@@ -80,7 +80,7 @@
 </div>
 
 <script>
-  const BASE_URL = "https://sandy-backend-l5tz.onrender.com";
+const BASE_URL = "https://sandy-backend-l5tz.onrender.com";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
@@ -110,7 +110,7 @@ loginBtn.addEventListener("click", () => {
             currentUserUid = user.uid;
             alert(`Welcome ${user.displayName}`);
             toggleLoginState(true);
-            loadData(); // reload table after login
+            loadData();
         })
         .catch(err => console.error(err));
 });
@@ -120,11 +120,11 @@ logoutBtn.addEventListener("click", () => {
     auth.signOut().then(() => {
         currentUserUid = null;
         toggleLoginState(false);
-        loadData(); // reload table after logout
+        loadData();
     });
 });
 
-function toggleLoginState(isLoggedIn){
+function toggleLoginState(isLoggedIn) {
     loginBtn.style.display = isLoggedIn ? "none" : "inline-block";
     logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
     expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
@@ -132,13 +132,13 @@ function toggleLoginState(isLoggedIn){
 
 // Auto-login
 auth.onAuthStateChanged(user => {
-    if(user){
+    if (user) {
         currentUserUid = user.uid;
         toggleLoginState(true);
-        loadData(); // table shows correct actions after auto-login
+        loadData();
     } else {
         toggleLoginState(false);
-        loadData(); // table shows without actions if logged out
+        loadData();
     }
 });
 
@@ -157,17 +157,17 @@ document.addEventListener("DOMContentLoaded", () => {
             date: document.querySelector("#date").value
         };
 
-        if(editId.value){
-            await fetch(`/update/${editId.value}`, {
+        if (editId.value) {
+            await fetch(`${BASE_URL}/update/${editId.value}`, {
                 method: "PUT",
-                headers: {"Content-Type": "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             });
             editId.value = "";
         } else {
-            await fetch("/submit", {
+            await fetch(`${BASE_URL}/submit`, {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             });
         }
@@ -176,8 +176,8 @@ document.addEventListener("DOMContentLoaded", () => {
         loadData();
     });
 
-    window.loadData = async function(){
-        const res = await fetch("/users");
+    window.loadData = async function () {
+        const res = await fetch(`${BASE_URL}/users`);
         const users = await res.json();
 
         let html = `<table class="table table-striped table-bordered text-white">
@@ -194,9 +194,9 @@ document.addEventListener("DOMContentLoaded", () => {
             </thead><tbody>`;
 
         users.forEach(u => {
-            const actionBtn = currentUserUid ? 
-                `<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>` 
-                : '-';
+            const actionBtn = currentUserUid ?
+                `<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>` :
+                '-';
             html += `<tr>
                 <td>${u.sid ?? '-'}</td>
                 <td>${u.name}</td>
@@ -212,8 +212,8 @@ document.addEventListener("DOMContentLoaded", () => {
         tableContainer.innerHTML = html;
     };
 
-    window.editExpense = async function(id){
-        const res = await fetch(`/user/${id}`);
+    window.editExpense = async function (id) {
+        const res = await fetch(`${BASE_URL}/user/${id}`);
         const user = await res.json();
 
         document.querySelector("#name").value = user.name;
@@ -224,10 +224,10 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector("#editId").value = id;
     };
 
-    loadData(); // initial table load
+    loadData();
 });
-
 </script>
+
 
 </body>
 </html>
