@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PTS PRO!</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/public/logod.png">
+<link rel="stylesheet" href="/public/style.css">
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+</head>
+<body class="text-white bg-dark">
+
+<header class="bg-white text-dark mx-1 px-1" style="border-radius:10px;">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="h3">PARALLEL TRACKING SENSE</h1>
+            <small>TRACK YOUR EXPENSES...</small>
+        </div>
+        <div>
+            <button id="googleLoginBtn" class="btn btn-outline-primary">Login with Google</button>
+            <button id="googleLogoutBtn" class="btn btn-outline-danger" style="display:none;">Logout</button>
+        </div>
+    </div>
+</header>
+
+<div class="container my-3">
+    <!-- Expense Form (only visible after login) -->
+    <div id="expenseFormContainer" style="display:none;">
+        <div class="card bg-dark text-white mb-4" style="border-radius:20px;">
+            <div class="card-body">
+                <form id="expenseForm" class="row g-3">
+                    <input type="hidden" id="editId">
+
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" id="name" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="amount" class="form-label">Amount</label>
+                        <input type="number" id="amount" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="type" class="form-label">Type</label>
+                        <select id="type" class="form-select" required>
+                            <option value="">Choose one...</option>
+                            <option value="Card">Card</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Gpay/Paytm">Gpay/Paytm</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="description" class="form-label">Description</label>
+                        <input type="text" id="description" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" id="date" class="form-control" required>
+                    </div>
+
+                    <div class="col-12 d-flex justify-content-between mt-3">
+                        <button type="reset" class="btn btn-danger">Clear</button>
+                        <button type="submit" class="btn btn-primary">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Permanent Expense Table -->
+    <div id="tableContainer" class="table-responsive"></div>
+</div>
+
+<script>
+  const BASE_URL = "https://sandy-backend-l5tz.onrender.com";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
+    authDomain: "ptspro-31997.firebaseapp.com",
+    projectId: "ptspro-31997",
+    storageBucket: "ptspro-31997.appspot.com",
+    messagingSenderId: "191965542623",
+    appId: "1:191965542623:web:b461ceedfc3a773267516a",
+    measurementId: "G-6LNC29KRQF"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+let currentUserUid = null;
+
+const loginBtn = document.getElementById("googleLoginBtn");
+const logoutBtn = document.getElementById("googleLogoutBtn");
+const expenseFormContainer = document.getElementById("expenseFormContainer");
+const tableContainer = document.getElementById("tableContainer");
+
+// Login
+loginBtn.addEventListener("click", () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+        .then(result => {
+            const user = result.user;
+            currentUserUid = user.uid;
+            alert(`Welcome ${user.displayName}`);
+            toggleLoginState(true);
+            loadData(); // reload table after login
+        })
+        .catch(err => console.error(err));
+});
+
+// Logout
+logoutBtn.addEventListener("click", () => {
+    auth.signOut().then(() => {
+        currentUserUid = null;
+        toggleLoginState(false);
+        loadData(); // reload table after logout
+    });
+});
+
+function toggleLoginState(isLoggedIn){
+    loginBtn.style.display = isLoggedIn ? "none" : "inline-block";
+    logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
+    expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
+}
+
+// Auto-login
+auth.onAuthStateChanged(user => {
+    if(user){
+        currentUserUid = user.uid;
+        toggleLoginState(true);
+        loadData(); // table shows correct actions after auto-login
+    } else {
+        toggleLoginState(false);
+        loadData(); // table shows without actions if logged out
+    }
+});
+
+// Expense Form Submit & Table
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector("#expenseForm");
+    const editId = document.querySelector("#editId");
+
+    form.addEventListener("submit", async e => {
+        e.preventDefault();
+        const data = {
+            name: document.querySelector("#name").value.trim(),
+            amount: document.querySelector("#amount").value.trim(),
+            type: document.querySelector("#type").value,
+            description: document.querySelector("#description").value.trim(),
+            date: document.querySelector("#date").value
+        };
+
+        if(editId.value){
+            await fetch(`/update/${editId.value}`, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(data)
+            });
+            editId.value = "";
+        } else {
+            await fetch("/submit", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(data)
+            });
+        }
+
+        form.reset();
+        loadData();
+    });
+
+    window.loadData = async function(){
+        const res = await fetch("/users");
+        const users = await res.json();
+
+        let html = `<table class="table table-striped table-bordered text-white">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead><tbody>`;
+
+        users.forEach(u => {
+            const actionBtn = currentUserUid ? 
+                `<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>` 
+                : '-';
+            html += `<tr>
+                <td>${u.sid ?? '-'}</td>
+                <td>${u.name}</td>
+                <td>${u.amount}</td>
+                <td>${u.type}</td>
+                <td>${u.description}</td>
+                <td>${u.date}</td>
+                <td>${actionBtn}</td>
+            </tr>`;
+        });
+
+        html += "</tbody></table>";
+        tableContainer.innerHTML = html;
+    };
+
+    window.editExpense = async function(id){
+        const res = await fetch(`/user/${id}`);
+        const user = await res.json();
+
+        document.querySelector("#name").value = user.name;
+        document.querySelector("#amount").value = user.amount;
+        document.querySelector("#type").value = user.type;
+        document.querySelector("#description").value = user.description;
+        document.querySelector("#date").value = user.date;
+        document.querySelector("#editId").value = id;
+    };
+
+    loadData(); // initial table load
+});
+
+</script>
+
+</body>
+</html>
