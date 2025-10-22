@@ -2,12 +2,14 @@
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
 const path = require("path");
+const cors = require("cors");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use("/public", express.static(path.join(__dirname, "public")));
 
-const uri = "mongodb+srv://Sandydb456:Sandydb456@cluster0.o4lr4zd.mongodb.net/myDB?retryWrites=true&w=majority";
+const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri);
 
 async function start() {
@@ -16,25 +18,21 @@ async function start() {
         const db = client.db("PTS_PRO");
         const expenses = db.collection("expenses");
 
-        // Serve main page
         app.get("/", (req, res) => {
             res.sendFile(path.join(__dirname, "index.html"));
         });
 
-        // Add new expense
         app.post("/submit", async (req, res) => {
             const { name, amount, type, description, date } = req.body;
             await expenses.insertOne({ name, amount, type, description, date });
             res.send("✅ Expense saved successfully!");
         });
 
-        // Get all expenses
         app.get("/users", async (req, res) => {
             const all = await expenses.find().toArray();
             res.json(all);
         });
 
-        // 🔹 Get single expense by ID
         app.get("/user/:id", async (req, res) => {
             try {
                 const user = await expenses.findOne({ _id: new ObjectId(req.params.id) });
@@ -44,7 +42,6 @@ async function start() {
             }
         });
 
-        // 🔹 Update existing expense
         app.put("/update/:id", async (req, res) => {
             try {
                 const { name, amount, type, description, date } = req.body;
@@ -59,7 +56,8 @@ async function start() {
             }
         });
 
-        app.listen(3000, () => console.log("🚀 Server running on http://localhost:3000"));
+        const PORT = process.env.PORT || 3000;
+        app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
     } catch (err) {
         console.error("❌ Error:", err);
     }
