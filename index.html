@@ -80,7 +80,7 @@
 "></div>
 
 <script>
-// Auto-detect backend URL
+// Detect backend URL
 const BASE_URL = window.location.hostname.includes("localhost") 
                  ? "http://localhost:3000" 
                  : "https://sandy-backend2-0.onrender.com";
@@ -117,7 +117,7 @@ function toggleLoginState(isLoggedIn) {
   expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
 }
 
-// Firebase login/logout
+// Firebase login
 loginBtn.addEventListener("click", () => {
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider)
@@ -143,14 +143,16 @@ auth.onAuthStateChanged(user => {
   else { toggleLoginState(false); loadData(); }
 });
 
-// Expense form
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("#expenseForm");
   const editId = document.querySelector("#editId");
 
   form.addEventListener("submit", async e => {
     e.preventDefault();
+    if(!currentUserUid) return showMessage("❌ Login first", 2000);
+
     const data = {
+      uid: currentUserUid,  // attach uid
       name: document.querySelector("#name").value.trim(),
       amount: document.querySelector("#amount").value.trim(),
       type: document.querySelector("#type").value,
@@ -174,8 +176,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   window.loadData = async function() {
+    if(!currentUserUid) { tableContainer.innerHTML = "<p class='text-warning'>Login to see your expenses</p>"; return; }
+
     try {
-      const res = await fetch(`${BASE_URL}/users`);
+      const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
       if(!res.ok) throw new Error("Failed to fetch users");
       const users = await res.json();
       let html = `<table class="table table-striped table-bordered text-white">
@@ -204,6 +208,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch(`${BASE_URL}/user/${id}`);
       if(!res.ok) throw new Error("Failed to fetch user");
       const user = await res.json();
+      if(user.uid !== currentUserUid) return showMessage("❌ Cannot edit others' expense", 2000);
+
       document.querySelector("#name").value = user.name;
       document.querySelector("#amount").value = user.amount;
       document.querySelector("#type").value = user.type;
