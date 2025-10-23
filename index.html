@@ -15,7 +15,6 @@ body {
   min-height: 100vh;
   margin: 0;
   font-family: "Poppins", sans-serif;
-  font-size: 1rem;
 }
 
 /* HEADER AFTER LOGIN */
@@ -50,7 +49,14 @@ table { color:#fff; font-size:0.95rem; }
 table thead { background:#00bcd4; color:#000; font-weight:600; }
 table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 
-/* LOGIN BUTTON */
+/* RESPONSIVE */
+@media (max-width:576px) {
+  header { flex-direction: column; align-items: flex-start; }
+  header .nav-links { margin-top:0.5rem; }
+  header .project-name { font-size:1.2rem; }
+  header .typing { font-size:0.9rem; }
+}
+
 #loginContainer {
   text-align:center;
   margin-top:100px;
@@ -95,40 +101,6 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 @keyframes blink {
   0%, 50%, 100% { opacity: 1; }
   25%, 75% { opacity: 0; }
-}
-
-/* MOBILE RESPONSIVE ADJUSTMENTS */
-@media (max-width:576px) {
-  body { font-size: 0.9rem; }
-
-  header {
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 15px;
-    text-align: center;
-  }
-
-  header .project-name { font-size: 1.3rem; margin-bottom: 5px; }
-  header .typing { font-size: 0.9rem; height: 1rem; }
-  #userNameDisplay { font-size: 0.95rem; margin: 5px 0; text-align: center; }
-
-  header .nav-links { flex-direction: column; gap: 8px; margin-top: 10px; }
-  header .nav-links a,
-  header button#googleLogoutBtn { font-size: 0.9rem; padding: 5px 12px; }
-
-  #loginContainer button { font-size: 1rem; padding: 8px 20px; }
-
-  .card-body form .form-label { font-size: 0.9rem; }
-  .card-body form .form-control,
-  .card-body form .form-select { font-size: 0.9rem; padding: 6px 10px; }
-
-  #aboutModal .modal-content { padding: 20px; }
-  #aboutModal h2 { font-size: 1.4rem; }
-  #aboutModal h4 { font-size: 1.1rem; }
-  #aboutModal p, #aboutModal li { font-size: 0.9rem; }
-
-  footer { font-size: 0.8rem; padding: 10px 15px; }
-  footer div { gap: 5px; flex-direction: column; }
 }
 </style>
 </head>
@@ -275,6 +247,7 @@ const userNameDisplay = document.getElementById("userNameDisplay");
 const aboutLink = document.getElementById("aboutLink");
 const aboutModal = document.getElementById("aboutModal");
 const closeAbout = document.getElementById("closeAbout");
+
 aboutLink.addEventListener("click", e => { e.preventDefault(); aboutModal.style.display = "block"; });
 closeAbout.addEventListener("click", () => { aboutModal.style.display = "none"; });
 window.addEventListener("click", e => { if(e.target == aboutModal) aboutModal.style.display="none"; });
@@ -300,7 +273,7 @@ auth.onAuthStateChanged(user=>{
     currentUserUid=user.uid;
     toggleLoginState(true);
     loadData();
-    userNameDisplay.textContent = `Welcome, "${user.displayName || "User"}"`;
+    userNameDisplay.textContent = user.displayName || "User";
   } else {
     currentUserUid=null;
     toggleLoginState(false);
@@ -317,7 +290,7 @@ loginBtn.addEventListener("click", async () => {
     currentUserUid = result.user.uid;
     toggleLoginState(true);
     loadData();
-    userNameDisplay.textContent = `Welcome, "${result.user.displayName || "User"}"`;
+    userNameDisplay.textContent = result.user.displayName || "User";
     showMessage("✅ Logged in successfully",2000);
   } catch(err){ console.error(err); showMessage("❌ Login failed",2000); }
 });
@@ -352,6 +325,7 @@ typeWriterHeader();
 // Expense form
 const form = document.getElementById("expenseForm");
 const editId = document.getElementById("editId");
+
 form.addEventListener("submit", async e=>{
   e.preventDefault();
   if(!currentUserUid) return;
@@ -440,6 +414,17 @@ window.editExpense = async function(id){
     <p style="margin:0;">&copy; 2025 Parallel Tracking Sense. All rights reserved.</p>
   </div>
 </footer>
+
+<style>
+/* Responsive adjustments */
+@media(min-width:576px){
+  footer div {
+    flex-direction:row;
+    justify-content:center;
+    gap:30px;
+  }
+}
+</style>
 
 </body>
 </html>
