@@ -8,14 +8,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <style>
-body { background-color:#0b0b0b; color:white; min-height:100vh; margin:0; font-family:"Poppins",sans-serif; }
-#loginContainer { display:flex; justify-content:center; align-items:center; height:100vh; flex-direction:column; text-align:center; transition:opacity 0.5s ease; }
+body { background-color:#0b0b0b; color:white; font-family:"Poppins", sans-serif; margin:0; min-height:100vh; }
+#loginContainer { display:flex; justify-content:center; align-items:center; height:100vh; flex-direction:column; text-align:center; }
 .login-box { background:#1a1a1a; padding:50px 70px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.6); max-width:420px; width:100%; }
 .login-box h1 { font-size:1.8rem; margin-bottom:8px; }
 .login-box small { color:#bbb; margin-bottom:30px; display:block; }
 .login-btn { padding:14px 45px; font-size:1.1rem; font-weight:600; border-radius:10px; width:100%; }
 .login-btn:hover { transform:scale(1.05); box-shadow:0 4px 12px rgba(0,0,0,0.3); }
-
 header { display:none; background:#0b0b0b; border-bottom:1px solid #222; padding:15px 20px; border-radius:0 0 15px 15px; }
 header .project-name { font-size:1.5rem; color:#00bcd4; font-weight:700; margin-bottom:3px; }
 header .typing { font-size:1rem; color:#ffcc00; height:1.2rem; }
@@ -23,17 +22,15 @@ header .nav-links a { color:#fff; text-decoration:none; font-weight:500; margin-
 header .nav-links a:hover { color:#00bcd4; }
 header button#googleLogoutBtn { background:transparent; border:2px solid #ff3b30; color:#ff3b30; font-weight:600; border-radius:8px; padding:6px 16px; transition:0.3s; }
 header button#googleLogoutBtn:hover { background:#ff3b30; color:white; }
-
 .table-container { margin-top:40px; padding:20px; background:#1a1a1a; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
 table { color:#fff; font-size:0.95rem; }
 table thead { background:#00bcd4; color:#000; font-weight:600; }
 table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
-
 @media (max-width:576px) {
   .login-box { padding:35px 25px; }
   .login-box h1 { font-size:1.4rem; }
   .login-btn { font-size:1rem; padding:12px; }
-  header { flex-direction: column; align-items:flex-start; }
+  header { flex-direction: column; align-items: flex-start; }
   header .nav-links { margin-top:0.5rem; }
   header .project-name { font-size:1.2rem; }
   header .typing { font-size:0.9rem; }
@@ -73,16 +70,9 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
       <div class="card-body">
         <form id="expenseForm" class="row g-3">
           <input type="hidden" id="editId">
-          <div class="col-md-6">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" id="name" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="amount" class="form-label">Amount</label>
-            <input type="number" id="amount" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="type" class="form-label">Type</label>
+          <div class="col-md-6"><label for="name" class="form-label">Name</label><input type="text" id="name" class="form-control" required></div>
+          <div class="col-md-6"><label for="amount" class="form-label">Amount</label><input type="number" id="amount" class="form-control" required></div>
+          <div class="col-md-6"><label for="type" class="form-label">Type</label>
             <select id="type" class="form-select" required>
               <option value="">Choose one...</option>
               <option value="Card">Card</option>
@@ -91,14 +81,8 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
               <option value="Other">Other</option>
             </select>
           </div>
-          <div class="col-md-6">
-            <label for="description" class="form-label">Description</label>
-            <input type="text" id="description" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="date" class="form-label">Date</label>
-            <input type="date" id="date" class="form-control" required>
-          </div>
+          <div class="col-md-6"><label for="description" class="form-label">Description</label><input type="text" id="description" class="form-control" required></div>
+          <div class="col-md-6"><label for="date" class="form-label">Date</label><input type="date" id="date" class="form-control" required></div>
           <div class="col-12 d-flex justify-content-between mt-3">
             <button type="reset" class="btn btn-danger">Clear</button>
             <button type="submit" class="btn btn-primary">Confirm</button>
@@ -116,53 +100,49 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 
 <script>
 const BASE_URL = window.location.hostname.includes("localhost")
-  ? "http://localhost:3000"
-  : "https://sandy-backend2-0.onrender.com";
+                 ? "http://localhost:3000"
+                 : "https://sandy-backend2-0.onrender.com";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
-  authDomain: "ptspro-31997.firebaseapp.com",
-  projectId: "ptspro-31997",
-  storageBucket: "ptspro-31997.appspot.com",
-  messagingSenderId: "191965542623",
-  appId: "1:191965542623:web:b461ceedfc3a773267516a",
-  measurementId: "G-6LNC29KRQF"
+  apiKey:"AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
+  authDomain:"ptspro-31997.firebaseapp.com",
+  projectId:"ptspro-31997",
+  storageBucket:"ptspro-31997.appspot.com",
+  messagingSenderId:"191965542623",
+  appId:"1:191965542623:web:b461ceedfc3a773267516a",
+  measurementId:"G-6LNC29KRQF"
 };
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-let currentUserUid = null;
+const auth=firebase.auth();
+let currentUserUid=null;
 
-const loginBtn = document.getElementById("googleLoginBtn");
-const logoutBtn = document.getElementById("googleLogoutBtn");
-const expenseFormContainer = document.getElementById("expenseFormContainer");
-const tableContainer = document.getElementById("tableContainer");
-const msgBox = document.getElementById("msgBox");
-const loginContainer = document.getElementById("loginContainer");
+const loginBtn=document.getElementById("googleLoginBtn");
+const logoutBtn=document.getElementById("googleLogoutBtn");
+const expenseFormContainer=document.getElementById("expenseFormContainer");
+const tableContainer=document.getElementById("tableContainer");
+const msgBox=document.getElementById("msgBox");
 
-function showMessage(msg,duration=2000){
-  msgBox.innerText = msg;
-  msgBox.style.display="block";
-  setTimeout(()=> msgBox.style.display="none", duration);
-}
+// Message
+function showMessage(msg,duration=2000){msgBox.innerText=msg; msgBox.style.display="block"; setTimeout(()=>msgBox.style.display="none",duration);}
 
+// Toggle login
 function toggleLoginState(isLoggedIn){
-  loginContainer.style.display = isLoggedIn ? "none" : "flex";
-  logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
-  expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
-  document.querySelector("header").style.display = isLoggedIn ? "block" : "none";
+  loginBtn.style.display=isLoggedIn?"none":"inline-block";
+  logoutBtn.style.display=isLoggedIn?"inline-block":"none";
+  expenseFormContainer.style.display=isLoggedIn?"block":"none";
+  document.querySelector("header").style.display=isLoggedIn?"block":"none";
 }
 
+// Firebase login/logout
 loginBtn.addEventListener("click", ()=>{
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
-    .then(result=>{
-      currentUserUid=result.user.uid;
-      showMessage(`Welcome ${result.user.displayName}!`);
-      toggleLoginState(true);
-      loadData();
-    }).catch(err=>showMessage("❌ Google login failed: "+err.message,3000));
+  const provider=new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).then(result=>{
+    currentUserUid=result.user.uid;
+    showMessage(`Welcome ${result.user.displayName}!`);
+    toggleLoginState(true);
+    loadData();
+  }).catch(err=>showMessage("❌ Google login failed: "+err.message,3000));
 });
-
 logoutBtn.addEventListener("click", ()=>{
   auth.signOut().then(()=>{
     currentUserUid=null;
@@ -170,7 +150,6 @@ logoutBtn.addEventListener("click", ()=>{
     loadData();
   });
 });
-
 auth.onAuthStateChanged(user=>{
   if(user){ currentUserUid=user.uid; toggleLoginState(true); loadData(); }
   else{ toggleLoginState(false); loadData(); }
@@ -181,17 +160,8 @@ const headerText="Drop Your Expenses !";
 const typingHeader=document.getElementById("typingHeader");
 let headerIndex=0;
 function typeWriterHeader(){
-  if(headerIndex<headerText.length){
-    typingHeader.innerHTML+=headerText.charAt(headerIndex);
-    headerIndex++;
-    setTimeout(typeWriterHeader,100);
-  } else {
-    setTimeout(()=>{
-      typingHeader.innerHTML="";
-      headerIndex=0;
-      typeWriterHeader();
-    },2000);
-  }
+  if(headerIndex<headerText.length){ typingHeader.innerHTML+=headerText.charAt(headerIndex); headerIndex++; setTimeout(typeWriterHeader,100); }
+  else{ setTimeout(()=>{ typingHeader.innerHTML=""; headerIndex=0; typeWriterHeader(); },2000);}
 }
 typeWriterHeader();
 
@@ -213,36 +183,38 @@ form.addEventListener("submit", async e=>{
   try{
     const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
     const method = editId.value ? "PUT" : "POST";
-    const res = await fetch(url,{ method, headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data)});
-    const result = await res.json();
+    const res=await fetch(url,{method, headers:{"Content-Type":"application/json"}, body:JSON.stringify(data)});
+    const result=await res.json();
     showMessage(result.message);
-    editId.value="";
-    form.reset();
-    loadData();
-  }catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
+    editId.value=""; form.reset(); loadData();
+  }catch(err){console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
 });
 
+// Load table + edit
 async function loadData(){
+  if(!currentUserUid){ tableContainer.innerHTML=""; return; }
   try{
-    const res = await fetch(`${BASE_URL}/users`);
-    if(!res.ok) throw new Error("Failed to fetch users");
-    const users = await res.json();
+    const res=await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
+    if(!res.ok) throw new Error("Failed to fetch expenses");
+    const users=await res.json();
     let html=`<table class="table table-striped table-bordered text-white">
-      <thead><tr><th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Action</th></tr></thead><tbody>`;
+      <thead><tr>
+        <th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Action</th>
+      </tr></thead><tbody>`;
     users.forEach((u,i)=>{
-      const actionBtn = currentUserUid ? `<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>` : '-';
+      const actionBtn=`<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>`;
       html+=`<tr><td>${i+1}</td><td>${u.name}</td><td>${u.amount}</td><td>${u.type}</td><td>${u.description}</td><td>${u.date}</td><td>${actionBtn}</td></tr>`;
     });
     html+="</tbody></table>";
     tableContainer.innerHTML=html;
-  }catch(err){ console.error(err); tableContainer.innerHTML="<p class='text-danger'>Failed to load expenses.</p>"; }
+  }catch(err){console.error(err); tableContainer.innerHTML="<p class='text-danger'>Failed to load your expenses.</p>";}
 }
 
 window.editExpense=async function(id){
   try{
-    const res = await fetch(`${BASE_URL}/user/${id}`);
+    const res=await fetch(`${BASE_URL}/user/${id}`);
     if(!res.ok) throw new Error("Failed to fetch user");
-    const user = await res.json();
+    const user=await res.json();
     document.getElementById("name").value=user.name;
     document.getElementById("amount").value=user.amount;
     document.getElementById("type").value=user.type;
@@ -250,7 +222,7 @@ window.editExpense=async function(id){
     document.getElementById("date").value=user.date;
     editId.value=id;
     showMessage("✏️ Edit mode enabled",2000);
-  }catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500);}
+  }catch(err){console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500);}
 }
 </script>
 </body>
