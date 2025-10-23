@@ -17,37 +17,6 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
-/* LOGIN BOX */
-#loginContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-  padding-top: 40px;
-}
-.login-box {
-  background: #1a1a1a;
-  padding: 30px 50px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  max-width: 420px;
-  width: 100%;
-}
-.login-box h1 { font-size: 1.8rem; margin-bottom: 8px; }
-.login-box small { color: #bbb; margin-bottom: 20px; display:block; }
-.login-btn {
-  padding: 12px 40px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border-radius: 10px;
-  width: 100%;
-}
-.login-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
 /* HEADER AFTER LOGIN */
 header {
   display: none;
@@ -74,9 +43,6 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 
 /* RESPONSIVE */
 @media (max-width:576px) {
-  .login-box { padding:25px 20px; }
-  .login-box h1 { font-size:1.4rem; }
-  .login-btn { font-size:1rem; padding:10px; }
   header { flex-direction: column; align-items: flex-start; }
   header .nav-links { margin-top:0.5rem; }
   header .project-name { font-size:1.2rem; }
@@ -85,15 +51,6 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 </style>
 </head>
 <body>
-
-<!-- LOGIN / HEADER TOP TEXT -->
-<div id="loginContainer">
-  <div class="login-box">
-    <h1>PARALLEL TRACKING SENSE</h1>
-    <small>Track your expenses smartly</small>
-    <button id="googleLoginBtn" class="btn btn-primary login-btn">Login with Google</button>
-  </div>
-</div>
 
 <!-- HEADER AFTER LOGIN -->
 <header>
@@ -196,32 +153,12 @@ function showMessage(msg, duration=2000) {
 
 // Toggle login
 function toggleLoginState(isLoggedIn) {
-  loginBtn.style.display = isLoggedIn ? "none" : "inline-block";
   logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
   expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
   document.querySelector("header").style.display = isLoggedIn ? "block" : "none";
 }
 
 // Firebase login/logout
-loginBtn.addEventListener("click", ()=>{
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
-    .then(result=>{
-      currentUserUid = result.user.uid;
-      showMessage(`Welcome ${result.user.displayName}!`);
-      toggleLoginState(true);
-      loadData();
-    }).catch(err=>showMessage("❌ Google login failed: "+err.message,3000));
-});
-
-logoutBtn.addEventListener("click", ()=>{
-  auth.signOut().then(()=>{
-    currentUserUid=null;
-    toggleLoginState(false);
-    loadData();
-  });
-});
-
 auth.onAuthStateChanged(user=>{
   if(user){ currentUserUid=user.uid; toggleLoginState(true); loadData(); }
   else{ toggleLoginState(false); loadData(); }
