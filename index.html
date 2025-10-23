@@ -273,7 +273,7 @@ auth.onAuthStateChanged(user=>{
     currentUserUid=user.uid;
     toggleLoginState(true);
     loadData();
-    userNameDisplay.textContent = user.displayName || "User";
+    userNameDisplay.textContent = `Welcome, "${user.displayName || "User"}"`;
   } else {
     currentUserUid=null;
     toggleLoginState(false);
@@ -290,7 +290,7 @@ loginBtn.addEventListener("click", async () => {
     currentUserUid = result.user.uid;
     toggleLoginState(true);
     loadData();
-    userNameDisplay.textContent = result.user.displayName || "User";
+    userNameDisplay.textContent = `Welcome, "${result.user.displayName || "User"}"`;
     showMessage("✅ Logged in successfully",2000);
   } catch(err){ console.error(err); showMessage("❌ Login failed",2000); }
 });
