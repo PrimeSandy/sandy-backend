@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PTS PRO!</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
@@ -10,204 +10,190 @@
 
 <style>
   body {
-    background-color: #0b0b0b;
-    color: white;
-    min-height: 100vh;
-    margin: 0;
+    background: #b2ebf2;
+    color: #222;
     font-family: "Poppins", sans-serif;
+    margin: 0;
+    min-height: 100vh;
   }
 
-  /* LOGIN PAGE */
+  /* LOGIN PAGE STYLING */
   #loginContainer {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #80deea, #4dd0e1);
     text-align: center;
+    padding: 20px;
   }
 
   .login-box {
-    background: #1a1a1a;
-    padding: 50px 70px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    transition: all 0.3s ease;
-    max-width: 420px;
+    background: #0d47a1;
+    color: white;
+    padding: 40px 50px;
+    border-radius: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
     width: 100%;
+    max-width: 400px;
   }
 
   .login-box h1 {
     font-size: 1.8rem;
     margin-bottom: 8px;
+    font-weight: 700;
   }
 
   .login-box small {
-    color: #bbb;
-    margin-bottom: 30px;
+    color: #ddd;
+    margin-bottom: 25px;
     display: block;
   }
 
   .login-btn {
-    padding: 14px 45px;
+    padding: 14px;
     font-size: 1.1rem;
     font-weight: 600;
+    background: #ffca28;
+    border: none;
+    color: #0d47a1;
     border-radius: 10px;
-    transition: all 0.3s ease;
     width: 100%;
+    transition: 0.3s;
   }
 
   .login-btn:hover {
     transform: scale(1.05);
+    background: #ffd54f;
+  }
+
+  /* HEADER AFTER LOGIN */
+  header {
+    display: none;
+    background: #0d47a1;
+    color: white;
+    padding: 10px 25px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   }
 
-  /* AFTER LOGIN HEADER */
-  header {
-    display: none;
-    background: #121212;
-    border-bottom: 1px solid #2a2a2a;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    border-radius: 0 0 15px 15px;
-    padding: 15px 20px;
+  .nav-links a {
+    color: white;
+    text-decoration: none;
+    margin-right: 20px;
+    font-weight: 500;
   }
 
-  header h1 {
-    font-size: 1.5rem;
-    color: #00bcd4;
-    font-weight: 700;
-    margin-bottom: 3px;
-  }
-
-  header small {
-    color: #ccc;
-    font-size: 0.85rem;
+  .nav-links a:hover {
+    text-decoration: underline;
   }
 
   #googleLogoutBtn {
-    background: transparent;
-    border: 2px solid #ff3b30;
-    color: #ff3b30;
-    font-weight: 600;
-    border-radius: 8px;
-    padding: 6px 16px;
-    transition: all 0.3s ease;
-  }
-
-  #googleLogoutBtn:hover {
-    background: #ff3b30;
+    background: #ef5350;
     color: white;
-  }
-
-  /* TABLE STYLING */
-  .table-container {
-    margin-top: 40px;
-    padding: 20px;
-    background: #1a1a1a;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-    animation: fadeIn 0.6s ease;
-  }
-
-  table {
-    color: #fff;
-    font-size: 0.95rem;
-  }
-
-  table thead {
-    background: #00bcd4;
-    color: #000;
-    font-weight: 600;
-  }
-
-  table tbody tr:hover {
-    background-color: rgba(0, 188, 212, 0.1);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
     transition: 0.3s;
   }
 
-  .fade-in {
-    opacity: 0;
-    animation: fadeIn 0.6s forwards;
+  #googleLogoutBtn:hover {
+    background: #e53935;
   }
 
-  @keyframes fadeIn {
-    to { opacity: 1; }
+  /* FORM + TABLE SECTION */
+  #expenseFormContainer, #tableContainer {
+    display: none;
   }
 
+  .content-area {
+    margin: 20px auto;
+    max-width: 900px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 30px;
+  }
+
+  .table {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  /* Responsive */
   @media (max-width: 576px) {
     .login-box {
-      padding: 35px 25px;
+      padding: 30px 25px;
     }
+    header {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
 
-    .login-box h1 {
-      font-size: 1.4rem;
-    }
-
-    .login-btn {
-      font-size: 1rem;
-      padding: 12px;
-    }
-
-    header h1 {
-      font-size: 1.2rem;
-    }
+  /* Message box */
+  #msgBox {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #198754; 
+    color: white; 
+    padding: 10px 20px; 
+    border-radius: 10px; 
+    display: none;
+    z-index: 9999;
   }
 </style>
 </head>
 
 <body>
+
 <!-- LOGIN PAGE -->
 <div id="loginContainer">
-  <div class="login-box fade-in">
-    <h1>PARALLEL TRACKING SENSE</h1>
+  <h2 class="fw-bold mb-4">WELCOME TO PTS PRO!</h2>
+  <div class="login-box">
+    <h1>USER LOGIN</h1>
     <small>Track your expenses smartly</small>
-    <button id="googleLoginBtn" class="btn btn-primary login-btn">Login with Google</button>
+    <button id="googleLoginBtn" class="login-btn">Login with Google</button>
   </div>
 </div>
 
-<!-- DASHBOARD HEADER -->
-<header class="text-white">
-  <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap">
-    <div>
-      <h1>PTS PRO DASHBOARD</h1>
-      <small>Track, Manage & Analyze your expenses</small>
-    </div>
-    <button id="googleLogoutBtn" class="btn btn-outline-danger btn-sm">Logout</button>
+<!-- HEADER AFTER LOGIN -->
+<header class="d-flex justify-content-between align-items-center flex-wrap">
+  <div class="nav-links d-flex align-items-center">
+    <a href="#">Home</a>
+    <a href="about.html">About</a>
+    <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k">Contact</a>
   </div>
+  <button id="googleLogoutBtn">Logout</button>
 </header>
 
-<!-- DASHBOARD MAIN AREA -->
-<div class="container table-container fade-in" id="tableContainer"></div>
+<!-- MAIN CONTENT -->
+<div class="content-area">
+  <div id="expenseFormContainer"></div>
+  <div id="tableContainer" class="table-responsive"></div>
+</div>
 
 <!-- MESSAGE BOX -->
-<div id="msgBox" style="
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #198754; 
-  color: white; 
-  padding: 10px 20px; 
-  border-radius: 10px; 
-  display: none;
-  z-index: 9999;
-"></div>
+<div id="msgBox"></div>
 
 <script>
-// Firebase + App Logic
 const BASE_URL = window.location.hostname.includes("localhost") 
                  ? "http://localhost:3000" 
                  : "https://sandy-backend2-0.onrender.com";
 
+// Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
-  authDomain: "ptspro-31997.firebaseapp.com",
-  projectId: "ptspro-31997",
-  storageBucket: "ptspro-31997.appspot.com",
-  messagingSenderId: "191965542623",
-  appId: "1:191965542623:web:b461ceedfc3a773267516a",
-  measurementId: "G-6LNC29KRQF"
+    apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
+    authDomain: "ptspro-31997.firebaseapp.com",
+    projectId: "ptspro-31997",
+    storageBucket: "ptspro-31997.appspot.com",
+    messagingSenderId: "191965542623",
+    appId: "1:191965542623:web:b461ceedfc3a773267516a",
+    measurementId: "G-6LNC29KRQF"
 };
-
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 let currentUserUid = null;
@@ -216,6 +202,7 @@ let currentUserUid = null;
 const loginContainer = document.getElementById("loginContainer");
 const loginBtn = document.getElementById("googleLoginBtn");
 const logoutBtn = document.getElementById("googleLogoutBtn");
+const expenseFormContainer = document.getElementById("expenseFormContainer");
 const tableContainer = document.getElementById("tableContainer");
 const msgBox = document.getElementById("msgBox");
 const header = document.querySelector("header");
@@ -228,7 +215,8 @@ function showMessage(msg, duration = 2000) {
 
 function toggleLoginState(isLoggedIn) {
   loginContainer.style.display = isLoggedIn ? "none" : "flex";
-  header.style.display = isLoggedIn ? "block" : "none";
+  header.style.display = isLoggedIn ? "flex" : "none";
+  expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
   tableContainer.style.display = isLoggedIn ? "block" : "none";
 }
 
@@ -241,6 +229,7 @@ loginBtn.addEventListener("click", () => {
       showMessage(`Welcome ${result.user.displayName}!`);
       toggleLoginState(true);
       loadData();
+      loadForm();
     })
     .catch(err => showMessage("❌ Google login failed: " + err.message, 3000));
 });
@@ -257,15 +246,67 @@ auth.onAuthStateChanged(user => {
   if (user) {
     currentUserUid = user.uid;
     loadData();
+    loadForm();
   }
 });
 
+// Load Form
+function loadForm() {
+  expenseFormContainer.innerHTML = `
+    <h4 class="mb-3">Add New Expense</h4>
+    <form id="expenseForm" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" id="name" class="form-control" placeholder="Name" required>
+      </div>
+      <div class="col-md-3">
+        <input type="number" id="amount" class="form-control" placeholder="Amount" required>
+      </div>
+      <div class="col-md-3">
+        <select id="type" class="form-select" required>
+          <option value="">Select Type</option>
+          <option value="Income">Income</option>
+          <option value="Expense">Expense</option>
+        </select>
+      </div>
+      <div class="col-md-10">
+        <input type="text" id="description" class="form-control" placeholder="Description">
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-success w-100">Add</button>
+      </div>
+    </form>
+  `;
+
+  document.getElementById("expenseForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const data = {
+      uid: currentUserUid,
+      name: name.value,
+      amount: amount.value,
+      type: type.value,
+      description: description.value,
+      date: new Date().toLocaleDateString()
+    };
+    await fetch(`${BASE_URL}/add`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(data)
+    });
+    showMessage("✅ Expense Added!");
+    loadData();
+    e.target.reset();
+  });
+}
+
+// Load Data
 async function loadData() {
   if(!currentUserUid) return;
   const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
   const users = await res.json();
-  let html = `<table class="table table-striped table-bordered text-white align-middle">
-  <thead><tr><th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th></tr></thead><tbody>`;
+  let html = `<table class="table table-striped table-bordered">
+  <thead class="table-primary text-center">
+    <tr><th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th></tr>
+  </thead><tbody>`;
   users.forEach((u,i) => html += `<tr><td>${i+1}</td><td>${u.name}</td><td>${u.amount}</td><td>${u.type}</td><td>${u.description}</td><td>${u.date}</td></tr>`);
   html += "</tbody></table>";
   tableContainer.innerHTML = html;
