@@ -15,7 +15,6 @@ body {
   min-height: 100vh;
   margin: 0;
   font-family: "Poppins", sans-serif;
-  font-size: 1rem;
 }
 
 /* HEADER AFTER LOGIN */
@@ -42,7 +41,6 @@ header button#googleLogoutBtn:hover { background:#ff3b30; color:white; }
   text-align: center;
   color: #ffcc00;
   font-weight: 600;
-  animation: blink 1s infinite;
 }
 
 /* TABLE */
@@ -51,7 +49,14 @@ table { color:#fff; font-size:0.95rem; }
 table thead { background:#00bcd4; color:#000; font-weight:600; }
 table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 
-/* LOGIN BUTTON */
+/* RESPONSIVE */
+@media (max-width:576px) {
+  header { flex-direction: column; align-items: flex-start; }
+  header .nav-links { margin-top:0.5rem; }
+  header .project-name { font-size:1.2rem; }
+  header .typing { font-size:0.9rem; }
+}
+
 #loginContainer {
   text-align:center;
   margin-top:100px;
@@ -93,44 +98,9 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
   color: #00bcd4;
   animation: blink 1s infinite;
 }
-
 @keyframes blink {
   0%, 50%, 100% { opacity: 1; }
   25%, 75% { opacity: 0; }
-}
-
-/* MOBILE RESPONSIVE ADJUSTMENTS */
-@media (max-width:576px) {
-  body { font-size: 0.9rem; }
-
-  header {
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 15px;
-    text-align: center;
-  }
-
-  header .project-name { font-size: 1.3rem; margin-bottom: 5px; }
-  header .typing { font-size: 0.9rem; height: 1rem; }
-  #userNameDisplay { font-size: 0.95rem; margin: 5px 0; text-align: center; }
-
-  header .nav-links { flex-direction: column; gap: 8px; margin-top: 10px; }
-  header .nav-links a,
-  header button#googleLogoutBtn { font-size: 0.9rem; padding: 5px 12px; }
-
-  #loginContainer button { font-size: 1rem; padding: 8px 20px; }
-
-  .card-body form .form-label { font-size: 0.9rem; }
-  .card-body form .form-control,
-  .card-body form .form-select { font-size: 0.9rem; padding: 6px 10px; }
-
-  #aboutModal .modal-content { padding: 20px; }
-  #aboutModal h2 { font-size: 1.4rem; }
-  #aboutModal h4 { font-size: 1.1rem; }
-  #aboutModal p, #aboutModal li { font-size: 0.9rem; }
-
-  footer { font-size: 0.8rem; padding: 10px 15px; }
-  footer div { gap: 5px; flex-direction: column; }
 }
 </style>
 </head>
@@ -277,6 +247,7 @@ const userNameDisplay = document.getElementById("userNameDisplay");
 const aboutLink = document.getElementById("aboutLink");
 const aboutModal = document.getElementById("aboutModal");
 const closeAbout = document.getElementById("closeAbout");
+
 aboutLink.addEventListener("click", e => { e.preventDefault(); aboutModal.style.display = "block"; });
 closeAbout.addEventListener("click", () => { aboutModal.style.display = "none"; });
 window.addEventListener("click", e => { if(e.target == aboutModal) aboutModal.style.display="none"; });
@@ -302,7 +273,7 @@ auth.onAuthStateChanged(user=>{
     currentUserUid=user.uid;
     toggleLoginState(true);
     loadData();
-    userNameDisplay.textContent = `Welcome, "${user.displayName || "User"}"`;
+    userNameDisplay.textContent = user.displayName || "User";
   } else {
     currentUserUid=null;
     toggleLoginState(false);
@@ -319,7 +290,7 @@ loginBtn.addEventListener("click", async () => {
     currentUserUid = result.user.uid;
     toggleLoginState(true);
     loadData();
-    userNameDisplay.textContent = `Welcome, "${result.user.displayName || "User"}"`;
+    userNameDisplay.textContent = result.user.displayName || "User";
     showMessage("✅ Logged in successfully",2000);
   } catch(err){ console.error(err); showMessage("❌ Login failed",2000); }
 });
@@ -350,6 +321,81 @@ function typeWriterHeader() {
   }
 }
 typeWriterHeader();
+
+// Expense form
+const form = document.getElementById("expenseForm");
+const editId = document.getElementById("editId");
+
+form.addEventListener("submit", async e=>{
+  e.preventDefault();
+  if(!currentUserUid) return;
+  const data = {
+    uid: currentUserUid,
+    name: document.getElementById("name").value.trim(),
+    amount: document.getElementById("amount").value.trim(),
+    type: document.getElementById("type").value,
+    description: document.getElementById("description").value.trim(),
+    date: document.getElementById("date").value
+  };
+  try {
+    const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
+    const method = editId.value ? "PUT" : "POST";
+    const res = await fetch(url,{ method, headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data)});
+    const result = await res.json();
+    showMessage(result.message);
+    editId.value="";
+    form.reset();
+    loadData();
+  } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
+});
+
+// Load table + edit
+async function loadData(){
+  if(!currentUserUid) {
+    tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
+    return;
+  }
+  try{
+    const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
+    if(!res.ok) throw new Error("Failed to fetch users");
+    const users = await res.json();
+    if(!Array.isArray(users) || users.length===0){
+      tableContainer.innerHTML = "<p class='text-muted'>No expenses yet.</p>";
+      return;
+    }
+    let html = `<table class="table table-striped table-bordered text-white">
+      <thead><tr>
+        <th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Action</th>
+      </tr></thead><tbody>`;
+    users.forEach((u,i)=>{
+      const actionBtn = `<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>`;
+      html += `<tr>
+        <td>${i+1}</td><td>${u.name}</td><td>${u.amount}</td><td>${u.type}</td>
+        <td>${u.description}</td><td>${u.date}</td><td>${actionBtn}</td>
+      </tr>`;
+    });
+    html += "</tbody></table>";
+    tableContainer.innerHTML=html;
+  } catch(err){ console.error(err); tableContainer.innerHTML="<p class='text-danger'>Failed to load expenses.</p>"; }
+}
+
+window.editExpense = async function(id){
+  try{
+    const res = await fetch(`${BASE_URL}/user/${id}`);
+    if(!res.ok) throw new Error("Failed to fetch user");
+    const user = await res.json();
+    document.getElementById("name").value=user.name;
+    document.getElementById("amount").value=user.amount;
+    document.getElementById("type").value=user.type;
+    document.getElementById("description").value=user.description;
+    document.getElementById("date").value=user.date;
+    editId.value=id;
+    showMessage("✏ Edit mode enabled",2000);
+  } catch(err){
+    console.error(err);
+    showMessage("❌ Failed to fetch expense for editing.",2500);
+  }
+}
 </script>
 
 <!-- FOOTER -->
@@ -369,6 +415,16 @@ typeWriterHeader();
   </div>
 </footer>
 
+<style>
+/* Responsive adjustments */
+@media(min-width:576px){
+  footer div {
+    flex-direction:row;
+    justify-content:center;
+    gap:30px;
+  }
+}
+</style>
+
 </body>
 </html>
-
