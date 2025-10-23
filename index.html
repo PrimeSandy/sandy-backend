@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,9 +49,31 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
   header .project-name { font-size:1.2rem; }
   header .typing { font-size:0.9rem; }
 }
+
+#loginContainer {
+  text-align:center;
+  margin-top:100px;
+}
+#loginContainer button {
+  font-size:1.2rem;
+  padding:10px 30px;
+  border-radius:10px;
+  border:none;
+  background:#00bcd4;
+  color:#000;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.3s;
+}
+#loginContainer button:hover { background:#0097a7; color:white; }
 </style>
 </head>
 <body>
+
+<!-- LOGIN BUTTON -->
+<div id="loginContainer">
+  <button id="googleLoginBtn">Login with Google</button>
+</div>
 
 <!-- HEADER AFTER LOGIN -->
 <header>
@@ -140,6 +163,7 @@ let currentUserUid = null;
 
 const loginBtn = document.getElementById("googleLoginBtn");
 const logoutBtn = document.getElementById("googleLogoutBtn");
+const loginContainer = document.getElementById("loginContainer");
 const expenseFormContainer = document.getElementById("expenseFormContainer");
 const tableContainer = document.getElementById("tableContainer");
 const msgBox = document.getElementById("msgBox");
@@ -153,15 +177,52 @@ function showMessage(msg, duration=2000) {
 
 // Toggle login
 function toggleLoginState(isLoggedIn) {
+  loginContainer.style.display = isLoggedIn ? "none" : "block";
   logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
   expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
   document.querySelector("header").style.display = isLoggedIn ? "block" : "none";
 }
 
-// Firebase login/logout
+// Firebase auth listener
 auth.onAuthStateChanged(user=>{
-  if(user){ currentUserUid=user.uid; toggleLoginState(true); loadData(); }
-  else{ toggleLoginState(false); loadData(); }
+  if(user){
+    currentUserUid=user.uid;
+    toggleLoginState(true);
+    loadData();
+  } else {
+    currentUserUid=null;
+    toggleLoginState(false);
+    tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
+  }
+});
+
+// LOGIN
+loginBtn.addEventListener("click", async () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    const result = await auth.signInWithPopup(provider);
+    currentUserUid = result.user.uid;
+    toggleLoginState(true);
+    loadData();
+    showMessage("✅ Logged in successfully",2000);
+  } catch(err){
+    console.error(err);
+    showMessage("❌ Login failed",2000);
+  }
+});
+
+// LOGOUT
+logoutBtn.addEventListener("click", async () => {
+  try {
+    await auth.signOut();
+    currentUserUid = null;
+    toggleLoginState(false);
+    tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
+    showMessage("✅ Logged out successfully", 2000);
+  } catch (err) {
+    console.error(err);
+    showMessage("❌ Logout failed", 2000);
+  }
 });
 
 // Typing effect
@@ -174,11 +235,7 @@ function typeWriterHeader() {
     headerIndex++;
     setTimeout(typeWriterHeader,100);
   } else {
-    setTimeout(()=>{
-      typingHeader.innerHTML="";
-      headerIndex=0;
-      typeWriterHeader();
-    },2000);
+    setTimeout(()=>{ typingHeader.innerHTML=""; headerIndex=0; typeWriterHeader(); },2000);
   }
 }
 typeWriterHeader();
