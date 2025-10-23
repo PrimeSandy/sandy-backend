@@ -35,6 +35,14 @@ header button#googleLogoutBtn {
 }
 header button#googleLogoutBtn:hover { background:#ff3b30; color:white; }
 
+/* CENTER USER NAME */
+#userNameDisplay {
+  flex: 1;
+  text-align: center;
+  color: #ffcc00;
+  font-weight: 600;
+}
+
 /* TABLE */
 .table-container { margin-top: 20px; padding: 20px; background:#1a1a1a; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
 table { color:#fff; font-size:0.95rem; }
@@ -84,6 +92,16 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
   color:#000; font-weight:600; cursor:pointer; margin-top:20px; 
 }
 #aboutModal button:hover { background:#0097a7; color:white; }
+
+/* Footer blinking name */
+.blinking-name {
+  color: #00bcd4;
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0; }
+}
 </style>
 </head>
 <body>
@@ -100,6 +118,10 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
       <h1 class="project-name mb-1">PARALLEL TRACKER</h1>
       <div class="typing" id="typingHeader"></div>
     </div>
+
+    <!-- CENTER USER NAME -->
+    <div id="userNameDisplay"></div>
+
     <nav class="d-flex align-items-center nav-links">
       <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k">Contact</a>
       <a href="#" id="aboutLink">About</a>
@@ -163,33 +185,25 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
       <strong>track your daily expenses</strong> and manage your budget efficiently. Whether you’re a student, 
       a professional, or a business owner, our goal is to make expense tracking effortless and insightful.
     </p>
-
     <h4>💡 Our Purpose</h4>
-    <p>
-      Managing money shouldn’t be complicated. With Parallel Tracking Sense, you can record your expenses, 
+    <p>Managing money shouldn’t be complicated. With Parallel Tracking Sense, you can record your expenses, 
       categorize your spending, and keep an eye on where your money goes — all in one clean, easy-to-use dashboard.
     </p>
-
     <h4>⚙️ How It Works</h4>
     <ul>
       <li>Add your daily expenses with name, amount, description, and date.</li>
       <li>View and organize all your expenses clearly.</li>
       <li>Analyze your spending pattern to plan better in the future.</li>
     </ul>
-
     <h4>🚀 Why Choose Us</h4>
-    <p>
-      Unlike complex finance tools, Parallel Tracking Sense focuses on <strong>simplicity</strong>, 
+    <p>Unlike complex finance tools, Parallel Tracking Sense focuses on <strong>simplicity</strong>, 
       <strong>speed</strong>, and <strong>clarity</strong>. You can start tracking in seconds without 
       any sign-up or setup hassles.
     </p>
-
     <h4>🤝 Our Vision</h4>
-    <p>
-      We believe financial awareness leads to better decisions. Our mission is to empower users to 
+    <p>We believe financial awareness leads to better decisions. Our mission is to empower users to 
       take control of their spending and develop healthy financial habits for a stable future.
     </p>
-
     <div style="text-align:center;">
       <button id="closeAbout">Close</button>
     </div>
@@ -227,6 +241,7 @@ const loginContainer = document.getElementById("loginContainer");
 const expenseFormContainer = document.getElementById("expenseFormContainer");
 const tableContainer = document.getElementById("tableContainer");
 const msgBox = document.getElementById("msgBox");
+const userNameDisplay = document.getElementById("userNameDisplay");
 
 // ABOUT MODAL
 const aboutLink = document.getElementById("aboutLink");
@@ -258,10 +273,12 @@ auth.onAuthStateChanged(user=>{
     currentUserUid=user.uid;
     toggleLoginState(true);
     loadData();
+    userNameDisplay.textContent = user.displayName || "User";
   } else {
     currentUserUid=null;
     toggleLoginState(false);
     tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
+    userNameDisplay.textContent = "";
   }
 });
 
@@ -273,6 +290,7 @@ loginBtn.addEventListener("click", async () => {
     currentUserUid = result.user.uid;
     toggleLoginState(true);
     loadData();
+    userNameDisplay.textContent = result.user.displayName || "User";
     showMessage("✅ Logged in successfully",2000);
   } catch(err){ console.error(err); showMessage("❌ Login failed",2000); }
 });
@@ -284,6 +302,7 @@ logoutBtn.addEventListener("click", async () => {
     currentUserUid = null;
     toggleLoginState(false);
     tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
+    userNameDisplay.textContent = "";
     showMessage("✅ Logged out successfully",2000);
   } catch(err){ console.error(err); showMessage("❌ Logout failed",2000); }
 });
@@ -368,7 +387,7 @@ window.editExpense = async function(id){
     document.getElementById("name").value=user.name;
     document.getElementById("amount").value=user.amount;
     document.getElementById("type").value=user.type;
-       document.getElementById("description").value=user.description;
+    document.getElementById("description").value=user.description;
     document.getElementById("date").value=user.date;
     editId.value=id;
     showMessage("✏ Edit mode enabled",2000);
@@ -379,11 +398,7 @@ window.editExpense = async function(id){
 }
 </script>
 
-
-
-
-<footer>
-    <!-- FOOTER -->
+<!-- FOOTER -->
 <footer style="
   background:#111; 
   color:#aaa; 
@@ -394,25 +409,8 @@ window.editExpense = async function(id){
   font-size:0.9rem;
 ">
   <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
-    <!-- <p style="margin:0;">Developed by <strong>SanthoshRavi</strong></p> -->
-     <p style="margin:0;">
-  Developed by 
-  <strong class="blinking-name">SanthoshRavi</strong>
-</p>
-
-<style>
-.blinking-name {
-  color: #00bcd4; /* highlight color */
-  animation: blink 1s infinite;
-}
-
-@keyframes blink {
-  0%, 50%, 100% { opacity: 1; }
-  25%, 75% { opacity: 0; }
-}
-</style>
-
-    <p style="margin:0;">Email: <a href="santhoshgowtham777@gmail.com" style="color:#00bcd4; text-decoration:none;">santhoshgowtham777@gmail.com</a></p>
+    <p style="margin:0;">Developed by <strong class="blinking-name">SanthoshRavi</strong></p>
+    <p style="margin:0;">Email: <a href="mailto:santhoshgowtham777@gmail.com" style="color:#00bcd4; text-decoration:none;">santhoshgowtham777@gmail.com</a></p>
     <p style="margin:0;">&copy; 2025 Parallel Tracking Sense. All rights reserved.</p>
   </div>
 </footer>
@@ -428,7 +426,5 @@ window.editExpense = async function(id){
 }
 </style>
 
-</footer>
 </body>
-</html> 
-
+</html>
