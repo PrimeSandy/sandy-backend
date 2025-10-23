@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/public", express.static(path.join(__dirname, "public")));
 
-// MongoDB URI from environment
+// MongoDB
 const uri = process.env.MONGODB_URI || "mongodb+srv://Sandydb456:Sandydb456@cluster0.o4lr4zd.mongodb.net/PTS_PRO?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -19,7 +19,6 @@ async function start() {
     try {
         await client.connect();
         console.log("✅ Connected to MongoDB!");
-
         const db = client.db();
         const expenses = db.collection("expenses");
 
@@ -29,8 +28,8 @@ async function start() {
         // Submit expense
         app.post("/submit", async (req, res) => {
             try {
-                const { name, amount, type, description, date } = req.body;
-                const result = await expenses.insertOne({ name, amount, type, description, date });
+                const { uid, name, amount, type, description, date } = req.body;
+                const result = await expenses.insertOne({ uid, name, amount, type, description, date });
                 res.json({ status: "success", message: "✅ Expense saved successfully!", id: result.insertedId });
             } catch (err) {
                 console.error(err);
@@ -38,10 +37,11 @@ async function start() {
             }
         });
 
-        // Get all expenses
+        // Get all expenses for a user
         app.get("/users", async (req, res) => {
             try {
-                const all = await expenses.find().toArray();
+                const { uid } = req.query;
+                const all = await expenses.find({ uid }).toArray();
                 res.json(all);
             } catch (err) {
                 console.error(err);
@@ -63,7 +63,10 @@ async function start() {
         // Update expense
         app.put("/update/:id", async (req, res) => {
             try {
-                const { name, amount, type, description, date } = req.body;
+                const { uid, name, amount, type, description, date } = req.body;
+                const exp = await expenses.findOne({ _id: new ObjectId(req.params.id) });
+                if(!exp || exp.uid !== uid) return res.status(403).json({ status: "error", message: "❌ Cannot edit others' expense" });
+
                 await expenses.updateOne(
                     { _id: new ObjectId(req.params.id) },
                     { $set: { name, amount, type, description, date } }
