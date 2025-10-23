@@ -22,22 +22,22 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   flex-direction: column;
   text-align: center;
+  padding-top: 40px;
 }
 .login-box {
   background: #1a1a1a;
-  padding: 50px 70px;
+  padding: 30px 50px;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.6);
   max-width: 420px;
   width: 100%;
 }
 .login-box h1 { font-size: 1.8rem; margin-bottom: 8px; }
-.login-box small { color: #bbb; margin-bottom: 30px; display:block; }
+.login-box small { color: #bbb; margin-bottom: 20px; display:block; }
 .login-btn {
-  padding: 14px 45px;
+  padding: 12px 40px;
   font-size: 1.1rem;
   font-weight: 600;
   border-radius: 10px;
@@ -67,16 +67,16 @@ header button#googleLogoutBtn {
 header button#googleLogoutBtn:hover { background:#ff3b30; color:white; }
 
 /* TABLE */
-.table-container { margin-top: 40px; padding: 20px; background:#1a1a1a; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
+.table-container { margin-top: 20px; padding: 20px; background:#1a1a1a; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
 table { color:#fff; font-size:0.95rem; }
 table thead { background:#00bcd4; color:#000; font-weight:600; }
 table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 
 /* RESPONSIVE */
 @media (max-width:576px) {
-  .login-box { padding:35px 25px; }
+  .login-box { padding:25px 20px; }
   .login-box h1 { font-size:1.4rem; }
-  .login-btn { font-size:1rem; padding:12px; }
+  .login-btn { font-size:1rem; padding:10px; }
   header { flex-direction: column; align-items: flex-start; }
   header .nav-links { margin-top:0.5rem; }
   header .project-name { font-size:1.2rem; }
@@ -86,7 +86,7 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- LOGIN / HEADER TOP TEXT -->
 <div id="loginContainer">
   <div class="login-box">
     <h1>PARALLEL TRACKING SENSE</h1>
