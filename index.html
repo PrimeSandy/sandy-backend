@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,70 +9,28 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 
 <style>
-body {
-  background-color: #0b0b0b;
-  color: white;
-  min-height: 100vh;
-  margin: 0;
-  font-family: "Poppins", sans-serif;
-}
-/* LOGIN BOX */
-#loginContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  flex-direction: column;
-  text-align: center;
-}
-.login-box {
-  background: #1a1a1a;
-  padding: 50px 70px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  max-width: 420px;
-  width: 100%;
-}
-.login-btn {
-  padding: 14px 45px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border-radius: 10px;
-  width: 100%;
-}
-.login-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-/* HEADER AFTER LOGIN */
-header {
-  display: none;
-  background: #0b0b0b;
-  border-bottom: 1px solid #222;
-  padding: 15px 20px;
-  border-radius: 0 0 15px 15px;
-}
-header .project-name { font-size: 1.5rem; color: #00bcd4; font-weight: 700; margin-bottom: 3px; }
-header .typing { font-size: 1rem; color: #ffcc00; height: 1.2rem; }
-header .nav-links a { color: #fff; text-decoration:none; font-weight:500; margin-right:1rem; transition:0.3s; cursor:pointer;}
+body { background-color:#0b0b0b; color:white; min-height:100vh; margin:0; font-family:"Poppins", sans-serif; }
+/* LOGIN */
+#loginContainer { display:flex; justify-content:center; align-items:center; height:100vh; flex-direction:column; text-align:center; }
+.login-box { background:#1a1a1a; padding:50px 70px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.6); max-width:420px; width:100%; }
+.login-btn { padding:14px 45px; font-size:1.1rem; font-weight:600; border-radius:10px; width:100%; }
+.login-btn:hover { transform:scale(1.05); box-shadow:0 4px 12px rgba(0,0,0,0.3); }
+/* HEADER */
+header { display:none; background:#0b0b0b; border-bottom:1px solid #222; padding:15px 20px; border-radius:0 0 15px 15px; }
+header .project-name { font-size:1.5rem; color:#00bcd4; font-weight:700; margin-bottom:3px; }
+header .typing { font-size:1rem; color:#ffcc00; height:1.2rem; }
+header .nav-links a { color:#fff; text-decoration:none; font-weight:500; margin-right:1rem; transition:0.3s; cursor:pointer;}
 header .nav-links a:hover { color:#00bcd4; }
-header button#googleLogoutBtn {
-  background: transparent; border:2px solid #ff3b30; color:#ff3b30;
-  font-weight:600; border-radius:8px; padding:6px 16px; transition:0.3s;
-}
+header button#googleLogoutBtn { background:transparent; border:2px solid #ff3b30; color:#ff3b30; font-weight:600; border-radius:8px; padding:6px 16px; transition:0.3s; }
 header button#googleLogoutBtn:hover { background:#ff3b30; color:white; }
-
 /* TABLE */
-.table-container { margin-top: 40px; padding: 20px; background:#1a1a1a; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
+.table-container { margin-top:40px; padding:20px; background:#1a1a1a; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
 table { color:#fff; font-size:0.95rem; }
 table thead { background:#00bcd4; color:#000; font-weight:600; }
 table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
-
 /* MODAL */
-.modal-body { max-height: 60vh; overflow-y: auto; }
-.modal-header h5 { color: #ffcc00; }
-
+.modal-body { max-height:60vh; overflow-y:auto; }
+.modal-header h5 { color:#ffcc00; }
 /* RESPONSIVE */
 @media (max-width:576px) {
   .login-box { padding:35px 25px; }
@@ -94,7 +51,7 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
   </div>
 </div>
 
-<!-- HEADER AFTER LOGIN -->
+<!-- HEADER -->
 <header>
   <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap">
     <div>
@@ -116,16 +73,9 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
       <div class="card-body">
         <form id="expenseForm" class="row g-3">
           <input type="hidden" id="editId">
-          <div class="col-md-6">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" id="name" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="amount" class="form-label">Amount</label>
-            <input type="number" id="amount" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="type" class="form-label">Type</label>
+          <div class="col-md-6"><label for="name" class="form-label">Name</label><input type="text" id="name" class="form-control" required></div>
+          <div class="col-md-6"><label for="amount" class="form-label">Amount</label><input type="number" id="amount" class="form-control" required></div>
+          <div class="col-md-6"><label for="type" class="form-label">Type</label>
             <select id="type" class="form-select" required>
               <option value="">Choose one...</option>
               <option value="Card">Card</option>
@@ -134,14 +84,8 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
               <option value="Other">Other</option>
             </select>
           </div>
-          <div class="col-md-6">
-            <label for="description" class="form-label">Description</label>
-            <input type="text" id="description" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="date" class="form-label">Date</label>
-            <input type="date" id="date" class="form-control" required>
-          </div>
+          <div class="col-md-6"><label for="description" class="form-label">Description</label><input type="text" id="description" class="form-control" required></div>
+          <div class="col-md-6"><label for="date" class="form-label">Date</label><input type="date" id="date" class="form-control" required></div>
           <div class="col-12 d-flex justify-content-between mt-3">
             <button type="reset" class="btn btn-danger">Clear</button>
             <button type="submit" class="btn btn-primary">Confirm</button>
@@ -150,8 +94,6 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
       </div>
     </div>
   </div>
-
-  <!-- TABLE -->
   <div id="tableContainer" class="table-responsive"></div>
 </div>
 
@@ -161,25 +103,22 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
     <div class="modal-content bg-dark text-white">
       <div class="modal-header">
         <h5 class="modal-title">About Parallel Tracking Sense</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <p>
-          <strong>Parallel Tracking Sense</strong> is a simple and smart web application designed to help you 
-          <strong>track your daily expenses</strong> and manage your budget efficiently. 
-        </p>
+        <p><strong>Parallel Tracking Sense</strong> is a smart app to track daily expenses efficiently.</p>
         <h4>💡 Our Purpose</h4>
-        <p>Managing money shouldn’t be complicated. Record expenses, categorize spending, and track your budget easily.</p>
+        <p>Record expenses, categorize spending, and manage your budget easily.</p>
         <h4>⚙️ How It Works</h4>
         <ul>
           <li>Add your daily expenses with name, amount, description, and date.</li>
           <li>View and organize all your expenses clearly.</li>
-          <li>Analyze your spending pattern to plan better in the future.</li>
+          <li>Analyze your spending pattern to plan better.</li>
         </ul>
         <h4>🚀 Why Choose Us</h4>
-        <p>Simplicity, speed, and clarity. Start tracking in seconds without any sign-up or setup hassles.</p>
+        <p>Simplicity, speed, clarity. Start tracking in seconds without signup.</p>
         <h4>🤝 Our Vision</h4>
-        <p>Empowering users to take control of their spending and develop healthy financial habits.</p>
+        <p>Empowering users to take control of spending and develop healthy financial habits.</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -197,15 +136,7 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 const BASE_URL = window.location.hostname.includes("localhost") ? "http://localhost:3000" : "https://sandy-backend2-0.onrender.com";
 
 // Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
-  authDomain: "ptspro-31997.firebaseapp.com",
-  projectId: "ptspro-31997",
-  storageBucket: "ptspro-31997.appspot.com",
-  messagingSenderId: "191965542623",
-  appId: "1:191965542623:web:b461ceedfc3a773267516a",
-  measurementId: "G-6LNC29KRQF"
-};
+const firebaseConfig = {apiKey:"AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",authDomain:"ptspro-31997.firebaseapp.com",projectId:"ptspro-31997",storageBucket:"ptspro-31997.appspot.com",messagingSenderId:"191965542623",appId:"1:191965542623:web:b461ceedfc3a773267516a",measurementId:"G-6LNC29KRQF"};
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 let currentUserUid = null;
@@ -216,122 +147,63 @@ const expenseFormContainer = document.getElementById("expenseFormContainer");
 const tableContainer = document.getElementById("tableContainer");
 const msgBox = document.getElementById("msgBox");
 
-// Message
-function showMessage(msg, duration=2000) {
-  msgBox.innerText = msg;
-  msgBox.style.display = "block";
-  setTimeout(()=> msgBox.style.display="none", duration);
-}
-
-// Toggle login
-function toggleLoginState(isLoggedIn) {
-  loginBtn.style.display = isLoggedIn ? "none" : "inline-block";
-  logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
-  expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
-  document.querySelector("header").style.display = isLoggedIn ? "flex" : "none";
-}
+function showMessage(msg,d=2000){ msgBox.innerText=msg; msgBox.style.display="block"; setTimeout(()=>msgBox.style.display="none",d); }
+function toggleLoginState(isLoggedIn){ loginBtn.style.display=isLoggedIn?"none":"inline-block"; logoutBtn.style.display=isLoggedIn?"inline-block":"none"; expenseFormContainer.style.display=isLoggedIn?"block":"none"; document.querySelector("header").style.display=isLoggedIn?"flex":"none"; }
 
 // Firebase login/logout
-loginBtn.addEventListener("click", ()=>{
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
-    .then(result=>{
-      currentUserUid = result.user.uid;
-      showMessage(`Welcome ${result.user.displayName}!`);
-      toggleLoginState(true);
-      loadData();
-    }).catch(err=>showMessage("❌ Google login failed: "+err.message,3000));
-});
-
-logoutBtn.addEventListener("click", ()=>{
-  auth.signOut().then(()=>{
-    currentUserUid=null;
-    toggleLoginState(false);
+loginBtn.addEventListener("click",()=>{
+  const provider=new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).then(result=>{
+    currentUserUid=result.user.uid;
+    showMessage(`Welcome ${result.user.displayName}!`);
+    toggleLoginState(true);
     loadData();
-  });
+  }).catch(err=>showMessage("❌ Google login failed: "+err.message,3000));
 });
 
-auth.onAuthStateChanged(user=>{
-  if(user){ currentUserUid=user.uid; toggleLoginState(true); loadData(); }
-  else{ toggleLoginState(false); loadData(); }
+logoutBtn.addEventListener("click",()=>{
+  auth.signOut().then(()=>{ currentUserUid=null; toggleLoginState(false); loadData(); });
 });
+
+auth.onAuthStateChanged(user=>{ if(user){ currentUserUid=user.uid; toggleLoginState(true); loadData(); } else{ toggleLoginState(false); loadData(); } });
 
 // Typing effect
-const headerText = "Drop Your Expenses !";
-const typingHeader = document.getElementById("typingHeader");
-let headerIndex = 0;
-function typeWriterHeader() {
-  if(headerIndex < headerText.length){
-    typingHeader.innerHTML += headerText.charAt(headerIndex);
-    headerIndex++;
-    setTimeout(typeWriterHeader,100);
-  } else {
-    setTimeout(()=>{ typingHeader.innerHTML=""; headerIndex=0; typeWriterHeader(); },2000);
-  }
-}
+const headerText="Drop Your Expenses !";
+const typingHeader=document.getElementById("typingHeader");
+let headerIndex=0;
+function typeWriterHeader(){ if(headerIndex<headerText.length){ typingHeader.innerHTML+=headerText.charAt(headerIndex); headerIndex++; setTimeout(typeWriterHeader,100); } else { setTimeout(()=>{ typingHeader.innerHTML=""; headerIndex=0; typeWriterHeader(); },2000); } }
 typeWriterHeader();
 
 // About modal
-document.getElementById("aboutBtn").addEventListener("click", ()=>{
-  const aboutModal = new bootstrap.Modal(document.getElementById('aboutModal'));
-  aboutModal.show();
-});
+document.getElementById("aboutBtn").addEventListener("click",()=>{ const aboutModal=new bootstrap.Modal(document.getElementById('aboutModal')); aboutModal.show(); });
 
 // Expense form
-const form = document.getElementById("expenseForm");
-const editId = document.getElementById("editId");
+const form=document.getElementById("expenseForm");
+const editId=document.getElementById("editId");
+form.addEventListener("submit",async e=>{ e.preventDefault(); if(!currentUserUid)return; const data={ uid:currentUserUid, name:document.getElementById("name").value.trim(), amount:document.getElementById("amount").value.trim(), type:document.getElementById("type").value, description:document.getElementById("description").value.trim(), date:document.getElementById("date").value }; try{ const url=editId.value?`${BASE_URL}/update/${editId.value}`:`${BASE_URL}/submit`; const method=editId.value?"PUT":"POST"; const res=await fetch(url,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}); const result=await res.json(); showMessage(result.message); editId.value=""; form.reset(); loadData(); } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500); } });
 
-form.addEventListener("submit", async e=>{
-  e.preventDefault();
-  if(!currentUserUid) return;
-  const data = {
-    uid: currentUserUid,
-    name: document.getElementById("name").value.trim(),
-    amount: document.getElementById("amount").value.trim(),
-    type: document.getElementById("type").value,
-    description: document.getElementById("description").value.trim(),
-    date: document.getElementById("date").value
-  };
-  try {
-    const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
-    const method = editId.value ? "PUT" : "POST";
-    const res = await fetch(url,{ method, headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data)});
-    const result = await res.json();
-    showMessage(result.message);
-    editId.value="";
-    form.reset();
-    loadData();
-  } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
-});
-
-// Load table + edit
+// Load table
 async function loadData(){
   try{
-    const res = await fetch(`${BASE_URL}/users`);
+    const res=await fetch(`${BASE_URL}/users`);
     if(!res.ok) throw new Error("Failed to fetch users");
-    const users = await res.json();
-    let html = `<table class="table table-striped table-bordered text-white">
-      <thead><tr>
-        <th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Action</th>
-      </tr></thead><tbody>`;
+    const users=await res.json();
+    let html=`<table class="table table-striped table-bordered text-white"><thead><tr><th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Action</th></tr></thead><tbody>`;
     users.forEach((u,i)=>{
-      const actionBtn = currentUserUid && u.uid === currentUserUid ? `<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>` : '-';
-      html += `<tr>
-        <td>${i+1}</td><td>${u.name}</td><td>${u.amount}</td><td>${u.type}</td>
-        <td>${u.description}</td><td>${u.date}</td><td>${actionBtn}</td>
-      </tr>`;
+      const actionBtn=currentUserUid && u.uid===currentUserUid?`<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>`:'-';
+      html+=`<tr><td>${i+1}</td><td>${u.name}</td><td>${u.amount}</td><td>${u.type}</td><td>${u.description}</td><td>${u.date}</td><td>${actionBtn}</td></tr>`;
     });
-    html += "</tbody></table>";
+    html+="</tbody></table>";
     tableContainer.innerHTML=html;
   } catch(err){ console.error(err); tableContainer.innerHTML="<p class='text-danger'>Failed to load expenses.</p>"; }
 }
 
-window.editExpense = async function(id){
+window.editExpense=async function(id){
   try{
-    const res = await fetch(`${BASE_URL}/user/${id}`);
+    const res=await fetch(`${BASE_URL}/user/${id}`);
     if(!res.ok) throw new Error("Failed to fetch user");
-    const user = await res.json();
-    if(user.uid !== currentUserUid){ showMessage("❌ Cannot edit others' expenses",2500); return; }
+    const user=await res.json();
+    if(user.uid!==currentUserUid){ showMessage("❌ Cannot edit others' expenses",2500); return; }
     document.getElementById("name").value=user.name;
     document.getElementById("amount").value=user.amount;
     document.getElementById("type").value=user.type;
@@ -339,7 +211,7 @@ window.editExpense = async function(id){
     document.getElementById("date").value=user.date;
     editId.value=id;
     showMessage("✏️ Edit mode enabled",2000);
-  } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500);}
+  } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500); }
 }
 </script>
 
