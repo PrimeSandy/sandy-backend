@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
@@ -13,13 +12,17 @@ app.use(express.json());
 app.use("/public", express.static(path.join(__dirname, "public")));
 
 // MongoDB connection from environment variable
-const uri = process.env.MONGODB_URI;
+
+const uri = process.env.MONGODB_URI || "mongodb+srv://Sandydb456:Sandydb456@cluster0.o4lr4zd.mongodb.net/PTS_PRO?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+// const client = new MongoClient(uri);
+// const uri = process.env.MONGODB_URI;
 if (!uri) {
     console.error("❌ MONGODB_URI is not set in environment variables!");
     process.exit(1);
 }
 
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+// const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function start() {
     try {
