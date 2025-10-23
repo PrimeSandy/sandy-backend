@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,7 +84,8 @@
 "></div>
 
 <script>
-const BASE_URL = "https://sandy-backend-l5tz.onrender.com"; // Must match Render URL
+const BASE_URL = "https://sandy-backend-l5tz.onrender.com"; // Your Render backend URL
+
 const firebaseConfig = {
     apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
     authDomain: "ptspro-31997.firebaseapp.com",
@@ -112,13 +112,19 @@ function showMessage(msg, duration = 2000) {
     setTimeout(() => msgBox.style.display = "none", duration);
 }
 
+function toggleLoginState(isLoggedIn) {
+    loginBtn.style.display = isLoggedIn ? "none" : "inline-block";
+    logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
+    expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
+}
+
+// Firebase login
 loginBtn.addEventListener("click", () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider)
         .then(result => {
-            const user = result.user;
-            currentUserUid = user.uid;
-            showMessage(`Welcome ${user.displayName}!`);
+            currentUserUid = result.user.uid;
+            showMessage(`Welcome ${result.user.displayName}!`);
             toggleLoginState(true);
             loadData();
         })
@@ -133,12 +139,7 @@ logoutBtn.addEventListener("click", () => {
     });
 });
 
-function toggleLoginState(isLoggedIn) {
-    loginBtn.style.display = isLoggedIn ? "none" : "inline-block";
-    logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
-    expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
-}
-
+// Auto login
 auth.onAuthStateChanged(user => {
     if (user) {
         currentUserUid = user.uid;
@@ -150,6 +151,7 @@ auth.onAuthStateChanged(user => {
     }
 });
 
+// Expense Form
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector("#expenseForm");
     const editId = document.querySelector("#editId");
@@ -173,19 +175,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             });
-
             const result = await res.json();
-            if (result.status === "success") {
-                showMessage(result.message);
-                editId.value = "";
-                form.reset();
-                loadData();
-            } else {
-                showMessage(result.message || "❌ Failed to submit");
-            }
+
+            showMessage(result.message);
+            editId.value = "";
+            form.reset();
+            loadData();
         } catch (err) {
             console.error(err);
-            showMessage("❌ Network error or backend failed", 3000);
+            showMessage("❌ Failed to submit/edit expense", 2500);
         }
     });
 
