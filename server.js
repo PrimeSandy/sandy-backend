@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
@@ -6,13 +7,18 @@ const cors = require("cors");
 
 const app = express();
 
-// Allow CORS from all origins
+// Allow CORS
 app.use(cors());
 app.use(express.json());
 app.use("/public", express.static(path.join(__dirname, "public")));
 
-// MongoDB connection
-const uri = process.env.MONGODB_URI || "mongodb+srv://Sandydb456:Sandydb456@cluster0.o4lr4zd.mongodb.net/PTS_PRO?retryWrites=true&w=majority";
+// MongoDB connection from environment variable
+const uri = process.env.MONGODB_URI;
+if (!uri) {
+    console.error("❌ MONGODB_URI is not set in environment variables!");
+    process.exit(1);
+}
+
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function start() {
@@ -20,11 +26,13 @@ async function start() {
         await client.connect();
         console.log("✅ Connected to MongoDB!");
 
-        const db = client.db("PTS_PRO");
+        const db = client.db(); // Use default DB from URI
         const expenses = db.collection("expenses");
 
+        // Serve front-end
         app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 
+        // Submit expense
         app.post("/submit", async (req, res) => {
             try {
                 const { name, amount, type, description, date } = req.body;
@@ -36,6 +44,7 @@ async function start() {
             }
         });
 
+        // Get all expenses
         app.get("/users", async (req, res) => {
             try {
                 const all = await expenses.find().toArray();
@@ -46,6 +55,7 @@ async function start() {
             }
         });
 
+        // Get single expense
         app.get("/user/:id", async (req, res) => {
             try {
                 const user = await expenses.findOne({ _id: new ObjectId(req.params.id) });
@@ -56,6 +66,7 @@ async function start() {
             }
         });
 
+        // Update expense
         app.put("/update/:id", async (req, res) => {
             try {
                 const { name, amount, type, description, date } = req.body;
@@ -72,8 +83,10 @@ async function start() {
 
         const PORT = process.env.PORT || 3000;
         app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
     } catch (err) {
         console.error("❌ MongoDB connection error:", err);
+        process.exit(1);
     }
 }
 
