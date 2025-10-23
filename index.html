@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -118,7 +117,7 @@ function toggleLoginState(isLoggedIn) {
   expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
 }
 
-// Firebase login
+// Firebase login/logout
 loginBtn.addEventListener("click", () => {
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider)
