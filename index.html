@@ -1,187 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PTS PRO!</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/public/logod.png">
+
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 
 <style>
-  body {
-    background-color: #0b0b0b;
-    color: white;
-    min-height: 100vh;
-    margin: 0;
-    font-family: "Poppins", sans-serif;
-  }
+body {
+  background-color: #0b0b0b;
+  color: white;
+  min-height: 100vh;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+}
 
-  /* LOGIN PAGE */
-  #loginContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
-    text-align: center;
-  }
+/* LOGIN PAGE */
+#loginContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  text-align: center;
+}
 
-  .login-box {
-    background: #1a1a1a;
-    padding: 50px 70px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    transition: all 0.3s ease;
-    max-width: 420px;
-    width: 100%;
-  }
+.login-box {
+  background: #1a1a1a;
+  padding: 50px 70px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  transition: all 0.3s ease;
+  max-width: 420px;
+  width: 100%;
+}
 
-  .login-box h1 {
-    font-size: 1.8rem;
-    margin-bottom: 8px;
-  }
+.login-box h1 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
 
-  .login-box small {
-    color: #bbb;
-    margin-bottom: 30px;
-    display: block;
-  }
+.login-box small {
+  color: #bbb;
+  margin-bottom: 30px;
+  display: block;
+}
 
-  .login-btn {
-    padding: 14px 45px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    width: 100%;
-  }
+.login-btn {
+  padding: 14px 45px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  width: 100%;
+}
 
-  .login-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  }
+.login-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
 
-  /* AFTER LOGIN HEADER */
-  header {
-    display: none;
-    background: #0b0b0b;
-    border-bottom: 1px solid #222;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    border-radius: 0 0 15px 15px;
-    padding: 15px 20px;
-  }
+/* AFTER LOGIN HEADER */
+header {
+  display: none;
+  background: #0b0b0b;
+  border-bottom: 1px solid #222;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  border-radius: 0 0 15px 15px;
+  padding: 15px 20px;
+}
 
-  header .project-name {
-    font-size: 1.5rem;
-    color: #00bcd4;
-    font-weight: 700;
-    margin-bottom: 3px;
-  }
+header .project-name {
+  font-size: 1.5rem;
+  color: #00bcd4;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
 
-  header .typing {
-    font-size: 1rem;
-    color: #ffcc00;
-    height: 1.2rem;
-  }
+header .typing {
+  font-size: 1rem;
+  color: #ffcc00;
+  height: 1.2rem;
+}
 
-  header .nav-links a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    margin-right: 1rem;
-    transition: color 0.3s;
-  }
+header .nav-links a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  margin-right: 1rem;
+  transition: color 0.3s;
+}
 
-  header .nav-links a:hover {
-    color: #00bcd4;
-  }
+header .nav-links a:hover { color: #00bcd4; }
 
-  header button#googleLogoutBtn {
-    background: transparent;
-    border: 2px solid #ff3b30;
-    color: #ff3b30;
-    font-weight: 600;
-    border-radius: 8px;
-    padding: 6px 16px;
-    transition: all 0.3s ease;
-  }
+header button#googleLogoutBtn {
+  background: transparent;
+  border: 2px solid #ff3b30;
+  color: #ff3b30;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 16px;
+  transition: all 0.3s ease;
+}
 
-  header button#googleLogoutBtn:hover {
-    background: #ff3b30;
-    color: white;
-  }
+header button#googleLogoutBtn:hover {
+  background: #ff3b30;
+  color: white;
+}
 
-  /* TABLE STYLING */
-  .table-container {
-    margin-top: 40px;
-    padding: 20px;
-    background: #1a1a1a;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-    animation: fadeIn 0.6s ease;
-  }
+/* EXPENSE FORM */
+#expenseFormContainer .card {
+  border-radius: 20px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+}
 
-  table {
-    color: #fff;
-    font-size: 0.95rem;
-  }
+/* TABLE STYLING */
+.table-container {
+  margin-top: 20px;
+  padding: 20px;
+  background: #1a1a1a;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  animation: fadeIn 0.6s ease;
+}
 
-  table thead {
-    background: #00bcd4;
-    color: #000;
-    font-weight: 600;
-  }
+table {
+  color: #fff;
+  font-size: 0.95rem;
+}
 
-  table tbody tr:hover {
-    background-color: rgba(0, 188, 212, 0.1);
-    transition: 0.3s;
-  }
+table thead {
+  background: #00bcd4;
+  color: #000;
+  font-weight: 600;
+}
 
-  .fade-in {
-    opacity: 0;
-    animation: fadeIn 0.6s forwards;
-  }
+table tbody tr:hover {
+  background-color: rgba(0, 188, 212, 0.1);
+  transition: 0.3s;
+}
 
-  @keyframes fadeIn {
-    to { opacity: 1; }
-  }
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.6s forwards;
+}
 
-  @media (max-width: 576px) {
-    .login-box {
-      padding: 35px 25px;
-    }
+@keyframes fadeIn { to { opacity: 1; } }
 
-    .login-box h1 {
-      font-size: 1.4rem;
-    }
-
-    .login-btn {
-      font-size: 1rem;
-      padding: 12px;
-    }
-
-    header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    header .nav-links {
-      margin-top: 0.5rem;
-    }
-
-    header .nav-links a {
-      margin-right: 1rem;
-    }
-
-    header .project-name {
-      font-size: 1.2rem;
-    }
-
-    header .typing {
-      font-size: 0.9rem;
-    }
-  }
+@media (max-width: 576px) {
+  .login-box { padding: 35px 25px; }
+  .login-box h1 { font-size: 1.4rem; }
+  .login-btn { font-size: 1rem; padding: 12px; }
+  header { flex-direction: column; align-items: flex-start; }
+  header .nav-links { margin-top: 0.5rem; }
+  header .nav-links a { margin-right: 1rem; }
+  header .project-name { font-size: 1.2rem; }
+  header .typing { font-size: 0.9rem; }
+}
 </style>
 </head>
 
@@ -203,7 +183,6 @@
       <h1 class="project-name mb-1">PARALLEL TRACKER</h1>
       <div class="typing" id="typingHeader"></div>
     </div>
-
     <!-- RIGHT SIDE NAV -->
     <nav class="d-flex align-items-center nav-links">
       <a href="contact.html">Contact</a>
@@ -213,7 +192,48 @@
   </div>
 </header>
 
-<!-- DASHBOARD MAIN AREA -->
+<!-- EXPENSE INPUT FORM -->
+<div class="container my-3" id="expenseFormContainer" style="display:none;">
+  <div class="card bg-dark text-white mb-4">
+    <div class="card-body">
+      <form id="expenseForm" class="row g-3">
+        <input type="hidden" id="editId">
+        <div class="col-md-6">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" id="name" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label for="amount" class="form-label">Amount</label>
+          <input type="number" id="amount" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label for="type" class="form-label">Type</label>
+          <select id="type" class="form-select" required>
+            <option value="">Choose one...</option>
+            <option value="Card">Card</option>
+            <option value="Cash">Cash</option>
+            <option value="Gpay/Paytm">Gpay/Paytm</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label for="description" class="form-label">Description</label>
+          <input type="text" id="description" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label for="date" class="form-label">Date</label>
+          <input type="date" id="date" class="form-control" required>
+        </div>
+        <div class="col-12 d-flex justify-content-between mt-3">
+          <button type="reset" class="btn btn-danger">Clear</button>
+          <button type="submit" class="btn btn-primary">Confirm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD TABLE -->
 <div class="container table-container fade-in" id="tableContainer"></div>
 
 <!-- MESSAGE BOX -->
@@ -256,6 +276,7 @@ const logoutBtn = document.getElementById("googleLogoutBtn");
 const tableContainer = document.getElementById("tableContainer");
 const msgBox = document.getElementById("msgBox");
 const header = document.querySelector("header");
+const expenseFormContainer = document.getElementById("expenseFormContainer");
 
 function showMessage(msg, duration = 2000) {
   msgBox.innerText = msg;
@@ -267,6 +288,7 @@ function toggleLoginState(isLoggedIn) {
   loginContainer.style.display = isLoggedIn ? "none" : "flex";
   header.style.display = isLoggedIn ? "block" : "none";
   tableContainer.style.display = isLoggedIn ? "block" : "none";
+  expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
 }
 
 // Firebase login
