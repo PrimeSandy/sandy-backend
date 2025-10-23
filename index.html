@@ -17,7 +17,7 @@
     font-family: "Poppins", sans-serif;
   }
 
-  /* Centered Login Container */
+  /* Centered Login */
   #loginContainer {
     display: flex;
     justify-content: center;
@@ -64,28 +64,25 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   }
 
-  /* Responsive Tweaks */
+  /* Responsive tweaks */
   @media (max-width: 576px) {
     .login-box {
       padding: 30px 25px;
     }
-
     .login-box h1 {
       font-size: 1.4rem;
     }
-
     .login-btn {
       font-size: 1rem;
       padding: 12px;
     }
   }
 
-  /* Hide header and form until login */
+  /* Hide app until login */
   header, #expenseFormContainer, #tableContainer {
     display: none;
   }
 
-  /* Smooth fade transitions */
   .fade-in {
     opacity: 0;
     animation: fadeIn 0.6s forwards;
@@ -108,7 +105,7 @@
   </div>
 </div>
 
-<!-- APP HEADER (Visible after login) -->
+<!-- APP HEADER -->
 <header class="bg-white text-dark mx-1 px-1" style="border-radius:10px;">
   <div class="container d-flex justify-content-between align-items-center flex-wrap py-2">
     <div>
@@ -123,7 +120,48 @@
 
 <!-- FORM + TABLE -->
 <div class="container my-3">
-  <div id="expenseFormContainer" style="display:none;"></div>
+  <!-- ✅ EXPENSE FORM RESTORED HERE -->
+  <div id="expenseFormContainer" style="display:none;">
+    <div class="card bg-dark text-white mb-4" style="border-radius:20px;">
+      <div class="card-body">
+        <form id="expenseForm" class="row g-3">
+          <input type="hidden" id="editId">
+          <div class="col-md-6">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" id="name" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="number" id="amount" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label for="type" class="form-label">Type</label>
+            <select id="type" class="form-select" required>
+              <option value="">Choose one...</option>
+              <option value="Card">Card</option>
+              <option value="Cash">Cash</option>
+              <option value="Gpay/Paytm">Gpay/Paytm</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" id="description" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" id="date" class="form-control" required>
+          </div>
+          <div class="col-12 d-flex justify-content-between mt-3">
+            <button type="reset" class="btn btn-danger">Clear</button>
+            <button type="submit" class="btn btn-primary">Confirm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
   <div id="tableContainer" class="table-responsive"></div>
 </div>
 
@@ -210,16 +248,79 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-async function loadData() {
-  if(!currentUserUid) return;
-  const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
-  const users = await res.json();
-  let html = `<table class="table table-striped table-bordered text-white">
-  <thead><tr><th>Id</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th></tr></thead><tbody>`;
-  users.forEach((u,i) => html += `<tr><td>${i+1}</td><td>${u.name}</td><td>${u.amount}</td><td>${u.type}</td><td>${u.description}</td><td>${u.date}</td></tr>`);
-  html += "</tbody></table>";
-  tableContainer.innerHTML = html;
-}
+// Load data + submit logic
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("#expenseForm");
+  const editId = document.querySelector("#editId");
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    if(!currentUserUid) return showMessage("❌ Login first", 2000);
+
+    const data = {
+      uid: currentUserUid,
+      name: document.querySelector("#name").value.trim(),
+      amount: document.querySelector("#amount").value.trim(),
+      type: document.querySelector("#type").value,
+      description: document.querySelector("#description").value.trim(),
+      date: document.querySelector("#date").value
+    };
+
+    try {
+      const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
+      const method = editId.value ? "PUT" : "POST";
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      const result = await res.json();
+      showMessage(result.message);
+      editId.value = "";
+      form.reset();
+      loadData();
+    } catch(err) {
+      console.error(err);
+      showMessage("❌ Failed to submit/edit expense", 2500);
+    }
+  });
+
+  window.loadData = async function() {
+    if(!currentUserUid) { tableContainer.innerHTML = "<p class='text-warning'>Login to see your expenses</p>"; return; }
+
+    try {
+      const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
+      const users = await res.json();
+      let html = `<table class="table table-striped table-bordered text-white">
+        <thead><tr><th>ID</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Action</th></tr></thead><tbody>`;
+      users.forEach((u,i) => {
+        html += `<tr>
+          <td>${i+1}</td><td>${u.name}</td><td>${u.amount}</td><td>${u.type}</td><td>${u.description}</td><td>${u.date}</td>
+          <td><button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button></td>
+        </tr>`;
+      });
+      html += "</tbody></table>";
+      tableContainer.innerHTML = html;
+    } catch(err) {
+      console.error(err);
+      tableContainer.innerHTML = "<p class='text-danger'>Failed to load expenses.</p>";
+    }
+  }
+
+  window.editExpense = async function(id) {
+    try {
+      const res = await fetch(`${BASE_URL}/user/${id}`);
+      const user = await res.json();
+      document.querySelector("#name").value = user.name;
+      document.querySelector("#amount").value = user.amount;
+      document.querySelector("#type").value = user.type;
+      document.querySelector("#description").value = user.description;
+      document.querySelector("#date").value = user.date;
+      document.querySelector("#editId").value = id;
+      showMessage("✏️ Edit mode enabled", 2000);
+    } catch(err) {
+      console.error(err);
+    }
+  }
+
+  loadData();
+});
 </script>
 </body>
 </html>
