@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PTS PRO!</title>
+<title>E-Trax!</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
@@ -81,8 +81,8 @@ footer {
   background:#111; color:#aaa; text-align:center; padding:15px 20px; 
   border-top:1px solid #222; margin-top:40px; font-size:0.9rem;
 }
-/* .blinking-name { color: #00bcd4; animation: blink 1.5s infinite; } */
-@keyframes blink { 0%,50%,100%{opacity:1;} 25%,75%{opacity:0;} }
+.blinking-name { color: #00bcd4; }
+/* @keyframes blink { 0%,50%,100%{opacity:1;} 25%,75%{opacity:0;} } */
 
 @media(min-width:576px){
   footer div { flex-direction:row; justify-content:center; gap:30px; }
@@ -204,7 +204,7 @@ const BASE_URL = window.location.hostname.includes("localhost")
   ? "http://localhost:3000"
   : "https://sandy-backend2-0.onrender.com";
 
-// Firebase
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
   authDomain: "ptspro-31997.firebaseapp.com",
@@ -251,7 +251,7 @@ function toggleLoginState(isLoggedIn) {
   document.querySelector("header").style.display = isLoggedIn ? "block" : "none";
 }
 
-// Auth
+// Firebase Auth
 auth.onAuthStateChanged(user=>{
   if(user){
     currentUserUid=user.uid;
@@ -333,7 +333,7 @@ form.addEventListener("submit", async e=>{
   } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
 });
 
-// Load table + charts
+// Load data
 async function loadData(){
   if(!currentUserUid) return;
   try{
@@ -441,7 +441,7 @@ function renderCharts(users){
   <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
     <p style="margin:0;">Developed by <strong class="blinking-name">Prime Sandy</strong></p>
     <p style="margin:0;">Email: <a href="mailto:santhoshgowtham777@gmail.com" style="color:#00bcd4; text-decoration:none;">santhoshgowtham777@gmail.com</a></p>
-    <p style="margin:0;">&copy; 2025 E-Trax . All rights reserved.</p>
+    <p style="margin:0;">&copy; 2025 Parallel Tracking Sense. All rights reserved.</p>
   </div>
 </footer>
 </body>
