@@ -7,6 +7,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body {
@@ -17,7 +18,7 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
-/* HEADER AFTER LOGIN */
+/* HEADER */
 header {
   display: none;
   background: #0b0b0b;
@@ -35,7 +36,6 @@ header button#googleLogoutBtn {
 }
 header button#googleLogoutBtn:hover { background:#ff3b30; color:white; }
 
-/* CENTER USER NAME */
 #userNameDisplay {
   flex: 1;
   text-align: center;
@@ -49,35 +49,18 @@ table { color:#fff; font-size:0.95rem; }
 table thead { background:#00bcd4; color:#000; font-weight:600; }
 table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 
-/* RESPONSIVE */
-@media (max-width:576px) {
-  header { flex-direction: column; align-items: flex-start; }
-  header .nav-links { margin-top:0.5rem; }
-  header .project-name { font-size:1.2rem; }
-  header .typing { font-size:0.9rem; }
-}
-
-#loginContainer {
-  text-align:center;
-  margin-top:100px;
-}
+/* LOGIN */
+#loginContainer { text-align:center; margin-top:100px; }
 #loginContainer button {
-  font-size:1.2rem;
-  padding:10px 30px;
-  border-radius:10px;
-  border:none;
-  background:#00bcd4;
-  color:#000;
-  font-weight:600;
-  cursor:pointer;
-  transition:0.3s;
+  font-size:1.2rem; padding:10px 30px; border-radius:10px;
+  border:none; background:#00bcd4; color:#000; font-weight:600;
+  cursor:pointer; transition:0.3s;
 }
 #loginContainer button:hover { background:#0097a7; color:white; }
 
-/* ABOUT MODAL */
+/* ABOUT */
 #aboutModal {
-  display:none; 
-  position:fixed; top:0; left:0; width:100%; height:100%;
+  display:none; position:fixed; top:0; left:0; width:100%; height:100%;
   background: rgba(0,0,0,0.8); color:white; z-index:9999; overflow:auto;
   padding:50px 20px; box-sizing:border-box;
 }
@@ -93,13 +76,16 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 }
 #aboutModal button:hover { background:#0097a7; color:white; }
 
-/* Footer blinking name */
-.blinking-name {
-  color: #00bcd4;
+/* FOOTER */
+footer {
+  background:#111; color:#aaa; text-align:center; padding:15px 20px; 
+  border-top:1px solid #222; margin-top:40px; font-size:0.9rem;
 }
-@keyframes blink {
-  0%, 50%, 100% { opacity: 1; }
-  25%, 75% { opacity: 0; }
+.blinking-name { color: #00bcd4; animation: blink 1.5s infinite; }
+@keyframes blink { 0%,50%,100%{opacity:1;} 25%,75%{opacity:0;} }
+
+@media(min-width:576px){
+  footer div { flex-direction:row; justify-content:center; gap:30px; }
 }
 </style>
 </head>
@@ -110,17 +96,14 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
   <button id="googleLoginBtn">Login with Google</button>
 </div>
 
-<!-- HEADER AFTER LOGIN -->
+<!-- HEADER -->
 <header>
   <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap">
     <div>
       <h1 class="project-name mb-1">PARALLEL TRACKER</h1>
       <div class="typing" id="typingHeader"></div>
     </div>
-
-    <!-- CENTER USER NAME -->
     <div id="userNameDisplay"></div>
-
     <nav class="d-flex align-items-center nav-links">
       <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k">Contact</a>
       <a href="#" id="aboutLink">About</a>
@@ -171,8 +154,23 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
     </div>
   </div>
 
-  <!-- TABLE -->
+  <!-- TABLE + CHART -->
   <div id="tableContainer" class="table-responsive"></div>
+
+  <!-- GRAPHICAL ANALYTICS -->
+  <div id="analyticsContainer" class="my-4" style="display:none;">
+    <div class="table-container">
+      <h4 class="text-center text-info mb-3">📊 Expense Analytics</h4>
+      <div class="row">
+        <div class="col-md-6">
+          <canvas id="lineChart"></canvas>
+        </div>
+        <div class="col-md-6">
+          <canvas id="pieChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ABOUT MODAL -->
@@ -187,6 +185,7 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
       <li>Add expenses with name, amount, and date.</li>
       <li>View and edit them anytime.</li>
       <li>Check total expenses instantly.</li>
+      <li>See visual analytics of your spending trends.</li>
     </ul>
     <div style="text-align:center;">
       <button id="closeAbout">Close</button>
@@ -202,8 +201,8 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 <script>
 // BASE URL
 const BASE_URL = window.location.hostname.includes("localhost")
-                 ? "http://localhost:3000"
-                 : "https://sandy-backend2-0.onrender.com";
+  ? "http://localhost:3000"
+  : "https://sandy-backend2-0.onrender.com";
 
 // Firebase
 const firebaseConfig = {
@@ -219,6 +218,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 let currentUserUid = null;
 
+// Elements
 const loginBtn = document.getElementById("googleLoginBtn");
 const logoutBtn = document.getElementById("googleLogoutBtn");
 const loginContainer = document.getElementById("loginContainer");
@@ -226,12 +226,12 @@ const expenseFormContainer = document.getElementById("expenseFormContainer");
 const tableContainer = document.getElementById("tableContainer");
 const msgBox = document.getElementById("msgBox");
 const userNameDisplay = document.getElementById("userNameDisplay");
+const analyticsContainer = document.getElementById("analyticsContainer");
 
-// ABOUT MODAL
+// About modal
 const aboutLink = document.getElementById("aboutLink");
 const aboutModal = document.getElementById("aboutModal");
 const closeAbout = document.getElementById("closeAbout");
-
 aboutLink.addEventListener("click", e => { e.preventDefault(); aboutModal.style.display = "block"; });
 closeAbout.addEventListener("click", () => { aboutModal.style.display = "none"; });
 window.addEventListener("click", e => { if(e.target == aboutModal) aboutModal.style.display="none"; });
@@ -251,7 +251,7 @@ function toggleLoginState(isLoggedIn) {
   document.querySelector("header").style.display = isLoggedIn ? "block" : "none";
 }
 
-// Firebase auth listener
+// Auth
 auth.onAuthStateChanged(user=>{
   if(user){
     currentUserUid=user.uid;
@@ -262,11 +262,11 @@ auth.onAuthStateChanged(user=>{
     currentUserUid=null;
     toggleLoginState(false);
     tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
+    analyticsContainer.style.display="none";
     userNameDisplay.textContent = "";
   }
 });
 
-// LOGIN
 loginBtn.addEventListener("click", async () => {
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
@@ -279,19 +279,19 @@ loginBtn.addEventListener("click", async () => {
   } catch(err){ console.error(err); showMessage("❌ Login failed",2000); }
 });
 
-// LOGOUT
 logoutBtn.addEventListener("click", async () => {
   try {
     await auth.signOut();
     currentUserUid = null;
     toggleLoginState(false);
     tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
+    analyticsContainer.style.display="none";
     userNameDisplay.textContent = "";
     showMessage("✅ Logged out successfully",2000);
   } catch(err){ console.error(err); showMessage("❌ Logout failed",2000); }
 });
 
-// Typing effect
+// Typing animation
 const headerText = "Drop Your Expenses !";
 const typingHeader = document.getElementById("typingHeader");
 let headerIndex = 0;
@@ -333,18 +333,16 @@ form.addEventListener("submit", async e=>{
   } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
 });
 
-// Load table + edit
+// Load table + charts
 async function loadData(){
-  if(!currentUserUid) {
-    tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
-    return;
-  }
+  if(!currentUserUid) return;
   try{
     const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
     if(!res.ok) throw new Error("Failed to fetch users");
     const users = await res.json();
     if(!Array.isArray(users) || users.length===0){
       tableContainer.innerHTML = "<p class='text-muted'>No expenses yet.</p>";
+      analyticsContainer.style.display="none";
       return;
     }
 
@@ -353,7 +351,6 @@ async function loadData(){
         <th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Action</th>
       </tr></thead><tbody>`;
 
-    // 🧮 Add total calculation
     let totalAmount = 0;
     users.forEach((u,i)=>{
       totalAmount += parseFloat(u.amount) || 0;
@@ -364,19 +361,22 @@ async function loadData(){
       </tr>`;
     });
 
-    // ✅ Total row
     html += `
       <tr style="background:#00bcd4; color:#000; font-weight:700;">
         <td colspan="2" class="text-end">Total</td>
         <td colspan="5">${totalAmount.toFixed(2)}</td>
       </tr>
     `;
-
     html += "</tbody></table>";
     tableContainer.innerHTML=html;
+
+    // Show charts
+    analyticsContainer.style.display="block";
+    renderCharts(users);
   } catch(err){ console.error(err); tableContainer.innerHTML="<p class='text-danger'>Failed to load expenses.</p>"; }
 }
 
+// Edit
 window.editExpense = async function(id){
   try{
     const res = await fetch(`${BASE_URL}/user/${id}`);
@@ -389,39 +389,60 @@ window.editExpense = async function(id){
     document.getElementById("date").value=user.date;
     editId.value=id;
     showMessage("✏ Edit mode enabled",2000);
-  } catch(err){
-    console.error(err);
-    showMessage("❌ Failed to fetch expense for editing.",2500);
-  }
+  } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500);}
+}
+
+// Render Charts
+function renderCharts(users){
+  const dates = {};
+  const types = {};
+
+  users.forEach(u=>{
+    const date = u.date || "Unknown";
+    const amount = parseFloat(u.amount) || 0;
+    dates[date] = (dates[date]||0)+amount;
+    types[u.type] = (types[u.type]||0)+amount;
+  });
+
+  // Line Chart - Expense over Time
+  const lineCtx = document.getElementById('lineChart').getContext('2d');
+  new Chart(lineCtx, {
+    type: 'line',
+    data: {
+      labels: Object.keys(dates),
+      datasets: [{
+        label: 'Total Expense',
+        data: Object.values(dates),
+        borderColor: '#00bcd4',
+        backgroundColor: 'rgba(0,188,212,0.2)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: { scales: { y: { beginAtZero:true } } }
+  });
+
+  // Pie Chart - Expense by Type
+  const pieCtx = document.getElementById('pieChart').getContext('2d');
+  new Chart(pieCtx, {
+    type: 'pie',
+    data: {
+      labels: Object.keys(types),
+      datasets: [{
+        data: Object.values(types),
+        backgroundColor: ['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0']
+      }]
+    }
+  });
 }
 </script>
 
-<!-- FOOTER -->
-<footer style="
-  background:#111; 
-  color:#aaa; 
-  text-align:center; 
-  padding:15px 20px; 
-  border-top:1px solid #222; 
-  margin-top:40px;
-  font-size:0.9rem;
-">
+<footer>
   <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
     <p style="margin:0;">Developed by <strong class="blinking-name">Prime Sandy</strong></p>
     <p style="margin:0;">Email: <a href="mailto:santhoshgowtham777@gmail.com" style="color:#00bcd4; text-decoration:none;">santhoshgowtham777@gmail.com</a></p>
     <p style="margin:0;">&copy; 2025 Parallel Tracking Sense. All rights reserved.</p>
   </div>
 </footer>
-
-<style>
-@media(min-width:576px){
-  footer div {
-    flex-direction:row;
-    justify-content:center;
-    gap:30px;
-   }
-}
-</style>
-
 </body>
 </html>
