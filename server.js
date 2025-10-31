@@ -10,14 +10,13 @@ app.use(cors());
 app.use(express.json());
 app.use("/public", express.static(path.join(__dirname, "public")));
 
-// create HTTP server + socket.io
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
-  cors: { origin: true, methods: ["GET","POST","PUT"] }
+  cors: { origin: "*", methods: ["GET","POST","PUT"] }
 });
 
-// MongoDB
+// MongoDB URI: set MONGODB_URI in .env or use the default (not recommended for prod)
 const uri = process.env.MONGODB_URI || "mongodb+srv://Sandydb456:Sandydb456@cluster0.o4lr4zd.mongodb.net/PTS_PRO?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -29,21 +28,22 @@ async function start() {
     const expenses = db.collection("expenses");
     const budgets = db.collection("budgets");
 
-    // Serve front-end (index.html in same folder)
+    // Serve front-end file
     app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 
-    // socket rooms by uid
-    io.on("connection", socket => {
+    // Socket.io: join rooms by uid
+    io.on("connection", (socket) => {
       console.log("Socket connected:", socket.id);
-      socket.on("join", uid => {
+      socket.on("join", (uid) => {
         if(uid) {
           socket.join(`uid_${uid}`);
           console.log(`Socket ${socket.id} joined uid_${uid}`);
         }
       });
+      socket.on("disconnect", () => {});
     });
 
-    // Submit expense: add metadata and emit to room
+    // Create expense
     app.post("/submit", async (req, res) => {
       try {
         const { uid, name, amount, type, description, date } = req.body;
@@ -53,35 +53,28 @@ async function start() {
         io.to(`uid_${uid}`).emit("expenses-changed", { action: "created", id: result.insertedId, uid });
         res.json({ status: "success", message: "✅ Expense saved successfully!", id: result.insertedId });
       } catch (err) {
-        console.error(err);
-        res.status(500).json({ status: "error", message: "❌ Failed to save expense" });
+        console.error(err); res.status(500).json({ status: "error", message: "❌ Failed to save expense" });
       }
     });
 
-    // Get all expenses for a user
+    // Get all for user
     app.get("/users", async (req, res) => {
       try {
         const { uid } = req.query;
         const all = await expenses.find({ uid }).sort({ createdAt: -1 }).toArray();
         res.json(all);
-      } catch (err) {
-        console.error(err);
-        res.status(500).json({ status: "error", message: "❌ Failed to fetch expenses" });
-      }
+      } catch (err) { console.error(err); res.status(500).json({ status: "error", message: "❌ Failed to fetch expenses" }); }
     });
 
-    // Get single expense
+    // Single expense
     app.get("/user/:id", async (req, res) => {
       try {
         const user = await expenses.findOne({ _id: new ObjectId(req.params.id) });
         res.json(user);
-      } catch (err) {
-        console.error(err);
-        res.status(500).json({ status: "error", message: "❌ Failed to fetch expense" });
-      }
+      } catch (err) { console.error(err); res.status(500).json({ status: "error", message: "❌ Failed to fetch expense" }); }
     });
 
-    // Update expense: save history + increment editCount + emit
+    // Update expense with history
     app.put("/update/:id", async (req, res) => {
       try {
         const { uid, editorName, name, amount, type, description, date } = req.body;
@@ -104,10 +97,7 @@ async function start() {
 
         io.to(`uid_${uid}`).emit("expenses-changed", { action: "updated", id, uid });
         res.json({ status: "success", message: "✅ Expense updated successfully!" });
-      } catch (err) {
-        console.error(err);
-        res.status(500).json({ status: "error", message: "❌ Failed to update expense" });
-      }
+      } catch (err) { console.error(err); res.status(500).json({ status: "error", message: "❌ Failed to update expense" }); }
     });
 
     // Budget endpoints
@@ -132,10 +122,7 @@ async function start() {
         await budgets.updateOne({ uid }, { $set: { uid, amount: amt, updatedAt: new Date() } }, { upsert: true });
         io.to(`uid_${uid}`).emit("budget-changed", { uid, amount: amt });
         res.json({ status: "success", message: "✅ Budget saved" });
-      } catch (err) {
-        console.error(err);
-        res.status(500).json({ status: "error", message: "❌ Failed to save budget" });
-      }
+      } catch (err) { console.error(err); res.status(500).json({ status: "error", message: "❌ Failed to save budget" }); }
     });
 
     app.get("/getBudget", async (req, res) => {
@@ -145,10 +132,7 @@ async function start() {
         const b = await budgets.findOne({ uid });
         if(!b) return res.json({ amount: 0 });
         res.json({ amount: b.amount, updatedAt: b.updatedAt });
-      } catch (err) {
-        console.error(err);
-        res.status(500).json({ status: "error", message: "❌ Failed to fetch budget" });
-      }
+      } catch (err) { console.error(err); res.status(500).json({ status: "error", message: "❌ Failed to fetch budget" }); }
     });
 
     const PORT = process.env.PORT || 3000;
@@ -160,4 +144,3 @@ async function start() {
 }
 
 start();
-
