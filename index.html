@@ -8,6 +8,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- socket.io client will be loaded dynamically from server via /socket.io/socket.io.js -->
 
 <style>
 body {
@@ -90,6 +91,23 @@ footer {
 }
 .blinking-name { color: #00bcd4; }
 
+/* History modal */
+#historyModal {
+  display:none; position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,0.75);
+  padding:30px; box-sizing:border-box; overflow:auto;
+}
+#historyModal .history-card {
+  max-width:900px; margin:auto; background:#121212; padding:20px; border-radius:12px;
+  border:1px solid #222;
+}
+.history-entry { border-bottom:1px dashed #333; padding:10px 0; }
+.field-changed { font-weight:700; color:#ffc107; }
+
+/* activity log */
+#activityLog { margin-top:18px; padding:12px; background:#0f0f0f; border-radius:10px; border:1px solid #222; }
+.activity-item { padding:8px 0; border-bottom:1px dashed #222; }
+
+/* responsive tweaks */
 @media(min-width:576px){
   footer div { flex-direction:row; justify-content:center; gap:30px; }
 }
@@ -198,6 +216,12 @@ footer {
   <!-- TABLE + CHART -->
   <div id="tableContainer" class="table-responsive"></div>
 
+  <!-- Activity Log -->
+  <div id="activityLog" style="display:none;">
+    <h5 style="margin-top:0;color:#ffc107;">Recent Activity</h5>
+    <div id="activityItems"></div>
+  </div>
+
   <!-- GRAPHICAL ANALYTICS -->
   <div id="analyticsContainer" class="my-4" style="display:none;">
     <div class="table-container">
@@ -235,6 +259,17 @@ footer {
   </div>
 </div>
 
+<!-- History Modal -->
+<div id="historyModal">
+  <div class="history-card" id="historyContent">
+    <h4 id="historyTitle" style="color:#ffc107;">History</h4>
+    <div id="historyList"></div>
+    <div style="text-align:right; margin-top:12px;">
+      <button id="closeHistoryBtn" class="btn btn-sm btn-secondary">Close</button>
+    </div>
+  </div>
+</div>
+
 <div id="msgBox" style="
   position: fixed; top: 20px; right: 20px;
   background-color: #198754; color: white; padding: 10px 20px;
@@ -245,6 +280,15 @@ footer {
 const BASE_URL = window.location.hostname.includes("localhost")
   ? "http://localhost:3000"
   : "https://sandy-backend2-0.onrender.com";
+
+// load socket.io client script from server origin
+(function loadSocketIo(){
+  const s = document.createElement('script');
+  s.src = `${BASE_URL.replace(/\/$/,'')}/socket.io/socket.io.js`;
+  s.onload = ()=> { console.log("socket.io client loaded"); };
+  s.onerror = ()=> { console.warn("socket.io client failed to load"); };
+  document.head.appendChild(s);
+})();
 
 // Firebase Config
 const firebaseConfig = {
@@ -259,6 +303,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 let currentUserUid = null;
+let socket = null;
 
 // Elements
 const loginBtn = document.getElementById("googleLoginBtn");
@@ -280,9 +325,6 @@ const budgetStatusText = document.getElementById("budgetStatusText");
 const budgetAlerts = document.getElementById("budgetAlerts");
 const analyticsBadge = document.getElementById("analyticsBadge");
 
-// small global to hold budget (used in charts)
-let currentBudgetAmount = 0;
-
 // About modal
 const aboutLink = document.getElementById("aboutLink");
 const aboutModal = document.getElementById("aboutModal");
@@ -290,6 +332,14 @@ const closeAbout = document.getElementById("closeAbout");
 aboutLink.addEventListener("click", e => { e.preventDefault(); aboutModal.style.display = "block"; });
 closeAbout.addEventListener("click", () => { aboutModal.style.display = "none"; });
 window.addEventListener("click", e => { if(e.target == aboutModal) aboutModal.style.display="none"; });
+
+// History modal
+const historyModal = document.getElementById("historyModal");
+const historyList = document.getElementById("historyList");
+const historyTitle = document.getElementById("historyTitle");
+const closeHistoryBtn = document.getElementById("closeHistoryBtn");
+closeHistoryBtn.addEventListener("click", () => historyModal.style.display = "none");
+window.addEventListener("click", e => { if(e.target == historyModal) historyModal.style.display="none"; });
 
 // Message
 function showMessage(msg, duration=2000) {
@@ -306,17 +356,20 @@ function toggleLoginState(isLoggedIn) {
   document.querySelector("header").style.display = isLoggedIn ? "block" : "none";
   budgetCard.style.display = isLoggedIn ? "block" : "none";
   analyticsContainer.style.display = isLoggedIn ? analyticsContainer.style.display : "none";
+  document.getElementById("activityLog").style.display = isLoggedIn ? "block" : "none";
 }
 
 // Firebase Auth
-auth.onAuthStateChanged(user=>{
+auth.onAuthStateChanged(async user=>{
   if(user){
     currentUserUid=user.uid;
     toggleLoginState(true);
-    loadData();
     userNameDisplay.textContent = user.displayName || "User";
+    // connect socket and join room
+    connectSocket();
+    await loadData();
     // fetch budget on login
-    fetchBudget();
+    await fetchBudget();
   } else {
     currentUserUid=null;
     toggleLoginState(false);
@@ -324,6 +377,7 @@ auth.onAuthStateChanged(user=>{
     analyticsContainer.style.display="none";
     userNameDisplay.textContent = "";
     clearBudgetUI();
+    if(socket){ socket.disconnect(); socket = null; }
   }
 });
 
@@ -349,9 +403,34 @@ logoutBtn.addEventListener("click", async () => {
     analyticsContainer.style.display="none";
     userNameDisplay.textContent = "";
     clearBudgetUI();
+    if(socket){ socket.disconnect(); socket = null; }
     showMessage("✅ Logged out successfully",2000);
   } catch(err){ console.error(err); showMessage("❌ Logout failed",2000); }
 });
+
+// connect socket and join user's room to receive real-time updates
+function connectSocket(){
+  try {
+    if(typeof io === 'undefined') {
+      console.warn("socket.io client not loaded yet");
+      return;
+    }
+    socket = io(BASE_URL);
+    socket.on("connect", ()=> {
+      console.log("socket connected:", socket.id);
+      if(currentUserUid) socket.emit("join", currentUserUid);
+    });
+    socket.on("expenses-changed", (payload)=>{
+      console.log("expenses-changed", payload);
+      // reload data when something changed
+      loadData();
+    });
+    socket.on("budget-changed", (payload) => {
+      console.log("budget-changed", payload);
+      fetchBudget();
+    });
+  } catch(err){ console.error("Socket error", err); }
+}
 
 // Typing animation
 const headerText = "Drop Your Expenses !";
@@ -386,9 +465,13 @@ form.addEventListener("submit", async e=>{
   try {
     const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
     const method = editId.value ? "PUT" : "POST";
+    // when updating include editorName
+    if(editId.value){
+      data.editorName = (auth.currentUser && auth.currentUser.displayName) ? auth.currentUser.displayName : null;
+    }
     const res = await fetch(url,{ method, headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data)});
     const result = await res.json();
-    showMessage(result.message);
+    showMessage(result.message || "Saved");
     editId.value="";
     form.reset();
     await loadData();
@@ -419,7 +502,6 @@ async function fetchBudget(){
     const res = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
     if(!res.ok) return clearBudgetUI();
     const r = await res.json();
-    // server returns { amount: X } or { amount:0 }
     if(!r || typeof r.amount === "undefined" || r.amount === 0){
       currentBudgetAmount = 0;
       clearBudgetUI();
@@ -511,6 +593,79 @@ resetBudgetBtn.addEventListener("click", async () => {
 // ----------- End Budget functions -----------
 
 
+// helper to format date nicely
+function formatDateString(d){
+  if(!d) return "—";
+  const dt = (typeof d === 'string' || typeof d === 'number') ? new Date(d) : d;
+  if(isNaN(dt.getTime())) return d;
+  const opts = { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' };
+  return dt.toLocaleString('en-GB', opts);
+}
+
+// Build activity log from all users' editHistory
+function buildActivityLog(allUsers){
+  const log = [];
+  allUsers.forEach(u=>{
+    // creation event
+    if(u.createdAt) log.push({
+      type: 'created',
+      uid: u.uid,
+      display: `${u.name} created`,
+      date: u.createdAt,
+      expenseId: u._id,
+      by: u.uid
+    });
+    if(Array.isArray(u.editHistory)){
+      u.editHistory.forEach(e=>{
+        log.push({
+          type: 'edited',
+          expenseName: u.name,
+          expenseId: u._id,
+          editorName: e.editorName || e.editorUid || 'Unknown',
+          date: e.date,
+          before: e.before,
+          after: e.after
+        });
+      });
+    }
+  });
+  // sort newest first
+  log.sort((a,b)=> new Date(b.date) - new Date(a.date));
+  return log;
+}
+
+// Render activity items (top 20)
+function renderActivityLog(allUsers){
+  const itemsDiv = document.getElementById('activityItems');
+  const container = document.getElementById('activityLog');
+  const log = buildActivityLog(allUsers);
+  itemsDiv.innerHTML = "";
+  if(!log || log.length===0){
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = 'block';
+  const limited = log.slice(0,20);
+  limited.forEach(it=>{
+    const div = document.createElement('div');
+    div.className = "activity-item";
+    if(it.type === 'created'){
+      div.innerHTML = `<div><strong>${it.display}</strong> — ${formatDateString(it.date)}</div>`;
+    } else {
+      // show changed fields keys
+      const changed = [];
+      if(it.before && it.after){
+        for(const k of Object.keys(it.before)){
+          if(String(it.before[k]) !== String(it.after[k])) changed.push(k);
+        }
+      }
+      const fieldsText = changed.length ? `<span class="field-changed">${changed.join(', ')}</span>` : `<span class="text-muted">no fields</span>`;
+      div.innerHTML = `<div><strong>${it.editorName}</strong> edited <strong>${it.expenseName || ''}</strong> — ${fieldsText} — ${formatDateString(it.date)}</div>`;
+    }
+    itemsDiv.appendChild(div);
+  });
+}
+
 // Load data
 async function loadData(){
   if(!currentUserUid) return;
@@ -521,6 +676,7 @@ async function loadData(){
     if(!Array.isArray(users) || users.length===0){
       tableContainer.innerHTML = "<p class='text-muted'>No expenses yet.</p>";
       analyticsContainer.style.display="none";
+      document.getElementById('activityLog').style.display = 'none';
       // update budget UI with zero spent
       const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
       if(bRes.ok){
@@ -532,23 +688,35 @@ async function loadData(){
 
     let html = `<table class="table table-striped table-bordered text-white">
       <thead><tr>
-        <th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Action</th>
+        <th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th>
+        <th>Date</th><th>Edits</th><th>Last Edited</th><th>Action</th>
       </tr></thead><tbody>`;
 
     let totalAmount = 0;
     users.forEach((u,i)=>{
       totalAmount += parseFloat(u.amount) || 0;
+      const editCount = u.editCount || 0;
+      const lastEdited = u.updatedAt || u.createdAt || null;
       const actionBtn = `<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>`;
+      const historyBtn = `<button class="btn btn-info btn-sm ms-1" onclick="viewHistory('${u._id}')">History</button>`;
+      const displayName = u.name || '';
       html += `<tr>
-        <td>${i+1}</td><td>${u.name}</td><td>${u.amount}</td><td>${u.type}</td>
-        <td>${u.description}</td><td>${u.date}</td><td>${actionBtn}</td>
+        <td>${i+1}</td>
+        <td>${displayName}</td>
+        <td>${u.amount}</td>
+        <td>${u.type}</td>
+        <td>${u.description}</td>
+        <td>${u.date}</td>
+        <td style="font-weight:700;">${editCount}</td>
+        <td>${formatDateString(lastEdited)}</td>
+        <td>${actionBtn}${historyBtn}</td>
       </tr>`;
     });
 
     html += `
       <tr style="background:#00bcd4; color:#000; font-weight:700;">
         <td colspan="2" class="text-end">Total</td>
-        <td colspan="5">${totalAmount.toFixed(2)}</td>
+        <td colspan="7">${totalAmount.toFixed(2)}</td>
       </tr>
     `;
     html += "</tbody></table>";
@@ -569,6 +737,9 @@ async function loadData(){
         clearBudgetUI();
       }
     }
+
+    // render activity log
+    renderActivityLog(users);
   } catch(err){ console.error(err); tableContainer.innerHTML="<p class='text-danger'>Failed to load expenses.</p>"; }
 }
 
@@ -588,6 +759,45 @@ window.editExpense = async function(id){
   } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500);}
 }
 
+// View history modal for one expense
+window.viewHistory = async function(id){
+  try{
+    const res = await fetch(`${BASE_URL}/user/${id}`);
+    if(!res.ok) throw new Error("Failed to fetch history");
+    const u = await res.json();
+    historyTitle.innerText = `History for: ${u.name || 'Expense'}`;
+    historyList.innerHTML = "";
+    // show creation info
+    const createdHtml = `<div class="history-entry"><div><strong>Created:</strong> ${formatDateString(u.createdAt)} </div><div class="text-muted">Initial values.</div></div>`;
+    historyList.insertAdjacentHTML('beforeend', createdHtml);
+    const hist = Array.isArray(u.editHistory) ? u.editHistory.slice().reverse() : [];
+    if(hist.length === 0){
+      historyList.insertAdjacentHTML('beforeend', `<div class="history-entry"><div class="text-muted">No edits yet.</div></div>`);
+    } else {
+      hist.forEach(h=>{
+        const changedFields = [];
+        if(h.before && h.after){
+          Object.keys(h.before).forEach(k=>{
+            if(String(h.before[k]) !== String(h.after[k])) changedFields.push(k);
+          });
+        }
+        const changedText = changedFields.length ? `<div>Changed: <span class="field-changed">${changedFields.join(', ')}</span></div>` : `<div class="text-muted">No field differences detected</div>`;
+        const editor = h.editorName || h.editorUid || "Unknown";
+        const entryHtml = `<div class="history-entry">
+          <div><strong>${editor}</strong> — ${formatDateString(h.date)}</div>
+          ${changedText}
+          <details style="margin-top:8px;">
+            <summary style="cursor:pointer">Show before / after</summary>
+            <pre style="background:#0b0b0b;padding:10px;border-radius:6px;margin-top:8px;">Before: ${JSON.stringify(h.before,null,2)}\n\nAfter: ${JSON.stringify(h.after,null,2)}</pre>
+          </details>
+        </div>`;
+        historyList.insertAdjacentHTML('beforeend', entryHtml);
+      });
+    }
+    historyModal.style.display = "block";
+  } catch(err){ console.error(err); showMessage("❌ Failed to load history",2000); }
+}
+
 // Render Charts
 function renderCharts(users){
   const dates = {};
@@ -605,7 +815,6 @@ function renderCharts(users){
   // If budget exists and exceeded, add "Over Budget" slice
   const overAmount = currentBudgetAmount && totalAmount > currentBudgetAmount ? (totalAmount - currentBudgetAmount) : 0;
   if(overAmount > 0){
-    // add to types with label showing rupee value
     const label = `Over Budget (₹${overAmount.toFixed(2)})`;
     types[label] = overAmount;
   }
