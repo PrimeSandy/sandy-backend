@@ -81,6 +81,8 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 }
 #aboutModal button:hover { background:#0097a7; color:white; }
 
+#analyticsBadge { margin-top:10px; font-weight:700; }
+
 /* FOOTER */
 footer {
   background:#111; color:#aaa; text-align:center; padding:15px 20px; 
@@ -206,6 +208,7 @@ footer {
         </div>
         <div class="col-md-6">
           <canvas id="pieChart"></canvas>
+          <div id="analyticsBadge" class="text-center"></div>
         </div>
       </div>
     </div>
@@ -275,6 +278,10 @@ const resetBudgetBtn = document.getElementById("resetBudgetBtn");
 const budgetProgressBar = document.getElementById("budgetProgressBar");
 const budgetStatusText = document.getElementById("budgetStatusText");
 const budgetAlerts = document.getElementById("budgetAlerts");
+const analyticsBadge = document.getElementById("analyticsBadge");
+
+// small global to hold budget (used in charts)
+let currentBudgetAmount = 0;
 
 // About modal
 const aboutLink = document.getElementById("aboutLink");
@@ -298,6 +305,7 @@ function toggleLoginState(isLoggedIn) {
   expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
   document.querySelector("header").style.display = isLoggedIn ? "block" : "none";
   budgetCard.style.display = isLoggedIn ? "block" : "none";
+  analyticsContainer.style.display = isLoggedIn ? analyticsContainer.style.display : "none";
 }
 
 // Firebase Auth
@@ -411,16 +419,20 @@ async function fetchBudget(){
     const res = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
     if(!res.ok) return clearBudgetUI();
     const r = await res.json();
-    if(!r || !r.amount) return clearBudgetUI();
-    // compute current total from loaded table (or refetch expenses)
-    // We'll call loadData which will call updateBudgetUI with total.
-    // But to be safe, fetch expenses and compute total here too.
+    // server returns { amount: X } or { amount:0 }
+    if(!r || typeof r.amount === "undefined" || r.amount === 0){
+      currentBudgetAmount = 0;
+      clearBudgetUI();
+      return;
+    }
+    currentBudgetAmount = parseFloat(r.amount) || 0;
+    // compute current total from expenses and update UI
     const expensesRes = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
     const arr = await expensesRes.json();
     let totalAmount = 0;
     if(Array.isArray(arr)) arr.forEach(x=> totalAmount += parseFloat(x.amount)||0);
-    updateBudgetUI(parseFloat(r.amount), totalAmount);
-    budgetInput.value = parseFloat(r.amount);
+    updateBudgetUI(currentBudgetAmount, totalAmount);
+    budgetInput.value = currentBudgetAmount;
   } catch(err){ console.error(err); clearBudgetUI(); }
 }
 
@@ -430,6 +442,8 @@ function clearBudgetUI(){
   budgetProgressBar.className = "progress-bar";
   budgetStatusText.innerText = "No budget set";
   budgetAlerts.innerHTML = "";
+  currentBudgetAmount = 0;
+  analyticsBadge.innerText = "";
 }
 
 // update UI after we know budgetAmount and totalSpent
@@ -438,10 +452,11 @@ function updateBudgetUI(budgetAmount, totalSpent){
     clearBudgetUI();
     return;
   }
-  const pct = Math.min( (totalSpent / budgetAmount) * 100, 100 );
-  const pctFixed = Math.round(pct);
-  budgetProgressBar.style.width = pctFixed + "%";
-  budgetProgressBar.innerText = `${pctFixed}%`;
+  const pct = (totalSpent / budgetAmount) * 100;
+  const pctClamped = Math.min(Math.round(pct), 999);
+  const widthPct = Math.min(pctClamped, 100);
+  budgetProgressBar.style.width = widthPct + "%";
+  budgetProgressBar.innerText = `${pctClamped}%`;
 
   // Color logic: normal -> green, >=80 -> yellow (warning), >100 -> red (danger)
   budgetProgressBar.className = "progress-bar";
@@ -457,10 +472,16 @@ function updateBudgetUI(budgetAmount, totalSpent){
 
   // Alerts
   budgetAlerts.innerHTML = "";
+  analyticsBadge.innerText = "";
   if(pct >= 100){
-    budgetAlerts.innerHTML = `<div class="text-danger" style="font-weight:700;">🚨 Budget exceeded! You spent ₹${(totalSpent - budgetAmount).toFixed(2)} over the limit.</div>`;
+    const over = (totalSpent - budgetAmount);
+    budgetAlerts.innerHTML = `<div class="text-danger" style="font-weight:700;">🚨 Budget exceeded! You spent ₹${over.toFixed(2)} over the limit.</div>`;
+    analyticsBadge.innerHTML = `🚨 Over budget: ₹${over.toFixed(2)} (shown as red slice in chart)`;
   } else if(pct >= 80){
-    budgetAlerts.innerHTML = `<div class="text-warning" style="font-weight:700;">⚠️ You're at ${pctFixed}% of your budget. Be careful!</div>`;
+    budgetAlerts.innerHTML = `<div class="text-warning" style="font-weight:700;">⚠️ You're at ${Math.round(pct)}% of your budget. Be careful!</div>`;
+    analyticsBadge.innerHTML = `⚠️ Usage: ${Math.round(pct)}% of budget`;
+  } else {
+    analyticsBadge.innerHTML = `✅ Usage: ${Math.round(pct)}% of budget`;
   }
 }
 
@@ -572,16 +593,25 @@ function renderCharts(users){
   const dates = {};
   const types = {};
 
+  let totalAmount = 0;
   users.forEach(u=>{
     const date = u.date || "Unknown";
     const amount = parseFloat(u.amount) || 0;
+    totalAmount += amount;
     dates[date] = (dates[date]||0)+amount;
     types[u.type] = (types[u.type]||0)+amount;
   });
 
+  // If budget exists and exceeded, add "Over Budget" slice
+  const overAmount = currentBudgetAmount && totalAmount > currentBudgetAmount ? (totalAmount - currentBudgetAmount) : 0;
+  if(overAmount > 0){
+    // add to types with label showing rupee value
+    const label = `Over Budget (₹${overAmount.toFixed(2)})`;
+    types[label] = overAmount;
+  }
+
   // Line Chart - Expense over Time
   const lineCtx = document.getElementById('lineChart').getContext('2d');
-  // destroy existing chart instances if any to avoid duplicates
   if(window.lineChartInstance) window.lineChartInstance.destroy();
   window.lineChartInstance = new Chart(lineCtx, {
     type: 'line',
@@ -599,19 +629,36 @@ function renderCharts(users){
     options: { scales: { y: { beginAtZero:true } } }
   });
 
-  // Pie Chart - Expense by Type
+  // Pie Chart - Expense by Type (with Over Budget slice colored red)
   const pieCtx = document.getElementById('pieChart').getContext('2d');
   if(window.pieChartInstance) window.pieChartInstance.destroy();
+
+  const labels = Object.keys(types);
+  const values = Object.values(types);
+
+  // colors: pick defaults, but make Over Budget red if present
+  const baseColors = ['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0','#3f51b5','#009688'];
+  const bgColors = labels.map(l => l.startsWith("Over Budget") ? '#ff3b30' : baseColors.shift() || '#607d8b');
+
   window.pieChartInstance = new Chart(pieCtx, {
     type: 'pie',
     data: {
-      labels: Object.keys(types),
+      labels,
       datasets: [{
-        data: Object.values(types),
-        backgroundColor: ['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0']
+        data: values,
+        backgroundColor: bgColors
       }]
     }
   });
+
+  // Put a small textual badge below pie (for accessibility)
+  if(overAmount > 0){
+    analyticsBadge.innerText = `🚨 Over budget: ₹${overAmount.toFixed(2)} — shown as red slice in chart.`;
+  } else if(currentBudgetAmount > 0) {
+    analyticsBadge.innerText = `✅ Within budget: Budget ₹${currentBudgetAmount.toFixed(2)}, Spent ₹${totalAmount.toFixed(2)}.`;
+  } else {
+    analyticsBadge.innerText = "";
+  }
 }
 </script>
 
