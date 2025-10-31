@@ -49,21 +49,22 @@ async function start() {
       try {
         const { uid, name, amount, type, description, date } = req.body;
         const now = new Date();
+        const parsedAmount = (typeof amount === "string" && amount.trim() === "") ? 0 : parseFloat(amount || 0);
         const doc = {
           uid,
-          name,
-          amount,
-          type,
-          description,
-          date,
+          name: name || "",
+          amount: isNaN(parsedAmount) ? 0 : parsedAmount,
+          type: type || "",
+          description: description || "",
+          date: date || null,
           createdAt: now,
           updatedAt: now,
           editCount: 0,
           editHistory: []
         };
         const result = await expenses.insertOne(doc);
-        io.to(`uid_${uid}`).emit("expenses-changed", { action: "created", id: result.insertedId, uid });
-        res.json({ status: "success", message: "✅ Expense saved successfully!", id: result.insertedId });
+        io.to(`uid_${uid}`).emit("expenses-changed", { action: "created", id: result.insertedId.toString(), uid });
+        res.json({ status: "success", message: "✅ Expense saved successfully!", id: result.insertedId.toString() });
       } catch (err) {
         console.error(err);
         res.status(500).json({ status: "error", message: "❌ Failed to save expense" });
@@ -75,7 +76,23 @@ async function start() {
       try {
         const { uid } = req.query;
         if(!uid) return res.status(400).json({ status: "error", message: "Missing uid" });
-        const all = await expenses.find({ uid }).sort({ createdAt: -1 }).toArray();
+        const allRaw = await expenses.find({ uid }).sort({ createdAt: -1 }).toArray();
+
+        // sanitize results for frontend (convert _id to string, ensure numbers)
+        const all = allRaw.map(exp => ({
+          _id: exp._id ? exp._id.toString() : null,
+          uid: exp.uid,
+          name: exp.name || "",
+          amount: typeof exp.amount === "number" ? exp.amount : parseFloat(exp.amount || 0) || 0,
+          type: exp.type || "",
+          description: exp.description || "",
+          date: exp.date || null,
+          createdAt: exp.createdAt || null,
+          updatedAt: exp.updatedAt || null,
+          editCount: exp.editCount || 0,
+          editHistory: Array.isArray(exp.editHistory) ? exp.editHistory : []
+        }));
+
         res.json(all);
       } catch (err) {
         console.error(err);
@@ -87,18 +104,20 @@ async function start() {
     app.get("/user/:id", async (req, res) => {
       try {
         const id = req.params.id;
+        if(!id) return res.status(400).json({ status: "error", message: "Missing id" });
+
         const exp = await expenses.findOne({ _id: new ObjectId(id) });
         if(!exp) return res.status(404).json({ status: "error", message: "Expense not found" });
 
         // Ensure fields exist to avoid undefined in frontend
         const safe = {
-          _id: exp._id,
+          _id: exp._id ? exp._id.toString() : null,
           uid: exp.uid,
-          name: exp.name,
-          amount: exp.amount,
-          type: exp.type,
-          description: exp.description,
-          date: exp.date,
+          name: exp.name || "",
+          amount: typeof exp.amount === "number" ? exp.amount : parseFloat(exp.amount || 0) || 0,
+          type: exp.type || "",
+          description: exp.description || "",
+          date: exp.date || null,
           createdAt: exp.createdAt || null,
           updatedAt: exp.updatedAt || null,
           editCount: exp.editCount || 0,
@@ -116,24 +135,27 @@ async function start() {
       try {
         const id = req.params.id;
         const { uid, editorName, name, amount, type, description, date } = req.body;
+        if(!id) return res.status(400).json({ status: "error", message: "Missing id" });
 
         const exp = await expenses.findOne({ _id: new ObjectId(id) });
         if(!exp) return res.status(404).json({ status: "error", message: "Expense not found" });
         if(exp.uid !== uid) return res.status(403).json({ status: "error", message: "❌ Cannot edit others' expense" });
 
         const before = {
-          name: exp.name,
-          amount: exp.amount,
-          type: exp.type,
-          description: exp.description,
-          date: exp.date
+          name: exp.name || "",
+          amount: typeof exp.amount === "number" ? exp.amount : parseFloat(exp.amount || 0) || 0,
+          type: exp.type || "",
+          description: exp.description || "",
+          date: exp.date || null
         };
+
+        const parsedAmount = (typeof amount === "string" && amount.trim() === "") ? before.amount : parseFloat(amount);
         const after = {
-          name: name !== undefined ? name : exp.name,
-          amount: amount !== undefined ? amount : exp.amount,
-          type: type !== undefined ? type : exp.type,
-          description: description !== undefined ? description : exp.description,
-          date: date !== undefined ? date : exp.date
+          name: (name !== undefined && name !== null) ? name : before.name,
+          amount: !isNaN(parsedAmount) ? parsedAmount : before.amount,
+          type: (type !== undefined && type !== null) ? type : before.type,
+          description: (description !== undefined && description !== null) ? description : before.description,
+          date: (date !== undefined && date !== null) ? date : before.date
         };
 
         await expenses.updateOne(
@@ -153,7 +175,7 @@ async function start() {
           }
         );
 
-        io.to(`uid_${uid}`).emit("expenses-changed", { action: "updated", id, uid });
+        io.to(`uid_${uid}`).emit("expenses-changed", { action: "updated", id: id.toString(), uid });
         res.json({ status: "success", message: "✅ Expense updated successfully!" });
       } catch (err) {
         console.error(err);
