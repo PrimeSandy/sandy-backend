@@ -10,30 +10,9 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-:root{
-  --bg: #0b0b0b;
-  --card: #1a1a1a;
-  --muted: #aaa;
-  --accent: #00bcd4;
-  --accent-2: #ffc107;
-  --text: #ffffff;
-  --danger: #ff3b30;
-  --success: #198754;
-}
-.light {
-  --bg: #f7f8fb;
-  --card: #ffffff;
-  --muted: #666;
-  --accent: #006e75;
-  --accent-2: #b8860b;
-  --text: #0b0b0b;
-  --danger: #d32f2f;
-  --success: #198754;
-}
-
 body {
-  background-color: var(--bg);
-  color: var(--text);
+  background-color: #0b0b0b;
+  color: white;
   min-height: 100vh;
   margin: 0;
   font-family: "Poppins", sans-serif;
@@ -41,91 +20,78 @@ body {
 
 /* HEADER */
 header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  background: transparent;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  padding: 12px 18px;
-  border-radius: 0 0 12px 12px;
+  display: none;
+  background: #0b0b0b;
+  border-bottom: 1px solid #222;
+  padding: 15px 20px;
+  border-radius: 0 0 15px 15px;
 }
-header .left {
-  display:flex; align-items:center; gap:10px;
-}
-header .project-name { font-size: 1.25rem; color: var(--accent); font-weight: 700; margin-bottom: 0; }
-header .typing { font-size: 0.95rem; color: var(--accent-2); height: 1.2rem; }
-header .nav-links a { color: var(--text); text-decoration:none; font-weight:500; margin-right:1rem; transition:0.3s; }
-header .nav-links a:hover { color:var(--accent); }
+header .project-name { font-size: 1.5rem; color: #00bcd4; font-weight: 700; margin-bottom: 3px; }
+header .typing { font-size: 1rem; color: #ffcc00; height: 1.2rem; }
+header .nav-links a { color: #fff; text-decoration:none; font-weight:500; margin-right:1rem; transition:0.3s; }
+header .nav-links a:hover { color:#00bcd4; }
 header button#googleLogoutBtn {
-  background: transparent; border:2px solid var(--danger); color:var(--danger);
-  font-weight:600; border-radius:8px; padding:6px 12px; transition:0.3s;
+  background: transparent; border:2px solid #ff3b30; color:#ff3b30;
+  font-weight:600; border-radius:8px; padding:6px 16px; transition:0.3s;
 }
-header button#googleLogoutBtn:hover { background:var(--danger); color:white; }
+header button#googleLogoutBtn:hover { background:#ff3b30; color:white; }
 
 #userNameDisplay {
   flex: 1;
   text-align: center;
-  color: var(--accent-2);
+  color: #ffcc00;
   font-weight: 600;
 }
 
-/* THEME TOGGLE */
-.theme-toggle {
-  display:flex; align-items:center; gap:8px;
-  padding:6px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);
-  cursor:pointer;
-}
-
 /* TABLE */
-.table-container { margin-top: 20px; padding: 20px; background:var(--card); border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.35); }
-table { color:var(--text); font-size:0.95rem; }
-table thead { background:var(--accent); color:#000; font-weight:600; }
-table tbody tr:hover { background-color: rgba(0,188,212,0.06); transition:0.2s; }
+.table-container { margin-top: 20px; padding: 20px; background:#1a1a1a; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
+table { color:#fff; font-size:0.95rem; }
+table thead { background:#00bcd4; color:#000; font-weight:600; }
+table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 
 /* LOGIN */
 #loginContainer { text-align:center; margin-top:100px; }
 #loginContainer button {
-  font-size:1.1rem; padding:10px 26px; border-radius:10px;
-  border:none; background:var(--accent); color:#000; font-weight:600;
+  font-size:1.2rem; padding:10px 30px; border-radius:10px;
+  border:none; background:#00bcd4; color:#000; font-weight:600;
   cursor:pointer; transition:0.3s;
 }
-#loginContainer button:hover { filter:brightness(0.95); }
+#loginContainer button:hover { background:#0097a7; color:white; }
 
 /* BUDGET */
-#budgetCard { display:none; margin-top:20px; border-radius:12px; padding:16px; background:var(--card); box-shadow:0 8px 25px rgba(0,0,0,0.35); }
+#budgetCard { display:none; margin-top:20px; border-radius:12px; padding:16px; background:#1a1a1a; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
 #budgetBar { height: 22px; border-radius:8px; overflow:hidden; background:#222; }
 #budgetBar .progress { height:22px; line-height:22px; font-weight:600; }
 
 /* ABOUT */
 #aboutModal {
   display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-  background: rgba(0,0,0,0.7); color:var(--text); z-index:9999; overflow:auto;
-  padding:40px 20px; box-sizing:border-box;
+  background: rgba(0,0,0,0.8); color:white; z-index:9999; overflow:auto;
+  padding:50px 20px; box-sizing:border-box;
 }
 #aboutModal .modal-content {
-  max-width:700px; margin:auto; background:var(--card); padding:24px; 
-  border-radius:16px; box-shadow:0 8px 25px rgba(0,0,0,0.6);
+  max-width:700px; margin:auto; background:#1a1a1a; padding:30px; 
+  border-radius:20px; box-shadow:0 8px 25px rgba(0,0,0,0.6);
 }
-#aboutModal h2 { color:var(--accent-2); text-align:center; margin-bottom:12px; }
+#aboutModal h2 { color:#ffc107; text-align:center; margin-bottom:20px; }
+#aboutModal h4 { color:#ffc107; margin-top:20px; }
 #aboutModal button { 
-  padding:8px 16px; border:none; border-radius:10px; background:var(--accent); 
-  color:#000; font-weight:600; cursor:pointer; margin-top:12px; 
+  padding:10px 20px; border:none; border-radius:10px; background:#00bcd4; 
+  color:#000; font-weight:600; cursor:pointer; margin-top:20px; 
 }
+#aboutModal button:hover { background:#0097a7; color:white; }
+
+#analyticsBadge { margin-top:10px; font-weight:700; }
 
 /* FOOTER */
 footer {
-  background:transparent; color:var(--muted); text-align:center; padding:15px 20px; 
-  border-top:1px solid rgba(255,255,255,0.03); margin-top:40px; font-size:0.9rem;
+  background:#111; color:#aaa; text-align:center; padding:15px 20px; 
+  border-top:1px solid #222; margin-top:40px; font-size:0.9rem;
 }
-.blinking-name { color: var(--accent); animation: blink 1.6s infinite; }
-@keyframes blink { 50% { opacity: 0.6 } }
+.blinking-name { color: #00bcd4; }
 
-/* Responsive */
-@media(max-width:768px){
-  header { flex-direction:column; align-items:flex-start; gap:6px; }
-  #userNameDisplay { text-align:left; }
-  .theme-toggle { align-self:flex-end; }
+@media(min-width:576px){
+  footer div { flex-direction:row; justify-content:center; gap:30px; }
 }
 </style>
 </head>
@@ -138,26 +104,18 @@ footer {
 
 <!-- HEADER -->
 <header>
-  <div class="left">
+  <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap">
     <div>
-      <h1 class="project-name mb-0">E-TRAX</h1>
+      <h1 class="project-name mb-1">E-TRAX</h1>
       <div class="typing" id="typingHeader"></div>
     </div>
+    <div id="userNameDisplay"></div>
+    <nav class="d-flex align-items-center nav-links">
+      <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k">Contact</a>
+      <a href="#" id="aboutLink">About</a>
+      <button id="googleLogoutBtn">Logout</button>
+    </nav>
   </div>
-
-  <div id="userNameDisplay"></div>
-
-  <nav class="d-flex align-items-center nav-links">
-    <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank" rel="noopener">Contact</a>
-    <a href="#" id="aboutLink">About</a>
-
-    <div class="theme-toggle" id="themeToggle" title="Toggle theme">
-      <span id="themeIcon">🌙</span>
-      <small id="themeText">Dark</small>
-    </div>
-
-    <button id="googleLogoutBtn">Logout</button>
-  </nav>
 </header>
 
 <!-- MAIN CONTAINER -->
@@ -167,8 +125,8 @@ footer {
   <div id="budgetCard">
     <div class="d-flex justify-content-between align-items-center mb-2">
       <div>
-        <h5 style="margin:0;color:var(--accent-2);">Budget Limit</h5>
-        <small style="color:var(--muted)">Set a monthly/total budget for your expenses</small>
+        <h5 style="margin:0;color:#ffc107;">Budget Limit</h5>
+        <small class="text-muted">Set a monthly/total budget for your expenses</small>
       </div>
       <div>
         <button id="resetBudgetBtn" class="btn btn-sm btn-outline-danger">Reset Budget</button>
@@ -183,7 +141,7 @@ footer {
         <button id="saveBudgetBtn" class="btn btn-primary">Save Budget</button>
       </div>
       <div class="col-md-6 text-end">
-        <div id="budgetStatusText" style="font-weight:600;color:var(--text);">No budget set</div>
+        <div id="budgetStatusText" style="font-weight:600;color:#fff;">No budget set</div>
       </div>
     </div>
 
@@ -198,7 +156,7 @@ footer {
 
   <!-- EXPENSE FORM -->
   <div id="expenseFormContainer" style="display:none;">
-    <div class="card mb-4" style="border-radius:20px; background:var(--card); color:var(--text);">
+    <div class="card bg-dark text-white mb-4" style="border-radius:20px;">
       <div class="card-body">
         <form id="expenseForm" class="row g-3">
           <input type="hidden" id="editId">
@@ -243,14 +201,14 @@ footer {
   <!-- GRAPHICAL ANALYTICS -->
   <div id="analyticsContainer" class="my-4" style="display:none;">
     <div class="table-container">
-      <h4 class="text-center" style="color:var(--accent);">📊 Expense Analytics</h4>
+      <h4 class="text-center text-info mb-3">📊 Expense Analytics</h4>
       <div class="row">
         <div class="col-md-6">
           <canvas id="lineChart"></canvas>
         </div>
         <div class="col-md-6">
           <canvas id="pieChart"></canvas>
-          <div id="analyticsBadge" class="text-center" style="margin-top:10px; font-weight:700;"></div>
+          <div id="analyticsBadge" class="text-center"></div>
         </div>
       </div>
     </div>
@@ -279,7 +237,7 @@ footer {
 
 <div id="msgBox" style="
   position: fixed; top: 20px; right: 20px;
-  background-color: var(--success); color: white; padding: 10px 20px;
+  background-color: #198754; color: white; padding: 10px 20px;
   border-radius: 10px; display: none; z-index: 9999;"></div>
 
 <script>
@@ -288,7 +246,7 @@ const BASE_URL = window.location.hostname.includes("localhost")
   ? "http://localhost:3000"
   : "https://sandy-backend2-0.onrender.com";
 
-// Firebase Config (unchanged)
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
   authDomain: "ptspro-31997.firebaseapp.com",
@@ -334,10 +292,9 @@ closeAbout.addEventListener("click", () => { aboutModal.style.display = "none"; 
 window.addEventListener("click", e => { if(e.target == aboutModal) aboutModal.style.display="none"; });
 
 // Message
-function showMessage(msg, duration=2000, isError=false) {
+function showMessage(msg, duration=2000) {
   msgBox.innerText = msg;
   msgBox.style.display = "block";
-  msgBox.style.backgroundColor = isError ? "#d9534f" : "var(--success)";
   setTimeout(()=> msgBox.style.display="none", duration);
 }
 
@@ -346,9 +303,9 @@ function toggleLoginState(isLoggedIn) {
   loginContainer.style.display = isLoggedIn ? "none" : "block";
   logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
   expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
-  document.querySelector("header").style.display = "flex";
+  document.querySelector("header").style.display = isLoggedIn ? "block" : "none";
   budgetCard.style.display = isLoggedIn ? "block" : "none";
-  analyticsContainer.style.display = isLoggedIn ? (analyticsContainer.style.display === "block" ? "block" : "block") : "none";
+  analyticsContainer.style.display = isLoggedIn ? analyticsContainer.style.display : "none";
 }
 
 // Firebase Auth
@@ -380,7 +337,7 @@ loginBtn.addEventListener("click", async () => {
     userNameDisplay.textContent = result.user.displayName || "User";
     showMessage("✅ Logged in successfully",2000);
     fetchBudget();
-  } catch(err){ console.error(err); showMessage("❌ Login failed",2000, true); }
+  } catch(err){ console.error(err); showMessage("❌ Login failed",2000); }
 });
 
 logoutBtn.addEventListener("click", async () => {
@@ -393,7 +350,7 @@ logoutBtn.addEventListener("click", async () => {
     userNameDisplay.textContent = "";
     clearBudgetUI();
     showMessage("✅ Logged out successfully",2000);
-  } catch(err){ console.error(err); showMessage("❌ Logout failed",2000, true); }
+  } catch(err){ console.error(err); showMessage("❌ Logout failed",2000); }
 });
 
 // Typing animation
@@ -431,13 +388,13 @@ form.addEventListener("submit", async e=>{
     const method = editId.value ? "PUT" : "POST";
     const res = await fetch(url,{ method, headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data)});
     const result = await res.json();
-    showMessage(result.message || "Saved");
+    showMessage(result.message);
     editId.value="";
     form.reset();
     await loadData();
     // re-fetch budget after adding/updating expense to update progress
     await fetchBudget();
-  } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500, true);}
+  } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
 });
 
 // ----------- Budget functions (frontend) -----------
@@ -451,9 +408,9 @@ async function saveBudgetToServer(amount){
     });
     const r = await res.json();
     if(res.ok) showMessage(r.message || "Budget saved");
-    else showMessage(r.message || "Failed to save budget", 2000, true);
+    else showMessage(r.message || "Failed to save budget");
     await fetchBudget();
-  } catch(err){ console.error(err); showMessage("❌ Failed to save budget",2000, true); }
+  } catch(err){ console.error(err); showMessage("❌ Failed to save budget",2000); }
 }
 
 async function fetchBudget(){
@@ -501,7 +458,7 @@ function updateBudgetUI(budgetAmount, totalSpent){
   budgetProgressBar.style.width = widthPct + "%";
   budgetProgressBar.innerText = `${pctClamped}%`;
 
-  // Color logic
+  // Color logic: normal -> green, >=80 -> yellow (warning), >100 -> red (danger)
   budgetProgressBar.className = "progress-bar";
   if(pct >= 100){
     budgetProgressBar.classList.add("bg-danger");
@@ -531,7 +488,7 @@ function updateBudgetUI(budgetAmount, totalSpent){
 // Save budget button
 saveBudgetBtn.addEventListener("click", async () => {
   const val = parseFloat(budgetInput.value);
-  if(!val || val <= 0){ showMessage("Enter valid budget amount",2000, true); return; }
+  if(!val || val <= 0){ showMessage("Enter valid budget amount"); return; }
   await saveBudgetToServer(val);
 });
 
@@ -547,9 +504,9 @@ resetBudgetBtn.addEventListener("click", async () => {
     });
     const r = await res.json();
     if(res.ok) showMessage(r.message || "Budget reset");
-    else showMessage(r.message || "Reset failed",2000, true);
+    else showMessage(r.message || "Reset failed");
     clearBudgetUI();
-  } catch(err){ console.error(err); showMessage("❌ Reset failed",2000, true); }
+  } catch(err){ console.error(err); showMessage("❌ Reset failed",2000); }
 });
 // ----------- End Budget functions -----------
 
@@ -581,20 +538,17 @@ async function loadData(){
     let totalAmount = 0;
     users.forEach((u,i)=>{
       totalAmount += parseFloat(u.amount) || 0;
-      const actionBtn = `
-        <button class="btn btn-warning btn-sm me-1" onclick="editExpense('${u._id}')">Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteExpense('${u._id}','${u.name}')">Delete</button>
-      `;
+      const actionBtn = `<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>`;
       html += `<tr>
-        <td>${i+1}</td><td>${u.name}</td><td>₹${parseFloat(u.amount).toFixed(2)}</td><td>${u.type}</td>
+        <td>${i+1}</td><td>${u.name}</td><td>${u.amount}</td><td>${u.type}</td>
         <td>${u.description}</td><td>${u.date}</td><td>${actionBtn}</td>
       </tr>`;
     });
 
     html += `
-      <tr style="background:var(--accent); color:#000; font-weight:700;">
+      <tr style="background:#00bcd4; color:#000; font-weight:700;">
         <td colspan="2" class="text-end">Total</td>
-        <td colspan="5">₹${totalAmount.toFixed(2)}</td>
+        <td colspan="5">${totalAmount.toFixed(2)}</td>
       </tr>
     `;
     html += "</tbody></table>";
@@ -631,23 +585,7 @@ window.editExpense = async function(id){
     document.getElementById("date").value=user.date;
     editId.value=id;
     showMessage("✏ Edit mode enabled",2000);
-  } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500, true);}
-}
-
-// Delete (new)
-window.deleteExpense = async function(id, name){
-  if(!confirm(`Delete expense "${name}"? This action cannot be undone.`)) return;
-  try{
-    const res = await fetch(`${BASE_URL}/delete/${id}`, { method: "DELETE" });
-    const r = await res.json();
-    if(res.ok){
-      showMessage(r.message || "Deleted");
-      await loadData();
-      await fetchBudget();
-    } else {
-      showMessage(r.message || "Delete failed",2000, true);
-    }
-  } catch(err){ console.error(err); showMessage("❌ Failed to delete",2000, true); }
+  } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500);}
 }
 
 // Render Charts
@@ -667,6 +605,7 @@ function renderCharts(users){
   // If budget exists and exceeded, add "Over Budget" slice
   const overAmount = currentBudgetAmount && totalAmount > currentBudgetAmount ? (totalAmount - currentBudgetAmount) : 0;
   if(overAmount > 0){
+    // add to types with label showing rupee value
     const label = `Over Budget (₹${overAmount.toFixed(2)})`;
     types[label] = overAmount;
   }
@@ -682,7 +621,7 @@ function renderCharts(users){
         label: 'Total Expense',
         data: Object.values(dates),
         borderColor: '#00bcd4',
-        backgroundColor: 'rgba(0,188,212,0.15)',
+        backgroundColor: 'rgba(0,188,212,0.2)',
         fill: true,
         tension: 0.3
       }]
@@ -690,13 +629,14 @@ function renderCharts(users){
     options: { scales: { y: { beginAtZero:true } } }
   });
 
-  // Pie Chart - Expense by Type
+  // Pie Chart - Expense by Type (with Over Budget slice colored red)
   const pieCtx = document.getElementById('pieChart').getContext('2d');
   if(window.pieChartInstance) window.pieChartInstance.destroy();
 
   const labels = Object.keys(types);
   const values = Object.values(types);
 
+  // colors: pick defaults, but make Over Budget red if present
   const baseColors = ['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0','#3f51b5','#009688'];
   const bgColors = labels.map(l => l.startsWith("Over Budget") ? '#ff3b30' : baseColors.shift() || '#607d8b');
 
@@ -711,7 +651,7 @@ function renderCharts(users){
     }
   });
 
-  // Badge text
+  // Put a small textual badge below pie (for accessibility)
   if(overAmount > 0){
     analyticsBadge.innerText = `🚨 Over budget: ₹${overAmount.toFixed(2)} — shown as red slice in chart.`;
   } else if(currentBudgetAmount > 0) {
@@ -720,41 +660,14 @@ function renderCharts(users){
     analyticsBadge.innerText = "";
   }
 }
-
-/* ---------------- THEME TOGGLE ---------------- */
-const themeToggle = document.getElementById('themeToggle');
-const themeIcon = document.getElementById('themeIcon');
-const themeText = document.getElementById('themeText');
-
-function applyTheme(theme){
-  if(theme === 'light'){
-    document.documentElement.classList.add('light');
-    themeIcon.innerText = '🌞';
-    themeText.innerText = 'Light';
-  } else {
-    document.documentElement.classList.remove('light');
-    themeIcon.innerText = '🌙';
-    themeText.innerText = 'Dark';
-  }
-  localStorage.setItem('etrax_theme', theme);
-}
-themeToggle.addEventListener('click', ()=>{
-  const cur = localStorage.getItem('etrax_theme') || 'dark';
-  applyTheme(cur === 'dark' ? 'light' : 'dark');
-});
-// initial
-applyTheme(localStorage.getItem('etrax_theme') || 'dark');
-/* ----------------------------------------------- */
-
 </script>
 
 <footer>
   <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
     <p style="margin:0;">Developed by <strong class="blinking-name">Prime Sandy</strong></p>
-    <p style="margin:0;">Email: <a href="mailto:santhoshgowtham777@gmail.com" style="color:var(--accent); text-decoration:none;">santhoshgowtham777@gmail.com</a></p>
+    <p style="margin:0;">Email: <a href="mailto:santhoshgowtham777@gmail.com" style="color:#00bcd4; text-decoration:none;">santhoshgowtham777@gmail.com</a></p>
     <p style="margin:0;">&copy; 2025 E-Trax. All rights reserved.</p>
   </div>
 </footer>
 </body>
 </html>
-
