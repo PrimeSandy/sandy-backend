@@ -16,127 +16,113 @@ const uri = process.env.MONGODB_URI || "mongodb+srv://Sandydb456:Sandydb456@clus
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function start() {
-    try {
-        await client.connect();
-        console.log("✅ Connected to MongoDB!");
-        const db = client.db();
-        const expenses = db.collection("expenses");
-        const budgets = db.collection("budgets"); // new collection for budgets
+  try {
+    await client.connect();
+    console.log("✅ Connected to MongoDB!");
 
-        // Serve front-end
-        app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
+    const db = client.db();
+    const expenses = db.collection("expenses");
+    const budgets = db.collection("budgets"); // For budget management
 
-        // Submit expense
-        app.post("/submit", async (req, res) => {
-            try {
-                const { uid, name, amount, type, description, date } = req.body;
-                const result = await expenses.insertOne({ uid, name, amount, type, description, date });
-                res.json({ status: "success", message: "✅ Expense saved successfully!", id: result.insertedId });
-            } catch (err) {
-                console.error(err);
-                res.status(500).json({ status: "error", message: "❌ Failed to save expense" });
-            }
-        });
+    // Serve frontend
+    app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 
-        // Get all expenses for a user
-        app.get("/users", async (req, res) => {
-            try {
-                const { uid } = req.query;
-                const all = await expenses.find({ uid }).toArray();
-                res.json(all);
-            } catch (err) {
-                console.error(err);
-                res.status(500).json({ status: "error", message: "❌ Failed to fetch expenses" });
-            }
-        });
+    // Submit expense
+    app.post("/submit", async (req, res) => {
+      try {
+        const { uid, name, amount, type, description, date } = req.body;
+        const result = await expenses.insertOne({ uid, name, amount, type, description, date });
+        res.json({ status: "success", message: "✅ Expense saved successfully!", id: result.insertedId });
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ status: "error", message: "❌ Failed to save expense" });
+      }
+    });
 
-        // Get single expense
-        app.get("/user/:id", async (req, res) => {
-            try {
-                const user = await expenses.findOne({ _id: new ObjectId(req.params.id) });
-                res.json(user);
-            } catch (err) {
-                console.error(err);
-                res.status(500).json({ status: "error", message: "❌ Failed to fetch expense" });
-            }
-        });
+    // Get all expenses for a user
+    app.get("/users", async (req, res) => {
+      try {
+        const { uid } = req.query;
+        const all = await expenses.find({ uid }).toArray();
+        res.json(all);
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ status: "error", message: "❌ Failed to fetch expenses" });
+      }
+    });
 
-        // Update expense
-        app.put("/update/:id", async (req, res) => {
-            try {
-                const { uid, name, amount, type, description, date } = req.body;
-                const exp = await expenses.findOne({ _id: new ObjectId(req.params.id) });
-                if(!exp || exp.uid !== uid) return res.status(403).json({ status: "error", message: "❌ Cannot edit others' expense" });
+    // Get single expense
+    app.get("/user/:id", async (req, res) => {
+      try {
+        const user = await expenses.findOne({ _id: new ObjectId(req.params.id) });
+        res.json(user);
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ status: "error", message: "❌ Failed to fetch expense" });
+      }
+    });
 
-                await expenses.updateOne(
-                    { _id: new ObjectId(req.params.id) },
-                    { $set: { name, amount, type, description, date } }
-                );
-                res.json({ status: "success", message: "✅ Expense updated successfully!" });
-            } catch (err) {
-                console.error(err);
-                res.status(500).json({ status: "error", message: "❌ Failed to update expense" });
-            }
-        });
+    // ✅ Update expense (fixed missing code)
+    app.put("/update/:id", async (req, res) => {
+      try {
+        const { uid, name, amount, type, description, date } = req.body;
+        const exp = await expenses.findOne({ _id: new ObjectId(req.params.id) });
+        if (!exp) return res.status(404).json({ status: "error", message: "Expense not found" });
+        if (exp.uid !== uid) return res.status(403).json({ status: "error", message: "Unauthorized" });
 
-        // ---------- Budget endpoints ----------
-        // Set or reset budget for a user
-        // POST body: { uid, amount, reset?: true }
-        app.post("/setBudget", async (req, res) => {
-            try {
-                const { uid, amount, reset } = req.body;
-                if(!uid) return res.status(400).json({ status: "error", message: "Missing uid" });
+        await expenses.updateOne(
+          { _id: new ObjectId(req.params.id) },
+          { $set: { name, amount, type, description, date } }
+        );
+        res.json({ status: "success", message: "✅ Expense updated successfully!" });
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ status: "error", message: "❌ Failed to update expense" });
+      }
+    });
 
-                if(reset){
-                    // delete budget doc
-                    await budgets.deleteOne({ uid });
-                    return res.json({ status: "success", message: "✅ Budget reset/deleted" });
-                }
+    // ✅ Save or Reset Budget
+    app.post("/setBudget", async (req, res) => {
+      try {
+        const { uid, amount, reset } = req.body;
+        if (!uid) return res.status(400).json({ message: "Missing UID" });
 
-                const amt = parseFloat(amount) || 0;
-                if(amt <= 0) {
-                    // If amount invalid treat as reset
-                    await budgets.deleteOne({ uid });
-                    return res.json({ status: "success", message: "✅ Budget reset (invalid amount)" });
-                }
+        if (reset) {
+          await budgets.deleteOne({ uid });
+          return res.json({ message: "✅ Budget reset successfully" });
+        }
 
-                // upsert budget doc
-                await budgets.updateOne(
-                    { uid },
-                    { $set: { uid, amount: amt, updatedAt: new Date() } },
-                    { upsert: true }
-                );
-                res.json({ status: "success", message: "✅ Budget saved" });
-            } catch (err) {
-                console.error(err);
-                res.status(500).json({ status: "error", message: "❌ Failed to save budget" });
-            }
-        });
+        await budgets.updateOne(
+          { uid },
+          { $set: { amount: parseFloat(amount) } },
+          { upsert: true }
+        );
+        res.json({ message: "✅ Budget saved successfully!" });
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "❌ Failed to save/reset budget" });
+      }
+    });
 
-        // Get budget for a user
-        // GET /getBudget?uid=...
-        app.get("/getBudget", async (req, res) => {
-            try {
-                const { uid } = req.query;
-                if(!uid) return res.status(400).json({ status: "error", message: "Missing uid" });
-                const b = await budgets.findOne({ uid });
-                if(!b) return res.json({ amount: 0 });
-                res.json({ amount: b.amount, updatedAt: b.updatedAt });
-            } catch (err) {
-                console.error(err);
-                res.status(500).json({ status: "error", message: "❌ Failed to fetch budget" });
-            }
-        });
-        // ---------- End budget endpoints ----------
+    // ✅ Fetch Budget
+    app.get("/getBudget", async (req, res) => {
+      try {
+        const { uid } = req.query;
+        if (!uid) return res.status(400).json({ message: "Missing UID" });
+        const b = await budgets.findOne({ uid });
+        res.json({ amount: b ? b.amount : 0 });
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "❌ Failed to fetch budget" });
+      }
+    });
 
-        const PORT = process.env.PORT || 3000;
-        app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-
-    } catch (err) {
-        console.error("❌ MongoDB connection error:", err);
-        process.exit(1);
-    }
+    // ✅ Start server
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+  } catch (err) {
+    console.error("❌ MongoDB Connection Failed:", err);
+  }
 }
 
 start();
-
