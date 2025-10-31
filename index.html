@@ -56,8 +56,6 @@
     .field-changed {font-weight:700; color:#ff9900}
     footer{max-width:1100px;margin:20px auto 40px;padding:10px;color:var(--muted); text-align:center}
     .hidden {display:none !important}
-    /* small helpers */
-    .wrap-ellipsis { max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:inline-block; vertical-align:middle;}
   </style>
 </head>
 <body>
@@ -221,7 +219,7 @@
       </div>
     </div>
 
-    <div id="msgBox" style="position:fixed; top:18px; right:18px; display:none; z-index:9999; padding:10px 14px; border-radius:8px;"></div>
+    <div id="msgBox" style="position:fixed; top:18px; right:18px; display:none; z-index:9999;"></div>
   </div>
 
   <footer>Developed by <strong style="color:var(--brand)">Prime Sandy</strong> — &copy; 2025 E-Trax</footer>
@@ -291,6 +289,7 @@
 
     function formatDateString(d){
       if(!d) return "—";
+      // d may be Date object, ISO string, or number
       const dt = (typeof d === 'string' || typeof d === 'number') ? new Date(d) : d;
       if(!dt || isNaN(dt.getTime())) return String(d);
       const opts = { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' };
@@ -420,7 +419,6 @@
     function clearBudgetUI(){
       budgetInput.value = '';
       budgetProgressBar.style.width = '0%';
-      budgetProgressBar.className = 'progress-bar';
       budgetStatusText.innerText = 'No budget set';
       budgetAlerts.innerHTML = '';
       currentBudgetAmount = 0;
@@ -481,23 +479,20 @@
         </tr></thead><tbody>`;
         users.forEach((u,i)=>{
           totalAmount += parseFloat(u.amount) || 0;
-          const editCount = u.editCount || (Array.isArray(u.editHistory) ? u.editHistory.length : 0);
-          const lastEdited = u.updatedAt || (Array.isArray(u.editHistory) && u.editHistory.length ? u.editHistory[u.editHistory.length-1].date : u.createdAt) || null;
-          const id = u._id || u.id || `idx-${i}`;
+          const editCount = u.editCount || 0;
+          const lastEdited = u.updatedAt || u.createdAt || null;
+          const id = u._id;
           html += `<tr>
             <td>${i+1}</td>
-            <td><span class="wrap-ellipsis" title="${escapeHtml(u.name||'')}">${escapeHtml(u.name || '')}</span></td>
+            <td>${escapeHtml(u.name || '')}</td>
             <td>₹${(parseFloat(u.amount)||0).toFixed(2)}</td>
             <td>${escapeHtml(u.type || '')}</td>
-            <td><span class="wrap-ellipsis" title="${escapeHtml(u.description||'')}">${escapeHtml(u.description || '')}</span></td>
+            <td>${escapeHtml(u.description || '')}</td>
             <td>${escapeHtml(u.date || '')}</td>
-            <td>${editCount}</td>
-            <td>${formatDateString(lastEdited)}</td>
+        
             <td>
-              <div class="d-flex gap-1">
-                <button class="btn btn-sm btn-outline-warning" onclick="editExpense('${id}')">Edit</button>
-                <button class="btn btn-sm btn-outline-info" onclick="viewHistory('${id}')">History</button>
-              </div>
+              <button class="btn btn-sm btn-outline-warning" onclick="editExpense('${id}')">Edit</button>
+              
             </td>
           </tr>`;
         });
@@ -513,7 +508,7 @@
       }
     }
 
-    function escapeHtml(s){ if(s === null || s === undefined) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+    function escapeHtml(s){ if(!s) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
 
     // global edit + view history functions (exposed)
     window.editExpense = async function(id){
@@ -525,18 +520,7 @@
         document.getElementById('amount').value = u.amount || '';
         document.getElementById('type').value = u.type || '';
         document.getElementById('description').value = u.description || '';
-        // attempt to set date input in yyyy-mm-dd if possible
-        if(u.date){
-          const dd = new Date(u.date);
-          if(!isNaN(dd.getTime())){
-            const yyyy = dd.getFullYear();
-            const mm = String(dd.getMonth()+1).padStart(2,'0');
-            const ddn = String(dd.getDate()).padStart(2,'0');
-            document.getElementById('date').value = `${yyyy}-${mm}-${ddn}`;
-          } else {
-            document.getElementById('date').value = u.date || '';
-          }
-        } else document.getElementById('date').value = '';
+        document.getElementById('date').value = u.date || '';
         editId.value = id;
         window.scrollTo({ top: 0, behavior: 'smooth' });
         showMessage('✏️ Edit mode enabled');
@@ -548,26 +532,22 @@
         const res = await fetch(`${BASE_URL}/user/${id}`);
         if(!res.ok) throw new Error('Failed to fetch history');
         const u = await res.json();
-        historyTitle.innerText = `History — ${u.name || 'Expense'}`;
-        historyList.innerHTML = '';
-
-        historyList.insertAdjacentHTML('beforeend', `<div><strong>Created:</strong> ${formatDateString(u.createdAt)}</div><div class="small-muted">Initial values.</div><hr>`);
-
-        const hist = Array.isArray(u.editHistory) ? u.editHistory.slice().reverse() : [];
+        // historyTitle.innerText = `History for: ${u.name || 'Expense'}`;
+        // historyList.innerHTML = '';
+        // historyList.insertAdjacentHTML('beforeend', `<div><strong>Created:</strong> ${formatDateString(u.createdAt)}</div><div class="small-muted">Initial values.</div><hr>`);
+        // const hist = Array.isArray(u.editHistory) ? u.editHistory.slice().reverse() : [];
         if(hist.length === 0){
           historyList.insertAdjacentHTML('beforeend', `<div class="small-muted">No edits yet.</div>`);
         } else {
           hist.forEach(h=>{
             const changedFields = [];
             if(h.before && h.after){
-              for(const k of Object.keys(h.before || {})){
-                if(String(h.before[k]) !== String(h.after ? h.after[k] : '')) changedFields.push(k);
-              }
+              for(const k of Object.keys(h.before)) if(String(h.before[k]) !== String(h.after[k])) changedFields.push(k);
             }
             const changedText = changedFields.length ? `<div>Changed: <span class="field-changed">${changedFields.join(', ')}</span></div>` : `<div class="small-muted">No field differences</div>`;
             const editor = h.editorName || h.editorUid || 'Unknown';
-            historyList.insertAdjacentHTML('beforeend', `<div style="margin-bottom:12px;"><div><strong>${escapeHtml(editor)}</strong> — ${formatDateString(h.date)}</div>${changedText}
-              <details style="margin-top:8px;"><summary>Show before / after</summary><pre style="background:#f6f8fb;padding:8px;border-radius:6px;overflow:auto;white-space:pre-wrap;">Before: ${escapeHtml(JSON.stringify(h.before || {},null,2))}\n\nAfter: ${escapeHtml(JSON.stringify(h.after || {},null,2))}</pre></details></div><hr>`);
+            historyList.insertAdjacentHTML('beforeend', `<div style="margin-bottom:12px;"><div><strong>${editor}</strong> — ${formatDateString(h.date)}</div>${changedText}
+              <details style="margin-top:8px;"><summary>Show before / after</summary><pre style="background:#f6f8fb;padding:8px;border-radius:6px;">Before: ${JSON.stringify(h.before,null,2)}\n\nAfter: ${JSON.stringify(h.after,null,2)}</pre></details></div><hr>`);
           });
         }
         historyModal.style.display = 'block';
@@ -591,25 +571,21 @@
       if(overAmount > 0) types[`Over Budget (₹${overAmount.toFixed(2)})`] = (types[`Over Budget (₹${overAmount.toFixed(2)})`]||0) + overAmount;
 
       // line
-      try{
-        const lineCtx = document.getElementById('lineChart').getContext('2d');
-        if(lineChartInstance) lineChartInstance.destroy();
-        lineChartInstance = new Chart(lineCtx, {
-          type: 'line',
-          data: { labels: Object.keys(dates), datasets:[{ label:'Total Expense', data: Object.values(dates), borderColor:'#0d6efd', backgroundColor:'rgba(13,110,253,0.12)', fill:true, tension:0.3 }] },
-          options: { responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
-        });
-      }catch(e){ console.warn('line chart err', e); }
+      const lineCtx = document.getElementById('lineChart').getContext('2d');
+      if(lineChartInstance) lineChartInstance.destroy();
+      lineChartInstance = new Chart(lineCtx, {
+        type: 'line',
+        data: { labels: Object.keys(dates), datasets:[{ label:'Total Expense', data: Object.values(dates), borderColor:'#0d6efd', backgroundColor:'rgba(13,110,253,0.12)', fill:true, tension:0.3 }] },
+        options: { responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
+      });
 
       // pie
-      try{
-        const pieCtx = document.getElementById('pieChart').getContext('2d');
-        if(pieChartInstance) pieChartInstance.destroy();
-        const labels = Object.keys(types), values = Object.values(types);
-        const baseColors = ['#0d6efd','#00bcd4','#ff9800','#8bc34a','#9c27b0','#3f51b5','#e91e63'];
-        const bg = labels.map(l => l.startsWith('Over Budget') ? '#ff3b30' : baseColors.shift() || '#607d8b');
-        pieChartInstance = new Chart(pieCtx, { type:'pie', data:{ labels, datasets:[{ data: values, backgroundColor: bg }] }, options:{ responsive:true, maintainAspectRatio:false } });
-      }catch(e){ console.warn('pie chart err', e); }
+      const pieCtx = document.getElementById('pieChart').getContext('2d');
+      if(pieChartInstance) pieChartInstance.destroy();
+      const labels = Object.keys(types), values = Object.values(types);
+      const baseColors = ['#0d6efd','#00bcd4','#ff9800','#8bc34a','#9c27b0','#3f51b5','#e91e63'];
+      const bg = labels.map(l => l.startsWith('Over Budget') ? '#ff3b30' : baseColors.shift() || '#607d8b');
+      pieChartInstance = new Chart(pieCtx, { type:'pie', data:{ labels, datasets:[{ data: values, backgroundColor: bg }] }, options:{ responsive:true, maintainAspectRatio:false } });
 
       if(overAmount > 0) analyticsBadge.innerText = `🚨 Over budget: ₹${overAmount.toFixed(2)}`;
       else if(currentBudgetAmount > 0) analyticsBadge.innerText = `✅ Budget ₹${currentBudgetAmount.toFixed(2)} — Spent ₹${totalAmount.toFixed(2)}`;
@@ -628,11 +604,11 @@
       const div = document.getElementById('activityItems'); div.innerHTML = '';
       if(limited.length === 0) { div.innerHTML = '<div class="small-muted">No recent activity</div>'; return; }
       limited.forEach(it=>{
-        if(it.type === 'created') div.insertAdjacentHTML('beforeend', `<div>📌 <strong>${escapeHtml(it.display)}</strong> — ${formatDateString(it.date)}</div>`);
+        if(it.type === 'created') div.insertAdjacentHTML('beforeend', `<div>📌 <strong>${it.display}</strong> — ${formatDateString(it.date)}</div>`);
         else {
           const changed = [];
           if(it.before && it.after) for(const k of Object.keys(it.before)) if(String(it.before[k]) !== String(it.after[k])) changed.push(k);
-          div.insertAdjacentHTML('beforeend', `<div>✏️ <strong>${escapeHtml(it.editorName)}</strong> edited <strong>${escapeHtml(it.expenseName || '')}</strong> — ${changed.length ? `<span class="field-changed">${changed.join(', ')}</span>` : '<span class="small-muted">no fields</span>'} — ${formatDateString(it.date)}</div>`);
+          div.insertAdjacentHTML('beforeend', `<div>✏️ <strong>${it.editorName}</strong> edited <strong>${it.expenseName || ''}</strong> — ${changed.length ? `<span class="field-changed">${changed.join(', ')}</span>` : '<span class="small-muted">no fields</span>'} — ${formatDateString(it.date)}</div>`);
         }
       });
     }
@@ -649,4 +625,4 @@
     tableContainer.innerHTML = '<div class="small-muted">Login to view your expenses</div>';
   </script>
 </body>
-</html>
+</html> 
