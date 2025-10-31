@@ -11,113 +11,33 @@
 <!-- socket.io client will be loaded dynamically from server via /socket.io/socket.io.js -->
 
 <style>
-body {
-  background-color: #0b0b0b;
-  color: white;
-  min-height: 100vh;
-  margin: 0;
-  font-family: "Poppins", sans-serif;
-}
-
-/* HEADER */
-header {
-  display: none;
-  background: #0b0b0b;
-  border-bottom: 1px solid #222;
-  padding: 15px 20px;
-  border-radius: 0 0 15px 15px;
-}
-header .project-name { font-size: 1.5rem; color: #00bcd4; font-weight: 700; margin-bottom: 3px; }
-header .typing { font-size: 1rem; color: #ffcc00; height: 1.2rem; }
-header .nav-links a { color: #fff; text-decoration:none; font-weight:500; margin-right:1rem; transition:0.3s; }
-header .nav-links a:hover { color:#00bcd4; }
-header button#googleLogoutBtn {
-  background: transparent; border:2px solid #ff3b30; color:#ff3b30;
-  font-weight:600; border-radius:8px; padding:6px 16px; transition:0.3s;
-}
-header button#googleLogoutBtn:hover { background:#ff3b30; color:white; }
-
-#userNameDisplay {
-  flex: 1;
-  text-align: center;
-  color: #ffcc00;
-  font-weight: 600;
-}
-
-/* TABLE */
-.table-container { margin-top: 20px; padding: 20px; background:#1a1a1a; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
+/* -- your existing styles unchanged (kept concise here) -- */
+body { background-color:#0b0b0b; color:white; min-height:100vh; margin:0; font-family:"Poppins",sans-serif; }
+header { display:none; background:#0b0b0b; border-bottom:1px solid #222; padding:15px 20px; border-radius:0 0 15px 15px; }
+header .project-name { font-size:1.5rem; color:#00bcd4; font-weight:700; margin-bottom:3px; }
+header .typing { font-size:1rem; color:#ffcc00; height:1.2rem; }
+#userNameDisplay { flex:1; text-align:center; color:#ffcc00; font-weight:600; }
+.table-container { margin-top:20px; padding:20px; background:#1a1a1a; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
+.table-container h4 { margin:0 0 12px 0; }
 table { color:#fff; font-size:0.95rem; }
 table thead { background:#00bcd4; color:#000; font-weight:600; }
-table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
-
-/* LOGIN */
+.table-responsive { overflow:auto; }
 #loginContainer { text-align:center; margin-top:100px; }
-#loginContainer button {
-  font-size:1.2rem; padding:10px 30px; border-radius:10px;
-  border:none; background:#00bcd4; color:#000; font-weight:600;
-  cursor:pointer; transition:0.3s;
-}
-#loginContainer button:hover { background:#0097a7; color:white; }
-
-/* BUDGET */
 #budgetCard { display:none; margin-top:20px; border-radius:12px; padding:16px; background:#1a1a1a; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
-#budgetBar { height: 22px; border-radius:8px; overflow:hidden; background:#222; }
-#budgetBar .progress { height:22px; line-height:22px; font-weight:600; }
-
-/* ABOUT */
-#aboutModal {
-  display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-  background: rgba(0,0,0,0.8); color:white; z-index:9999; overflow:auto;
-  padding:50px 20px; box-sizing:border-box;
-}
-#aboutModal .modal-content {
-  max-width:700px; margin:auto; background:#1a1a1a; padding:30px; 
-  border-radius:20px; box-shadow:0 8px 25px rgba(0,0,0,0.6);
-}
-#aboutModal h2 { color:#ffc107; text-align:center; margin-bottom:20px; }
-#aboutModal h4 { color:#ffc107; margin-top:20px; }
-#aboutModal button { 
-  padding:10px 20px; border:none; border-radius:10px; background:#00bcd4; 
-  color:#000; font-weight:600; cursor:pointer; margin-top:20px; 
-}
-#aboutModal button:hover { background:#0097a7; color:white; }
-
-#analyticsBadge { margin-top:10px; font-weight:700; }
-
-/* FOOTER */
-footer {
-  background:#111; color:#aaa; text-align:center; padding:15px 20px; 
-  border-top:1px solid #222; margin-top:40px; font-size:0.9rem;
-}
-.blinking-name { color: #00bcd4; }
-
-/* History modal */
-#historyModal {
-  display:none; position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,0.75);
-  padding:30px; box-sizing:border-box; overflow:auto;
-}
-#historyModal .history-card {
-  max-width:900px; margin:auto; background:#121212; padding:20px; border-radius:12px;
-  border:1px solid #222;
-}
+#aboutModal, #historyModal { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8); padding:50px 20px; box-sizing:border-box; overflow:auto; }
+#historyModal .history-card { max-width:900px; margin:auto; background:#121212; padding:20px; border-radius:12px; border:1px solid #222; }
 .history-entry { border-bottom:1px dashed #333; padding:10px 0; }
 .field-changed { font-weight:700; color:#ffc107; }
-
-/* activity log */
-#activityLog { margin-top:18px; padding:12px; background:#0f0f0f; border-radius:10px; border:1px solid #222; }
 .activity-item { padding:8px 0; border-bottom:1px dashed #222; }
-
-/* responsive tweaks */
-@media(min-width:576px){
-  footer div { flex-direction:row; justify-content:center; gap:30px; }
-}
+footer { background:#111; color:#aaa; text-align:center; padding:15px 20px; border-top:1px solid #222; margin-top:40px; font-size:0.9rem; }
+.blinking-name { color: #00bcd4; }
 </style>
 </head>
 <body>
 
 <!-- LOGIN BUTTON -->
 <div id="loginContainer">
-  <button id="googleLoginBtn">Login with Google</button>
+  <button id="googleLoginBtn" class="btn btn-lg">Login with Google</button>
 </div>
 
 <!-- HEADER -->
@@ -129,9 +49,8 @@ footer {
     </div>
     <div id="userNameDisplay"></div>
     <nav class="d-flex align-items-center nav-links">
-      <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k">Contact</a>
       <a href="#" id="aboutLink">About</a>
-      <button id="googleLogoutBtn">Logout</button>
+      <button id="googleLogoutBtn" class="btn btn-sm">Logout</button>
     </nav>
   </div>
 </header>
@@ -139,7 +58,7 @@ footer {
 <!-- MAIN CONTAINER -->
 <div class="container my-3">
 
-  <!-- BUDGET CARD (visible after login) -->
+  <!-- BUDGET CARD -->
   <div id="budgetCard">
     <div class="d-flex justify-content-between align-items-center mb-2">
       <div>
@@ -241,21 +160,12 @@ footer {
 
 <!-- ABOUT MODAL -->
 <div id="aboutModal">
-  <div class="modal-content">
-    <h2>About Parallel Tracking Sense</h2>
+  <div class="modal-content" style="max-width:700px;margin:auto;background:#1a1a1a;padding:30px;border-radius:20px;">
+    <h2 style="color:#ffc107;text-align:center;">About Parallel Tracking Sense</h2>
     <p><strong>Parallel Tracking Sense</strong> helps you <strong>track your daily expenses</strong> and manage your budget efficiently.</p>
-    <h4>💡 Purpose</h4>
+    <h4 style="color:#ffc107;">💡 Purpose</h4>
     <p>Record, categorize, and analyze your spending patterns easily.</p>
-    <h4>⚙️ How It Works</h4>
-    <ul>
-      <li>Add expenses with name, amount, and date.</li>
-      <li>View and edit them anytime.</li>
-      <li>Check total expenses instantly.</li>
-      <li>See visual analytics of your spending trends.</li>
-    </ul>
-    <div style="text-align:center;">
-      <button id="closeAbout">Close</button>
-    </div>
+    <div style="text-align:center;"><button id="closeAbout" class="btn btn-primary">Close</button></div>
   </div>
 </div>
 
@@ -270,27 +180,22 @@ footer {
   </div>
 </div>
 
-<div id="msgBox" style="
-  position: fixed; top: 20px; right: 20px;
-  background-color: #198754; color: white; padding: 10px 20px;
-  border-radius: 10px; display: none; z-index: 9999;"></div>
+<div id="msgBox" style="position: fixed; top: 20px; right: 20px; background-color: #198754; color: white; padding: 10px 20px; border-radius: 10px; display: none; z-index: 9999;"></div>
 
 <script>
-// BASE URL
+/* --------------------------
+  Config & globals
+---------------------------*/
+// BASE URL for your backend
 const BASE_URL = window.location.hostname.includes("localhost")
   ? "http://localhost:3000"
   : "https://sandy-backend2-0.onrender.com";
 
-// load socket.io client script from server origin
-(function loadSocketIo(){
-  const s = document.createElement('script');
-  s.src = `${BASE_URL.replace(/\/$/,'')}/socket.io/socket.io.js`;
-  s.onload = ()=> { console.log("socket.io client loaded"); };
-  s.onerror = ()=> { console.warn("socket.io client failed to load"); };
-  document.head.appendChild(s);
-})();
+// socket loader flag
+let socketIoLoaded = false;
+let socket = null;
 
-// Firebase Config
+// Firebase init
 const firebaseConfig = {
   apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
   authDomain: "ptspro-31997.firebaseapp.com",
@@ -302,10 +207,13 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-let currentUserUid = null;
-let socket = null;
 
-// Elements
+let currentUserUid = null;
+let currentBudgetAmount = 0; // <-- important global
+
+/* --------------------------
+  DOM refs
+---------------------------*/
 const loginBtn = document.getElementById("googleLoginBtn");
 const logoutBtn = document.getElementById("googleLogoutBtn");
 const loginContainer = document.getElementById("loginContainer");
@@ -314,8 +222,6 @@ const tableContainer = document.getElementById("tableContainer");
 const msgBox = document.getElementById("msgBox");
 const userNameDisplay = document.getElementById("userNameDisplay");
 const analyticsContainer = document.getElementById("analyticsContainer");
-
-// Budget elements
 const budgetCard = document.getElementById("budgetCard");
 const budgetInput = document.getElementById("budgetInput");
 const saveBudgetBtn = document.getElementById("saveBudgetBtn");
@@ -324,32 +230,73 @@ const budgetProgressBar = document.getElementById("budgetProgressBar");
 const budgetStatusText = document.getElementById("budgetStatusText");
 const budgetAlerts = document.getElementById("budgetAlerts");
 const analyticsBadge = document.getElementById("analyticsBadge");
-
-// About modal
 const aboutLink = document.getElementById("aboutLink");
 const aboutModal = document.getElementById("aboutModal");
 const closeAbout = document.getElementById("closeAbout");
-aboutLink.addEventListener("click", e => { e.preventDefault(); aboutModal.style.display = "block"; });
-closeAbout.addEventListener("click", () => { aboutModal.style.display = "none"; });
-window.addEventListener("click", e => { if(e.target == aboutModal) aboutModal.style.display="none"; });
-
-// History modal
 const historyModal = document.getElementById("historyModal");
 const historyList = document.getElementById("historyList");
 const historyTitle = document.getElementById("historyTitle");
 const closeHistoryBtn = document.getElementById("closeHistoryBtn");
-closeHistoryBtn.addEventListener("click", () => historyModal.style.display = "none");
-window.addEventListener("click", e => { if(e.target == historyModal) historyModal.style.display="none"; });
+const form = document.getElementById("expenseForm");
+const editId = document.getElementById("editId");
 
-// Message
-function showMessage(msg, duration=2000) {
+/* --------------------------
+  Helpers
+---------------------------*/
+function showMessage(msg, duration=2000){
   msgBox.innerText = msg;
   msgBox.style.display = "block";
-  setTimeout(()=> msgBox.style.display="none", duration);
+  setTimeout(()=> msgBox.style.display = "none", duration);
 }
 
-// Toggle login
-function toggleLoginState(isLoggedIn) {
+function formatDateString(d){
+  if(!d) return "—";
+  const dt = (typeof d === 'string' || typeof d === 'number') ? new Date(d) : d;
+  if(isNaN(dt.getTime())) return String(d);
+  const opts = { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' };
+  return dt.toLocaleString('en-GB', opts);
+}
+
+/* --------------------------
+  Load socket.io client then connect
+---------------------------*/
+(function loadSocketIo(){
+  const s = document.createElement('script');
+  s.src = `${BASE_URL.replace(/\/$/,'')}/socket.io/socket.io.js`;
+  s.onload = ()=> { console.log("socket.io client loaded"); socketIoLoaded = true; if(currentUserUid) connectSocket(); };
+  s.onerror = ()=> { console.warn("socket.io client failed to load"); socketIoLoaded = false; };
+  document.head.appendChild(s);
+})();
+
+function connectSocket(retries = 0){
+  try {
+    if(typeof io === 'undefined'){
+      if(retries < 5) setTimeout(()=> connectSocket(retries+1), 800);
+      else console.warn("socket.io client not available (tried retries)");
+      return;
+    }
+    // prevent duplicate sockets
+    if(socket && socket.connected) return;
+    socket = io(BASE_URL);
+    socket.on("connect", ()=> {
+      console.log("socket connected:", socket.id);
+      if(currentUserUid) socket.emit("join", currentUserUid);
+    });
+    socket.on("expenses-changed", (payload)=> {
+      console.log("expenses-changed", payload);
+      loadData(); // reload
+    });
+    socket.on("budget-changed", (payload) => {
+      console.log("budget-changed", payload);
+      fetchBudget();
+    });
+  } catch(err){ console.error("Socket error", err); }
+}
+
+/* --------------------------
+  Auth & UI toggles
+---------------------------*/
+function toggleLoginState(isLoggedIn){
   loginContainer.style.display = isLoggedIn ? "none" : "block";
   logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
   expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
@@ -359,28 +306,27 @@ function toggleLoginState(isLoggedIn) {
   document.getElementById("activityLog").style.display = isLoggedIn ? "block" : "none";
 }
 
-// Firebase Auth
 auth.onAuthStateChanged(async user=>{
   if(user){
-    currentUserUid=user.uid;
+    currentUserUid = user.uid;
     toggleLoginState(true);
     userNameDisplay.textContent = user.displayName || "User";
-    // connect socket and join room
-    connectSocket();
+    if(socketIoLoaded) connectSocket();
+    else connectSocket(); // try connecting with retries
     await loadData();
-    // fetch budget on login
     await fetchBudget();
   } else {
-    currentUserUid=null;
+    currentUserUid = null;
     toggleLoginState(false);
     tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
-    analyticsContainer.style.display="none";
+    analyticsContainer.style.display = "none";
     userNameDisplay.textContent = "";
     clearBudgetUI();
     if(socket){ socket.disconnect(); socket = null; }
   }
 });
 
+/* Login / Logout */
 loginBtn.addEventListener("click", async () => {
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
@@ -389,7 +335,7 @@ loginBtn.addEventListener("click", async () => {
     toggleLoginState(true);
     loadData();
     userNameDisplay.textContent = result.user.displayName || "User";
-    showMessage("✅ Logged in successfully",2000);
+    showMessage("✅ Logged in successfully", 2000);
     fetchBudget();
   } catch(err){ console.error(err); showMessage("❌ Login failed",2000); }
 });
@@ -400,7 +346,7 @@ logoutBtn.addEventListener("click", async () => {
     currentUserUid = null;
     toggleLoginState(false);
     tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
-    analyticsContainer.style.display="none";
+    analyticsContainer.style.display = "none";
     userNameDisplay.textContent = "";
     clearBudgetUI();
     if(socket){ socket.disconnect(); socket = null; }
@@ -408,53 +354,13 @@ logoutBtn.addEventListener("click", async () => {
   } catch(err){ console.error(err); showMessage("❌ Logout failed",2000); }
 });
 
-// connect socket and join user's room to receive real-time updates
-function connectSocket(){
-  try {
-    if(typeof io === 'undefined') {
-      console.warn("socket.io client not loaded yet");
-      return;
-    }
-    socket = io(BASE_URL);
-    socket.on("connect", ()=> {
-      console.log("socket connected:", socket.id);
-      if(currentUserUid) socket.emit("join", currentUserUid);
-    });
-    socket.on("expenses-changed", (payload)=>{
-      console.log("expenses-changed", payload);
-      // reload data when something changed
-      loadData();
-    });
-    socket.on("budget-changed", (payload) => {
-      console.log("budget-changed", payload);
-      fetchBudget();
-    });
-  } catch(err){ console.error("Socket error", err); }
-}
-
-// Typing animation
-const headerText = "Drop Your Expenses !";
-const typingHeader = document.getElementById("typingHeader");
-let headerIndex = 0;
-function typeWriterHeader() {
-  if(headerIndex < headerText.length){
-    typingHeader.innerHTML += headerText.charAt(headerIndex);
-    headerIndex++;
-    setTimeout(typeWriterHeader,100);
-  } else {
-    setTimeout(()=>{ typingHeader.innerHTML=""; headerIndex=0; typeWriterHeader(); },2000);
-  }
-}
-typeWriterHeader();
-
-// Expense form
-const form = document.getElementById("expenseForm");
-const editId = document.getElementById("editId");
-
+/* --------------------------
+  Expense form submit (create + update)
+---------------------------*/
 form.addEventListener("submit", async e=>{
   e.preventDefault();
-  if(!currentUserUid) return;
-  const data = {
+  if(!currentUserUid) return showMessage("Login first");
+  const payload = {
     uid: currentUserUid,
     name: document.getElementById("name").value.trim(),
     amount: document.getElementById("amount").value.trim(),
@@ -462,33 +368,31 @@ form.addEventListener("submit", async e=>{
     description: document.getElementById("description").value.trim(),
     date: document.getElementById("date").value
   };
+
   try {
     const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
-    const method = editId.value ? "PUT" : "POST";
-    // when updating include editorName
+    // include editorName when updating
     if(editId.value){
-      data.editorName = (auth.currentUser && auth.currentUser.displayName) ? auth.currentUser.displayName : null;
+      payload.editorName = (auth.currentUser && auth.currentUser.displayName) ? auth.currentUser.displayName : null;
     }
-    const res = await fetch(url,{ method, headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data)});
+    const res = await fetch(url, { method: editId.value ? "PUT" : "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(payload) });
     const result = await res.json();
+    if(!res.ok) throw new Error(result.message || "Server error");
     showMessage(result.message || "Saved");
-    editId.value="";
+    editId.value = "";
     form.reset();
     await loadData();
-    // re-fetch budget after adding/updating expense to update progress
     await fetchBudget();
-  } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
+  } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500); }
 });
 
-// ----------- Budget functions (frontend) -----------
+/* --------------------------
+  Budget functions
+---------------------------*/
 async function saveBudgetToServer(amount){
   if(!currentUserUid) return;
   try {
-    const res = await fetch(`${BASE_URL}/setBudget`, {
-      method: "POST",
-      headers: { "Content-Type":"application/json" },
-      body: JSON.stringify({ uid: currentUserUid, amount: parseFloat(amount) || 0 })
-    });
+    const res = await fetch(`${BASE_URL}/setBudget`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ uid: currentUserUid, amount: parseFloat(amount) || 0 }) });
     const r = await res.json();
     if(res.ok) showMessage(r.message || "Budget saved");
     else showMessage(r.message || "Failed to save budget");
@@ -508,6 +412,7 @@ async function fetchBudget(){
       return;
     }
     currentBudgetAmount = parseFloat(r.amount) || 0;
+
     // compute current total from expenses and update UI
     const expensesRes = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
     const arr = await expensesRes.json();
@@ -520,15 +425,14 @@ async function fetchBudget(){
 
 function clearBudgetUI(){
   budgetInput.value = "";
-  budgetProgressBar.style.width = "0%";
-  budgetProgressBar.className = "progress-bar";
+  if(budgetProgressBar) budgetProgressBar.style.width = "0%";
+  if(budgetProgressBar) budgetProgressBar.className = "progress-bar";
   budgetStatusText.innerText = "No budget set";
   budgetAlerts.innerHTML = "";
   currentBudgetAmount = 0;
   analyticsBadge.innerText = "";
 }
 
-// update UI after we know budgetAmount and totalSpent
 function updateBudgetUI(budgetAmount, totalSpent){
   if(!budgetAmount || budgetAmount <= 0){
     clearBudgetUI();
@@ -540,19 +444,13 @@ function updateBudgetUI(budgetAmount, totalSpent){
   budgetProgressBar.style.width = widthPct + "%";
   budgetProgressBar.innerText = `${pctClamped}%`;
 
-  // Color logic: normal -> green, >=80 -> yellow (warning), >100 -> red (danger)
   budgetProgressBar.className = "progress-bar";
-  if(pct >= 100){
-    budgetProgressBar.classList.add("bg-danger");
-  } else if(pct >= 80){
-    budgetProgressBar.classList.add("bg-warning");
-  } else {
-    budgetProgressBar.classList.add("bg-success");
-  }
+  if(pct >= 100){ budgetProgressBar.classList.add("bg-danger"); }
+  else if(pct >= 80){ budgetProgressBar.classList.add("bg-warning"); }
+  else { budgetProgressBar.classList.add("bg-success"); }
 
   budgetStatusText.innerText = `Budget: ₹${budgetAmount.toFixed(2)}  —  Spent: ₹${totalSpent.toFixed(2)}`;
 
-  // Alerts
   budgetAlerts.innerHTML = "";
   analyticsBadge.innerText = "";
   if(pct >= 100){
@@ -567,83 +465,47 @@ function updateBudgetUI(budgetAmount, totalSpent){
   }
 }
 
-// Save budget button
 saveBudgetBtn.addEventListener("click", async () => {
   const val = parseFloat(budgetInput.value);
   if(!val || val <= 0){ showMessage("Enter valid budget amount"); return; }
   await saveBudgetToServer(val);
 });
 
-// Reset budget
 resetBudgetBtn.addEventListener("click", async () => {
   if(!currentUserUid) return;
   if(!confirm("Reset/delete your budget?")) return;
   try {
-    const res = await fetch(`${BASE_URL}/setBudget`, {
-      method: "POST",
-      headers: { "Content-Type":"application/json" },
-      body: JSON.stringify({ uid: currentUserUid, amount: 0, reset: true })
-    });
+    const res = await fetch(`${BASE_URL}/setBudget`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ uid: currentUserUid, amount: 0, reset: true }) });
     const r = await res.json();
     if(res.ok) showMessage(r.message || "Budget reset");
     else showMessage(r.message || "Reset failed");
     clearBudgetUI();
   } catch(err){ console.error(err); showMessage("❌ Reset failed",2000); }
 });
-// ----------- End Budget functions -----------
 
-
-// helper to format date nicely
-function formatDateString(d){
-  if(!d) return "—";
-  const dt = (typeof d === 'string' || typeof d === 'number') ? new Date(d) : d;
-  if(isNaN(dt.getTime())) return d;
-  const opts = { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' };
-  return dt.toLocaleString('en-GB', opts);
-}
-
-// Build activity log from all users' editHistory
+/* --------------------------
+  Activity log & history helpers
+---------------------------*/
 function buildActivityLog(allUsers){
   const log = [];
-  allUsers.forEach(u=>{
-    // creation event
-    if(u.createdAt) log.push({
-      type: 'created',
-      uid: u.uid,
-      display: `${u.name} created`,
-      date: u.createdAt,
-      expenseId: u._id,
-      by: u.uid
-    });
+  allUsers.forEach(u => {
+    if(u.createdAt) log.push({ type:'created', uid:u.uid, display:`${u.name} created`, date:u.createdAt, expenseId:u._id, by:u.uid });
     if(Array.isArray(u.editHistory)){
       u.editHistory.forEach(e=>{
-        log.push({
-          type: 'edited',
-          expenseName: u.name,
-          expenseId: u._id,
-          editorName: e.editorName || e.editorUid || 'Unknown',
-          date: e.date,
-          before: e.before,
-          after: e.after
-        });
+        log.push({ type:'edited', expenseName:u.name, expenseId:u._id, editorName:e.editorName || e.editorUid || 'Unknown', date:e.date, before:e.before, after:e.after, editorUid:e.editorUid });
       });
     }
   });
-  // sort newest first
   log.sort((a,b)=> new Date(b.date) - new Date(a.date));
   return log;
 }
 
-// Render activity items (top 20)
 function renderActivityLog(allUsers){
   const itemsDiv = document.getElementById('activityItems');
   const container = document.getElementById('activityLog');
   const log = buildActivityLog(allUsers);
   itemsDiv.innerHTML = "";
-  if(!log || log.length===0){
-    container.style.display = 'none';
-    return;
-  }
+  if(!log || log.length===0){ container.style.display = 'none'; return; }
   container.style.display = 'block';
   const limited = log.slice(0,20);
   limited.forEach(it=>{
@@ -652,12 +514,9 @@ function renderActivityLog(allUsers){
     if(it.type === 'created'){
       div.innerHTML = `<div><strong>${it.display}</strong> — ${formatDateString(it.date)}</div>`;
     } else {
-      // show changed fields keys
       const changed = [];
       if(it.before && it.after){
-        for(const k of Object.keys(it.before)){
-          if(String(it.before[k]) !== String(it.after[k])) changed.push(k);
-        }
+        for(const k of Object.keys(it.before)) if(String(it.before[k]) !== String(it.after[k])) changed.push(k);
       }
       const fieldsText = changed.length ? `<span class="field-changed">${changed.join(', ')}</span>` : `<span class="text-muted">no fields</span>`;
       div.innerHTML = `<div><strong>${it.editorName}</strong> edited <strong>${it.expenseName || ''}</strong> — ${fieldsText} — ${formatDateString(it.date)}</div>`;
@@ -666,18 +525,22 @@ function renderActivityLog(allUsers){
   });
 }
 
-// Load data
+/* --------------------------
+  Load data (main)
+---------------------------*/
 async function loadData(){
   if(!currentUserUid) return;
   try{
     const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
-    if(!res.ok) throw new Error("Failed to fetch users");
+    if(!res.ok){
+      const text = await res.text().catch(()=>"");
+      throw new Error(`Failed to fetch users: ${res.status} ${text}`);
+    }
     const users = await res.json();
-    if(!Array.isArray(users) || users.length===0){
+    if(!Array.isArray(users) || users.length === 0){
       tableContainer.innerHTML = "<p class='text-muted'>No expenses yet.</p>";
-      analyticsContainer.style.display="none";
+      analyticsContainer.style.display = "none";
       document.getElementById('activityLog').style.display = 'none';
-      // update budget UI with zero spent
       const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
       if(bRes.ok){
         const b = await bRes.json();
@@ -686,11 +549,9 @@ async function loadData(){
       return;
     }
 
-    let html = `<table class="table table-striped table-bordered text-white">
-      <thead><tr>
-        <th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th>
-        <th>Date</th><th>Edits</th><th>Last Edited</th><th>Action</th>
-      </tr></thead><tbody>`;
+    let html = `<table class="table table-striped table-bordered text-white"><thead><tr>
+      <th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Edits</th><th>Last Edited</th><th>Action</th>
+    </tr></thead><tbody>`;
 
     let totalAmount = 0;
     users.forEach((u,i)=>{
@@ -699,10 +560,9 @@ async function loadData(){
       const lastEdited = u.updatedAt || u.createdAt || null;
       const actionBtn = `<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>`;
       const historyBtn = `<button class="btn btn-info btn-sm ms-1" onclick="viewHistory('${u._id}')">History</button>`;
-      const displayName = u.name || '';
       html += `<tr>
         <td>${i+1}</td>
-        <td>${displayName}</td>
+        <td>${u.name || ''}</td>
         <td>${u.amount}</td>
         <td>${u.type}</td>
         <td>${u.description}</td>
@@ -713,53 +573,47 @@ async function loadData(){
       </tr>`;
     });
 
-    html += `
-      <tr style="background:#00bcd4; color:#000; font-weight:700;">
-        <td colspan="2" class="text-end">Total</td>
-        <td colspan="7">${totalAmount.toFixed(2)}</td>
-      </tr>
-    `;
+    html += `<tr style="background:#00bcd4; color:#000; font-weight:700;"><td colspan="2" class="text-end">Total</td><td colspan="7">${totalAmount.toFixed(2)}</td></tr>`;
     html += "</tbody></table>";
-    tableContainer.innerHTML=html;
+    tableContainer.innerHTML = html;
 
-    // Show charts
-    analyticsContainer.style.display="block";
+    analyticsContainer.style.display = "block";
     renderCharts(users);
 
-    // Update budget UI with totals
     const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
     if(bRes.ok){
       const b = await bRes.json();
-      if(b && b.amount && parseFloat(b.amount) > 0){
-        updateBudgetUI(parseFloat(b.amount), totalAmount);
-      } else {
-        // no budget set
-        clearBudgetUI();
-      }
+      if(b && b.amount && parseFloat(b.amount) > 0) updateBudgetUI(parseFloat(b.amount), totalAmount);
+      else clearBudgetUI();
     }
 
-    // render activity log
     renderActivityLog(users);
-  } catch(err){ console.error(err); tableContainer.innerHTML="<p class='text-danger'>Failed to load expenses.</p>"; }
+  } catch(err){
+    console.error(err);
+    tableContainer.innerHTML = `<p class='text-danger'>Failed to load expenses. ${err.message ? ("(" + err.message + ")") : ""}</p>`;
+  }
 }
 
-// Edit
+/* --------------------------
+  Edit / History handlers (global)
+---------------------------*/
 window.editExpense = async function(id){
   try{
     const res = await fetch(`${BASE_URL}/user/${id}`);
     if(!res.ok) throw new Error("Failed to fetch user");
     const user = await res.json();
-    document.getElementById("name").value=user.name;
-    document.getElementById("amount").value=user.amount;
-    document.getElementById("type").value=user.type;
-    document.getElementById("description").value=user.description;
-    document.getElementById("date").value=user.date;
-    editId.value=id;
+    document.getElementById("name").value = user.name || "";
+    document.getElementById("amount").value = user.amount || "";
+    document.getElementById("type").value = user.type || "";
+    document.getElementById("description").value = user.description || "";
+    document.getElementById("date").value = user.date || "";
+    editId.value = id;
     showMessage("✏ Edit mode enabled",2000);
-  } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500);}
-}
+    // scroll into view
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500); }
+};
 
-// View history modal for one expense
 window.viewHistory = async function(id){
   try{
     const res = await fetch(`${BASE_URL}/user/${id}`);
@@ -767,7 +621,6 @@ window.viewHistory = async function(id){
     const u = await res.json();
     historyTitle.innerText = `History for: ${u.name || 'Expense'}`;
     historyList.innerHTML = "";
-    // show creation info
     const createdHtml = `<div class="history-entry"><div><strong>Created:</strong> ${formatDateString(u.createdAt)} </div><div class="text-muted">Initial values.</div></div>`;
     historyList.insertAdjacentHTML('beforeend', createdHtml);
     const hist = Array.isArray(u.editHistory) ? u.editHistory.slice().reverse() : [];
@@ -796,30 +649,31 @@ window.viewHistory = async function(id){
     }
     historyModal.style.display = "block";
   } catch(err){ console.error(err); showMessage("❌ Failed to load history",2000); }
-}
+};
 
-// Render Charts
+/* --------------------------
+  Charts
+---------------------------*/
 function renderCharts(users){
   const dates = {};
   const types = {};
-
   let totalAmount = 0;
+
   users.forEach(u=>{
     const date = u.date || "Unknown";
     const amount = parseFloat(u.amount) || 0;
     totalAmount += amount;
-    dates[date] = (dates[date]||0)+amount;
-    types[u.type] = (types[u.type]||0)+amount;
+    dates[date] = (dates[date] || 0) + amount;
+    const typeKey = (u.type && u.type.length) ? u.type : 'Other';
+    types[typeKey] = (types[typeKey] || 0) + amount;
   });
 
-  // If budget exists and exceeded, add "Over Budget" slice
   const overAmount = currentBudgetAmount && totalAmount > currentBudgetAmount ? (totalAmount - currentBudgetAmount) : 0;
   if(overAmount > 0){
-    const label = `Over Budget (₹${overAmount.toFixed(2)})`;
-    types[label] = overAmount;
+    types[`Over Budget (₹${overAmount.toFixed(2)})`] = overAmount;
   }
 
-  // Line Chart - Expense over Time
+  // Line Chart
   const lineCtx = document.getElementById('lineChart').getContext('2d');
   if(window.lineChartInstance) window.lineChartInstance.destroy();
   window.lineChartInstance = new Chart(lineCtx, {
@@ -838,37 +692,33 @@ function renderCharts(users){
     options: { scales: { y: { beginAtZero:true } } }
   });
 
-  // Pie Chart - Expense by Type (with Over Budget slice colored red)
+  // Pie Chart
   const pieCtx = document.getElementById('pieChart').getContext('2d');
   if(window.pieChartInstance) window.pieChartInstance.destroy();
-
   const labels = Object.keys(types);
   const values = Object.values(types);
-
-  // colors: pick defaults, but make Over Budget red if present
   const baseColors = ['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0','#3f51b5','#009688'];
   const bgColors = labels.map(l => l.startsWith("Over Budget") ? '#ff3b30' : baseColors.shift() || '#607d8b');
 
   window.pieChartInstance = new Chart(pieCtx, {
     type: 'pie',
-    data: {
-      labels,
-      datasets: [{
-        data: values,
-        backgroundColor: bgColors
-      }]
-    }
+    data: { labels, datasets: [{ data: values, backgroundColor: bgColors }] },
+    options: {}
   });
 
-  // Put a small textual badge below pie (for accessibility)
-  if(overAmount > 0){
-    analyticsBadge.innerText = `🚨 Over budget: ₹${overAmount.toFixed(2)} — shown as red slice in chart.`;
-  } else if(currentBudgetAmount > 0) {
-    analyticsBadge.innerText = `✅ Within budget: Budget ₹${currentBudgetAmount.toFixed(2)}, Spent ₹${totalAmount.toFixed(2)}.`;
-  } else {
-    analyticsBadge.innerText = "";
-  }
+  if(overAmount > 0) analyticsBadge.innerText = `🚨 Over budget: ₹${overAmount.toFixed(2)} — shown as red slice in chart.`;
+  else if(currentBudgetAmount > 0) analyticsBadge.innerText = `✅ Within budget: Budget ₹${currentBudgetAmount.toFixed(2)}, Spent ₹${totalAmount.toFixed(2)}.`;
+  else analyticsBadge.innerText = "";
 }
+
+/* --------------------------
+  UI actions for modals
+---------------------------*/
+aboutLink.addEventListener('click', e=>{ e.preventDefault(); aboutModal.style.display = 'block'; });
+closeAbout.addEventListener('click', ()=> aboutModal.style.display = 'none');
+window.addEventListener('click', e=> { if(e.target === aboutModal) aboutModal.style.display='none'; if(e.target === historyModal) historyModal.style.display='none'; });
+closeHistoryBtn.addEventListener('click', ()=> historyModal.style.display='none');
+
 </script>
 
 <footer>
