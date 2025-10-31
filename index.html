@@ -17,7 +17,6 @@
       --muted:#6b7280;
       --brand:#0d6efd;
       --accent:#00bcd4;
-      --glass: rgba(13,110,253,0.06);
     }
     *{box-sizing:border-box;font-family:'Poppins',sans-serif}
     body{background:var(--bg); margin:0; color:#0b1320; min-height:100vh;}
@@ -43,6 +42,13 @@
     .table thead th{background:linear-gradient(90deg,var(--accent), #4aa3ff); color:#000; font-weight:700; border:0}
     .table tbody tr td{vertical-align:middle}
     .small-muted{color:var(--muted); font-size:0.9rem}
+
+    /* responsive table - allow horizontal scroll */
+    .table-responsive { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .table-minwidth { min-width:900px; } /* ensures columns don't wrap too early on mobile */
+
+    /* charts */
+    canvas { width:100% !important; height:260px !important; display:block; }
 
     /* history modal */
     #aboutModal, #historyModal{display:none; position:fixed; inset:0; z-index:9999; background:rgba(2,6,23,0.6); padding:30px; box-sizing:border-box;}
@@ -283,8 +289,9 @@
 
     function formatDateString(d){
       if(!d) return "—";
+      // d may be Date object, ISO string, or number
       const dt = (typeof d === 'string' || typeof d === 'number') ? new Date(d) : d;
-      if(isNaN(dt.getTime())) return String(d);
+      if(!dt || isNaN(dt.getTime())) return String(d);
       const opts = { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' };
       return dt.toLocaleString('en-GB', opts);
     }
@@ -467,7 +474,7 @@
 
         // build table
         let totalAmount = 0;
-        let html = `<table class="table table-hover mt-2"><thead><tr>
+        let html = `<div class="table-responsive"><table class="table table-hover table-minwidth mt-2"><thead><tr>
           <th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Edits</th><th>Last Edited</th><th>Action</th>
         </tr></thead><tbody>`;
         users.forEach((u,i)=>{
@@ -491,7 +498,7 @@
           </tr>`;
         });
         html += `<tr style="background:linear-gradient(90deg,var(--accent),#4aa3ff); color:#000; font-weight:700;"><td colspan="2" class="text-end">Total</td><td colspan="7">₹${totalAmount.toFixed(2)}</td></tr>`;
-        html += `</tbody></table>`;
+        html += `</tbody></table></div>`;
         tableContainer.innerHTML = html;
 
         renderCharts(users);
@@ -570,7 +577,7 @@
       lineChartInstance = new Chart(lineCtx, {
         type: 'line',
         data: { labels: Object.keys(dates), datasets:[{ label:'Total Expense', data: Object.values(dates), borderColor:'#0d6efd', backgroundColor:'rgba(13,110,253,0.12)', fill:true, tension:0.3 }] },
-        options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+        options: { responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
       });
 
       // pie
@@ -579,7 +586,7 @@
       const labels = Object.keys(types), values = Object.values(types);
       const baseColors = ['#0d6efd','#00bcd4','#ff9800','#8bc34a','#9c27b0','#3f51b5','#e91e63'];
       const bg = labels.map(l => l.startsWith('Over Budget') ? '#ff3b30' : baseColors.shift() || '#607d8b');
-      pieChartInstance = new Chart(pieCtx, { type:'pie', data:{ labels, datasets:[{ data: values, backgroundColor: bg }] }, options:{} });
+      pieChartInstance = new Chart(pieCtx, { type:'pie', data:{ labels, datasets:[{ data: values, backgroundColor: bg }] }, options:{ responsive:true, maintainAspectRatio:false } });
 
       if(overAmount > 0) analyticsBadge.innerText = `🚨 Over budget: ₹${overAmount.toFixed(2)}`;
       else if(currentBudgetAmount > 0) analyticsBadge.innerText = `✅ Budget ₹${currentBudgetAmount.toFixed(2)} — Spent ₹${totalAmount.toFixed(2)}`;
