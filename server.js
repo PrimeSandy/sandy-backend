@@ -39,7 +39,7 @@ async function start() {
       });
     });
 
-    // Create Expense
+    // 🧾 Create Expense
     app.post("/submit", async (req, res) => {
       try {
         const { uid, name, amount, type, description, date } = req.body;
@@ -54,7 +54,7 @@ async function start() {
       }
     });
 
-    // Get all expenses
+    // 👥 Get all expenses (for specific user)
     app.get("/users", async (req, res) => {
       const { uid } = req.query;
       if (!uid) return res.status(400).json({ status: "error", message: "Missing uid" });
@@ -62,19 +62,19 @@ async function start() {
       res.json(all);
     });
 
-    // Get single expense
+    // 👤 Get single expense
     app.get("/user/:id", async (req, res) => {
       try {
         const user = await expenses.findOne({ _id: new ObjectId(req.params.id) });
-        if(!user) return res.status(404).json({ status: "error", message: "Not found" });
+        if (!user) return res.status(404).json({ status: "error", message: "Not found" });
         res.json(user);
-      } catch(err){
+      } catch (err) {
         console.error(err);
         res.status(500).json({ status: "error", message: "Invalid id or server error" });
       }
     });
 
-    // Update expense (track edit history)
+    // ✏️ Update expense (with edit history)
     app.put("/update/:id", async (req, res) => {
       try {
         const { uid, editorName, name, amount, type, description, date } = req.body;
@@ -103,24 +103,24 @@ async function start() {
       }
     });
 
-    // DELETE expense
+    // 🗑️ Delete expense
     app.delete("/delete/:id", async (req, res) => {
       try {
         const id = req.params.id;
-        if(!id) return res.status(400).json({ status:"error", message:"Missing id" });
+        if (!id) return res.status(400).json({ status: "error", message: "Missing id" });
         const exp = await expenses.findOne({ _id: new ObjectId(id) });
-        if(!exp) return res.status(404).json({ status:"error", message:"Expense not found" });
+        if (!exp) return res.status(404).json({ status: "error", message: "Expense not found" });
 
         await expenses.deleteOne({ _id: new ObjectId(id) });
         io.to(`uid_${exp.uid}`).emit("expenses-changed", { action: "deleted", id, uid: exp.uid });
         res.json({ status: "success", message: "✅ Expense deleted" });
-      } catch(err){
+      } catch (err) {
         console.error(err);
         res.status(500).json({ status: "error", message: "❌ Failed to delete" });
       }
     });
 
-    // Budget routes
+    // 💰 Budget routes
     app.post("/setBudget", async (req, res) => {
       try {
         const { uid, amount, reset } = req.body;
@@ -136,21 +136,32 @@ async function start() {
         await budgets.updateOne({ uid }, { $set: { uid, amount: amt, updatedAt: new Date() } }, { upsert: true });
         io.to(`uid_${uid}`).emit("budget-changed", { uid, amount: amt });
         res.json({ status: "success", message: "✅ Budget saved" });
-      } catch(err){
+      } catch (err) {
         console.error(err);
-        res.status(500).json({ status:"error", message:"❌ Budget operation failed" });
+        res.status(500).json({ status: "error", message: "❌ Budget operation failed" });
       }
     });
 
     app.get("/getBudget", async (req, res) => {
       try {
         const { uid } = req.query;
-        if(!uid) return res.status(400).json({ status:"error", message:"Missing uid" });
+        if (!uid) return res.status(400).json({ status: "error", message: "Missing uid" });
         const b = await budgets.findOne({ uid });
         res.json({ amount: b?.amount || 0, updatedAt: b?.updatedAt || null });
-      } catch(err){
+      } catch (err) {
         console.error(err);
-        res.status(500).json({ status:"error", message:"❌ Failed to get budget" });
+        res.status(500).json({ status: "error", message: "❌ Failed to get budget" });
+      }
+    });
+
+    // 📜 NEW: History route for frontend
+    app.get("/history", async (req, res) => {
+      try {
+        const all = await expenses.find({}).sort({ createdAt: -1 }).limit(10).toArray();
+        res.json(all);
+      } catch (err) {
+        console.error("❌ Error fetching history:", err);
+        res.status(500).json({ status: "error", message: "Failed to fetch history" });
       }
     });
 
