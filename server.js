@@ -1,4 +1,3 @@
-// server.js (Node + Express + MongoDB + socket.io)
 require("dotenv").config();
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
@@ -14,7 +13,7 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
-  cors: { origin: "*", methods: ["GET", "POST", "PUT"] },
+  cors: { origin: "*", methods: ["GET", "POST", "PUT", "DELETE"] },
 });
 
 // MongoDB
@@ -64,8 +63,14 @@ async function start() {
 
     // Get single expense
     app.get("/user/:id", async (req, res) => {
-      const user = await expenses.findOne({ _id: new ObjectId(req.params.id) });
-      res.json(user);
+      try {
+        const user = await expenses.findOne({ _id: new ObjectId(req.params.id) });
+        if(!user) return res.status(404).json({ status: "error", message: "Not found" });
+        res.json(user);
+      } catch(err){
+        console.error(err);
+        res.status(500).json({ status: "error", message: "Invalid id or server error" });
+      }
     });
 
     // Update expense (track edit history)
@@ -97,27 +102,55 @@ async function start() {
       }
     });
 
+    // DELETE expense (new)
+    app.delete("/delete/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        if(!id) return res.status(400).json({ status:"error", message:"Missing id" });
+        const exp = await expenses.findOne({ _id: new ObjectId(id) });
+        if(!exp) return res.status(404).json({ status:"error", message:"Expense not found" });
+
+        await expenses.deleteOne({ _id: new ObjectId(id) });
+        io.to(`uid_${exp.uid}`).emit("expenses-changed", { action: "deleted", id, uid: exp.uid });
+        res.json({ status: "success", message: "✅ Expense deleted" });
+      } catch(err){
+        console.error(err);
+        res.status(500).json({ status: "error", message: "❌ Failed to delete" });
+      }
+    });
+
     // Budget routes
     app.post("/setBudget", async (req, res) => {
-      const { uid, amount, reset } = req.body;
-      if (!uid) return res.status(400).json({ status: "error", message: "Missing uid" });
+      try {
+        const { uid, amount, reset } = req.body;
+        if (!uid) return res.status(400).json({ status: "error", message: "Missing uid" });
 
-      if (reset) {
-        await budgets.deleteOne({ uid });
-        io.to(`uid_${uid}`).emit("budget-changed", { uid, amount: 0 });
-        return res.json({ status: "success", message: "✅ Budget reset" });
+        if (reset) {
+          await budgets.deleteOne({ uid });
+          io.to(`uid_${uid}`).emit("budget-changed", { uid, amount: 0 });
+          return res.json({ status: "success", message: "✅ Budget reset" });
+        }
+
+        const amt = parseFloat(amount) || 0;
+        await budgets.updateOne({ uid }, { $set: { uid, amount: amt, updatedAt: new Date() } }, { upsert: true });
+        io.to(`uid_${uid}`).emit("budget-changed", { uid, amount: amt });
+        res.json({ status: "success", message: "✅ Budget saved" });
+      } catch(err){
+        console.error(err);
+        res.status(500).json({ status:"error", message:"❌ Budget operation failed" });
       }
-
-      const amt = parseFloat(amount) || 0;
-      await budgets.updateOne({ uid }, { $set: { uid, amount: amt, updatedAt: new Date() } }, { upsert: true });
-      io.to(`uid_${uid}`).emit("budget-changed", { uid, amount: amt });
-      res.json({ status: "success", message: "✅ Budget saved" });
     });
 
     app.get("/getBudget", async (req, res) => {
-      const { uid } = req.query;
-      const b = await budgets.findOne({ uid });
-      res.json({ amount: b?.amount || 0, updatedAt: b?.updatedAt || null });
+      try {
+        const { uid } = req.query;
+        if(!uid) return res.status(400).json({ status:"error", message:"Missing uid" });
+        const b = await budgets.findOne({ uid });
+        res.json({ amount: b?.amount || 0, updatedAt: b?.updatedAt || null });
+      } catch(err){
+        console.error(err);
+        res.status(500).json({ status:"error", message:"❌ Failed to get budget" });
+      }
     });
 
     const PORT = process.env.PORT || 3000;
