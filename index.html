@@ -7,91 +7,21 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <style>
-body {
-  background-color: #0b0b0b;
-  color: white;
-  min-height: 100vh;
-  margin: 0;
-  font-family: "Poppins", sans-serif;
-}
-
-/* HEADER */
-header {
-  display: none;
-  background: #0b0b0b;
-  border-bottom: 1px solid #222;
-  padding: 15px 20px;
-  border-radius: 0 0 15px 15px;
-}
-header .project-name { font-size: 1.5rem; color: #00bcd4; font-weight: 700; margin-bottom: 3px; }
-header .typing { font-size: 1rem; color: #ffcc00; height: 1.2rem; }
-header .nav-links a { color: #fff; text-decoration:none; font-weight:500; margin-right:1rem; transition:0.3s; }
-header .nav-links a:hover { color:#00bcd4; }
-header button#googleLogoutBtn {
-  background: transparent; border:2px solid #ff3b30; color:#ff3b30;
-  font-weight:600; border-radius:8px; padding:6px 16px; transition:0.3s;
-}
-header button#googleLogoutBtn:hover { background:#ff3b30; color:white; }
-
-#userNameDisplay {
-  flex: 1;
-  text-align: center;
-  color: #ffcc00;
-  font-weight: 600;
-}
-
-/* TABLE */
-.table-container { margin-top: 20px; padding: 20px; background:#1a1a1a; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
-table { color:#fff; font-size:0.95rem; }
-table thead { background:#00bcd4; color:#000; font-weight:600; }
-table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
-
-/* LOGIN */
-#loginContainer { text-align:center; margin-top:100px; }
-#loginContainer button {
-  font-size:1.2rem; padding:10px 30px; border-radius:10px;
-  border:none; background:#00bcd4; color:#000; font-weight:600;
-  cursor:pointer; transition:0.3s;
-}
-#loginContainer button:hover { background:#0097a7; color:white; }
-
-/* ABOUT */
-#aboutModal {
-  display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-  background: rgba(0,0,0,0.8); color:white; z-index:9999; overflow:auto;
-  padding:50px 20px; box-sizing:border-box;
-}
-#aboutModal .modal-content {
-  max-width:700px; margin:auto; background:#1a1a1a; padding:30px; 
-  border-radius:20px; box-shadow:0 8px 25px rgba(0,0,0,0.6);
-}
-#aboutModal h2 { color:#ffc107; text-align:center; margin-bottom:20px; }
-#aboutModal h4 { color:#ffc107; margin-top:20px; }
-#aboutModal button { 
-  padding:10px 20px; border:none; border-radius:10px; background:#00bcd4; 
-  color:#000; font-weight:600; cursor:pointer; margin-top:20px; 
-}
-#aboutModal button:hover { background:#0097a7; color:white; }
-
-/* FOOTER */
-footer {
-  background:#111; color:#aaa; text-align:center; padding:15px 20px; 
-  border-top:1px solid #222; margin-top:40px; font-size:0.9rem;
-}
-.blinking-name { color: #00bcd4; }
-/* @keyframes blink { 0%,50%,100%{opacity:1;} 25%,75%{opacity:0;} } */
-
-@media(min-width:576px){
-  footer div { flex-direction:row; justify-content:center; gap:30px; }
-}
+body{background:#0b0b0b;color:white;font-family:Poppins,sans-serif;margin:0;min-height:100vh;}
+header{display:none;background:#0b0b0b;border-bottom:1px solid #222;padding:15px 20px;border-radius:0 0 15px 15px;}
+header .project-name{color:#00bcd4;font-weight:700;}
+#loginContainer{text-align:center;margin-top:100px;}
+#loginContainer button{font-size:1.2rem;padding:10px 30px;border:none;border-radius:10px;background:#00bcd4;color:#000;font-weight:600;cursor:pointer;}
+.table-container{margin-top:20px;padding:20px;background:#1a1a1a;border-radius:15px;box-shadow:0 8px 25px rgba(0,0,0,.4);}
+footer{background:#111;color:#aaa;text-align:center;padding:15px 20px;margin-top:40px;}
 </style>
 </head>
 <body>
 
-<!-- LOGIN BUTTON -->
+<!-- LOGIN -->
 <div id="loginContainer">
   <button id="googleLoginBtn">Login with Google</button>
 </div>
@@ -99,350 +29,170 @@ footer {
 <!-- HEADER -->
 <header>
   <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap">
-    <div>
-      <h1 class="project-name mb-1">E-TRAX</h1>
-      <div class="typing" id="typingHeader"></div>
-    </div>
+    <div><h1 class="project-name mb-1">E-TRAX</h1><div id="typingHeader" class="text-warning"></div></div>
     <div id="userNameDisplay"></div>
-    <nav class="d-flex align-items-center nav-links">
-      <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k">Contact</a>
-      <a href="#" id="aboutLink">About</a>
-      <button id="googleLogoutBtn">Logout</button>
+    <nav class="d-flex align-items-center">
+      <a href="#" id="aboutLink" class="me-3 text-white">About</a>
+      <button id="googleLogoutBtn" class="btn btn-outline-danger btn-sm">Logout</button>
     </nav>
   </div>
 </header>
 
-<!-- FORM -->
-<div class="container my-3">
-  <div id="expenseFormContainer" style="display:none;">
-    <div class="card bg-dark text-white mb-4" style="border-radius:20px;">
-      <div class="card-body">
-        <form id="expenseForm" class="row g-3">
-          <input type="hidden" id="editId">
-          <div class="col-md-6">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" id="name" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="amount" class="form-label">Amount</label>
-            <input type="number" id="amount" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="type" class="form-label">Type</label>
-            <select id="type" class="form-select" required>
-              <option value="">Choose one...</option>
-              <option value="Card">Card</option>
-              <option value="Cash">Cash</option>
-              <option value="Gpay/Paytm">Gpay/Paytm</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="description" class="form-label">Description</label>
-            <input type="text" id="description" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="date" class="form-label">Date</label>
-            <input type="date" id="date" class="form-control" required>
-          </div>
-          <div class="col-12 d-flex justify-content-between mt-3">
-            <button type="reset" class="btn btn-danger">Clear</button>
-            <button type="submit" class="btn btn-primary">Confirm</button>
-          </div>
-        </form>
-      </div>
+<!-- ONLINE USERS -->
+<div class="container my-3 text-center">
+  <div style="background:#1a1a1a;border-radius:15px;padding:15px;">
+    <h5 class="text-info">👥 Active Users Online: <span id="onlineCount">0</span></h5>
+    <ul id="onlineUsers" style="list-style:none;padding:0;margin-top:10px;"></ul>
+  </div>
+</div>
+
+<!-- EXPENSE FORM -->
+<div class="container my-3" id="expenseFormContainer" style="display:none;">
+  <div class="card bg-dark text-white mb-4" style="border-radius:20px;">
+    <div class="card-body">
+      <form id="expenseForm" class="row g-3">
+        <input type="hidden" id="editId">
+        <div class="col-md-6"><label>Name</label><input type="text" id="name" class="form-control" required></div>
+        <div class="col-md-6"><label>Amount</label><input type="number" id="amount" class="form-control" required></div>
+        <div class="col-md-6">
+          <label>Type</label>
+          <select id="type" class="form-select" required>
+            <option value="">Choose...</option>
+            <option value="Card">Card</option><option value="Cash">Cash</option>
+            <option value="Gpay/Paytm">Gpay/Paytm</option><option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="col-md-6"><label>Description</label><input type="text" id="description" class="form-control" required></div>
+        <div class="col-md-6"><label>Date</label><input type="date" id="date" class="form-control" required></div>
+        <div class="col-12 d-flex justify-content-between mt-3">
+          <button type="reset" class="btn btn-danger">Clear</button>
+          <button type="submit" class="btn btn-primary">Confirm</button>
+        </div>
+      </form>
     </div>
   </div>
-
-  <!-- TABLE + CHART -->
   <div id="tableContainer" class="table-responsive"></div>
-
-  <!-- GRAPHICAL ANALYTICS -->
   <div id="analyticsContainer" class="my-4" style="display:none;">
     <div class="table-container">
       <h4 class="text-center text-info mb-3">📊 Expense Analytics</h4>
-      <div class="row">
-        <div class="col-md-6">
-          <canvas id="lineChart"></canvas>
-        </div>
-        <div class="col-md-6">
-          <canvas id="pieChart"></canvas>
-        </div>
-      </div>
+      <div class="row"><div class="col-md-6"><canvas id="lineChart"></canvas></div><div class="col-md-6"><canvas id="pieChart"></canvas></div></div>
     </div>
   </div>
 </div>
 
-<!-- ABOUT MODAL -->
-<div id="aboutModal">
-  <div class="modal-content">
-    <h2>About Parallel Tracking Sense</h2>
-    <p><strong>Parallel Tracking Sense</strong> helps you <strong>track your daily expenses</strong> and manage your budget efficiently.</p>
-    <h4>💡 Purpose</h4>
-    <p>Record, categorize, and analyze your spending patterns easily.</p>
-    <h4>⚙️ How It Works</h4>
-    <ul>
-      <li>Add expenses with name, amount, and date.</li>
-      <li>View and edit them anytime.</li>
-      <li>Check total expenses instantly.</li>
-      <li>See visual analytics of your spending trends.</li>
-    </ul>
-    <div style="text-align:center;">
-      <button id="closeAbout">Close</button>
-    </div>
-  </div>
-</div>
+<div id="msgBox" style="position:fixed;top:20px;right:20px;background:#198754;color:white;padding:10px 20px;border-radius:10px;display:none;z-index:9999;"></div>
 
-<div id="msgBox" style="
-  position: fixed; top: 20px; right: 20px;
-  background-color: #198754; color: white; padding: 10px 20px;
-  border-radius: 10px; display: none; z-index: 9999;"></div>
+<footer>
+  <p>Developed by <b style="color:#00bcd4;">Prime Sandy</b> | &copy;2025 E-Trax</p>
+</footer>
 
 <script>
-// BASE URL
-const BASE_URL = window.location.hostname.includes("localhost")
-  ? "http://localhost:3000"
-  : "https://sandy-backend2-0.onrender.com";
+const BASE_URL = window.location.hostname.includes("localhost") ? "http://localhost:3000" : "https://sandy-backend2-0.onrender.com";
 
-// Firebase Config
+// 🔥 Firebase Config
 const firebaseConfig = {
-  apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
-  authDomain: "ptspro-31997.firebaseapp.com",
-  projectId: "ptspro-31997",
-  storageBucket: "ptspro-31997.appspot.com",
-  messagingSenderId: "191965542623",
-  appId: "1:191965542623:web:b461ceedfc3a773267516a",
-  measurementId: "G-6LNC29KRQF"
+  apiKey:"AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
+  authDomain:"ptspro-31997.firebaseapp.com",
+  databaseURL:"https://ptspro-31997-default-rtdb.firebaseio.com",
+  projectId:"ptspro-31997",
+  storageBucket:"ptspro-31997.appspot.com",
+  messagingSenderId:"191965542623",
+  appId:"1:191965542623:web:b461ceedfc3a773267516a"
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-let currentUserUid = null;
+const db = firebase.database();
+let currentUserUid=null;
 
-// Elements
-const loginBtn = document.getElementById("googleLoginBtn");
-const logoutBtn = document.getElementById("googleLogoutBtn");
-const loginContainer = document.getElementById("loginContainer");
-const expenseFormContainer = document.getElementById("expenseFormContainer");
-const tableContainer = document.getElementById("tableContainer");
-const msgBox = document.getElementById("msgBox");
-const userNameDisplay = document.getElementById("userNameDisplay");
-const analyticsContainer = document.getElementById("analyticsContainer");
+const loginBtn=document.getElementById("googleLoginBtn"),logoutBtn=document.getElementById("googleLogoutBtn"),
+loginContainer=document.getElementById("loginContainer"),expenseFormContainer=document.getElementById("expenseFormContainer"),
+tableContainer=document.getElementById("tableContainer"),msgBox=document.getElementById("msgBox"),
+userNameDisplay=document.getElementById("userNameDisplay"),analyticsContainer=document.getElementById("analyticsContainer");
 
-// About modal
-const aboutLink = document.getElementById("aboutLink");
-const aboutModal = document.getElementById("aboutModal");
-const closeAbout = document.getElementById("closeAbout");
-aboutLink.addEventListener("click", e => { e.preventDefault(); aboutModal.style.display = "block"; });
-closeAbout.addEventListener("click", () => { aboutModal.style.display = "none"; });
-window.addEventListener("click", e => { if(e.target == aboutModal) aboutModal.style.display="none"; });
+function showMessage(msg,dur=2000){msgBox.innerText=msg;msgBox.style.display="block";setTimeout(()=>msgBox.style.display="none",dur);}
+function toggleLoginState(x){loginContainer.style.display=x?"none":"block";logoutBtn.style.display=x?"inline-block":"none";expenseFormContainer.style.display=x?"block":"none";document.querySelector("header").style.display=x?"block":"none";}
 
-// Message
-function showMessage(msg, duration=2000) {
-  msgBox.innerText = msg;
-  msgBox.style.display = "block";
-  setTimeout(()=> msgBox.style.display="none", duration);
+// 👥 PRESENCE FUNCTIONS
+function setUserOnline(uid,name){
+  const ref=db.ref("presence/"+uid);
+  ref.set({online:true,name,lastSeen:Date.now()});
+  ref.onDisconnect().set({online:false,name,lastSeen:Date.now()});
+  setInterval(()=>ref.update({online:true,lastSeen:Date.now()}),30000);
+}
+function showOnlineUsers(){
+  const ref=db.ref("presence");
+  ref.on("value",snap=>{
+    const data=snap.val()||{};const now=Date.now();
+    const online=Object.values(data).filter(u=>u.online&&(now-u.lastSeen)<60000);
+    document.getElementById("onlineCount").innerText=online.length;
+    const ul=document.getElementById("onlineUsers");ul.innerHTML="";
+    online.forEach(u=>{
+      const s=Math.floor((now-u.lastSeen)/1000);
+      ul.innerHTML+=`<li><span style="color:lime;">●</span> ${u.name} – <small>${s}s ago</small></li>`;
+    });
+  });
 }
 
-// Toggle login
-function toggleLoginState(isLoggedIn) {
-  loginContainer.style.display = isLoggedIn ? "none" : "block";
-  logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
-  expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
-  document.querySelector("header").style.display = isLoggedIn ? "block" : "none";
-}
-
-// Firebase Auth
+// Firebase Auth listener
 auth.onAuthStateChanged(user=>{
   if(user){
     currentUserUid=user.uid;
     toggleLoginState(true);
+    userNameDisplay.textContent=user.displayName||"User";
     loadData();
-    userNameDisplay.textContent = user.displayName || "User";
-  } else {
+    setUserOnline(user.uid,user.displayName||"User");
+    showOnlineUsers();
+  }else{
     currentUserUid=null;
     toggleLoginState(false);
-    tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
+    tableContainer.innerHTML="<p class='text-muted'>Login to view your expenses</p>";
     analyticsContainer.style.display="none";
-    userNameDisplay.textContent = "";
+    userNameDisplay.textContent="";
   }
 });
 
-loginBtn.addEventListener("click", async () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  try {
-    const result = await auth.signInWithPopup(provider);
-    currentUserUid = result.user.uid;
-    toggleLoginState(true);
-    loadData();
-    userNameDisplay.textContent = result.user.displayName || "User";
-    showMessage("✅ Logged in successfully",2000);
-  } catch(err){ console.error(err); showMessage("❌ Login failed",2000); }
-});
-
-logoutBtn.addEventListener("click", async () => {
-  try {
-    await auth.signOut();
-    currentUserUid = null;
-    toggleLoginState(false);
-    tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
-    analyticsContainer.style.display="none";
-    userNameDisplay.textContent = "";
-    showMessage("✅ Logged out successfully",2000);
-  } catch(err){ console.error(err); showMessage("❌ Logout failed",2000); }
-});
+// Login/Logout
+loginBtn.onclick=async()=>{
+  const provider=new firebase.auth.GoogleAuthProvider();
+  try{const r=await auth.signInWithPopup(provider);currentUserUid=r.user.uid;showMessage("✅ Logged in");}
+  catch(e){showMessage("❌ Login failed");}
+};
+logoutBtn.onclick=async()=>{await auth.signOut();showMessage("✅ Logged out");};
 
 // Typing animation
-const headerText = "Drop Your Expenses !";
-const typingHeader = document.getElementById("typingHeader");
-let headerIndex = 0;
-function typeWriterHeader() {
-  if(headerIndex < headerText.length){
-    typingHeader.innerHTML += headerText.charAt(headerIndex);
-    headerIndex++;
-    setTimeout(typeWriterHeader,100);
-  } else {
-    setTimeout(()=>{ typingHeader.innerHTML=""; headerIndex=0; typeWriterHeader(); },2000);
-  }
-}
-typeWriterHeader();
+const text="Drop Your Expenses !";let i=0;
+(function type(){if(i<text.length){document.getElementById("typingHeader").innerHTML+=text.charAt(i);i++;setTimeout(type,100);}
+else{setTimeout(()=>{document.getElementById("typingHeader").innerHTML="";i=0;type();},2000);}})();
 
 // Expense form
-const form = document.getElementById("expenseForm");
-const editId = document.getElementById("editId");
-
-form.addEventListener("submit", async e=>{
-  e.preventDefault();
-  if(!currentUserUid) return;
-  const data = {
-    uid: currentUserUid,
-    name: document.getElementById("name").value.trim(),
-    amount: document.getElementById("amount").value.trim(),
-    type: document.getElementById("type").value,
-    description: document.getElementById("description").value.trim(),
-    date: document.getElementById("date").value
-  };
-  try {
-    const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
-    const method = editId.value ? "PUT" : "POST";
-    const res = await fetch(url,{ method, headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data)});
-    const result = await res.json();
-    showMessage(result.message);
-    editId.value="";
-    form.reset();
-    loadData();
-  } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
+document.getElementById("expenseForm").addEventListener("submit",async e=>{
+  e.preventDefault();if(!currentUserUid)return;
+  const data={uid:currentUserUid,name:name.value,amount:amount.value,type:type.value,description:description.value,date:date.value};
+  const url=editId.value?`${BASE_URL}/update/${editId.value}`:`${BASE_URL}/submit`;
+  const method=editId.value?"PUT":"POST";
+  const res=await fetch(url,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+  const result=await res.json();showMessage(result.message);editId.value="";e.target.reset();loadData();
 });
 
-// Load data
+// Load expenses
 async function loadData(){
-  if(!currentUserUid) return;
-  try{
-    const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
-    if(!res.ok) throw new Error("Failed to fetch users");
-    const users = await res.json();
-    if(!Array.isArray(users) || users.length===0){
-      tableContainer.innerHTML = "<p class='text-muted'>No expenses yet.</p>";
-      analyticsContainer.style.display="none";
-      return;
-    }
-
-    let html = `<table class="table table-striped table-bordered text-white">
-      <thead><tr>
-        <th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Action</th>
-      </tr></thead><tbody>`;
-
-    let totalAmount = 0;
-    users.forEach((u,i)=>{
-      totalAmount += parseFloat(u.amount) || 0;
-      const actionBtn = `<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>`;
-      html += `<tr>
-        <td>${i+1}</td><td>${u.name}</td><td>${u.amount}</td><td>${u.type}</td>
-        <td>${u.description}</td><td>${u.date}</td><td>${actionBtn}</td>
-      </tr>`;
-    });
-
-    html += `
-      <tr style="background:#00bcd4; color:#000; font-weight:700;">
-        <td colspan="2" class="text-end">Total</td>
-        <td colspan="5">${totalAmount.toFixed(2)}</td>
-      </tr>
-    `;
-    html += "</tbody></table>";
-    tableContainer.innerHTML=html;
-
-    // Show charts
-    analyticsContainer.style.display="block";
-    renderCharts(users);
-  } catch(err){ console.error(err); tableContainer.innerHTML="<p class='text-danger'>Failed to load expenses.</p>"; }
+  if(!currentUserUid)return;
+  const r=await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);const arr=await r.json();
+  if(!arr.length){tableContainer.innerHTML="<p>No expenses yet.</p>";analyticsContainer.style.display="none";return;}
+  let total=0;let html=`<table class="table table-striped table-bordered text-white"><thead><tr><th>#</th><th>Name</th><th>Amt</th><th>Type</th><th>Desc</th><th>Date</th><th>Action</th></tr></thead><tbody>`;
+  arr.forEach((u,i)=>{total+=+u.amount;html+=`<tr><td>${i+1}</td><td>${u.name}</td><td>${u.amount}</td><td>${u.type}</td><td>${u.description}</td><td>${u.date}</td><td><button class='btn btn-warning btn-sm' onclick="editExpense('${u._id}')">Edit</button></td></tr>`;});
+  html+=`<tr style='background:#00bcd4;color:#000;font-weight:700;'><td colspan='2' class='text-end'>Total</td><td colspan='5'>${total.toFixed(2)}</td></tr></tbody></table>`;
+  tableContainer.innerHTML=html;analyticsContainer.style.display="block";renderCharts(arr);
 }
-
-// Edit
-window.editExpense = async function(id){
-  try{
-    const res = await fetch(`${BASE_URL}/user/${id}`);
-    if(!res.ok) throw new Error("Failed to fetch user");
-    const user = await res.json();
-    document.getElementById("name").value=user.name;
-    document.getElementById("amount").value=user.amount;
-    document.getElementById("type").value=user.type;
-    document.getElementById("description").value=user.description;
-    document.getElementById("date").value=user.date;
-    editId.value=id;
-    showMessage("✏ Edit mode enabled",2000);
-  } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500);}
-}
-
-// Render Charts
-function renderCharts(users){
-  const dates = {};
-  const types = {};
-
-  users.forEach(u=>{
-    const date = u.date || "Unknown";
-    const amount = parseFloat(u.amount) || 0;
-    dates[date] = (dates[date]||0)+amount;
-    types[u.type] = (types[u.type]||0)+amount;
-  });
-
-  // Line Chart - Expense over Time
-  const lineCtx = document.getElementById('lineChart').getContext('2d');
-  new Chart(lineCtx, {
-    type: 'line',
-    data: {
-      labels: Object.keys(dates),
-      datasets: [{
-        label: 'Total Expense',
-        data: Object.values(dates),
-        borderColor: '#00bcd4',
-        backgroundColor: 'rgba(0,188,212,0.2)',
-        fill: true,
-        tension: 0.3
-      }]
-    },
-    options: { scales: { y: { beginAtZero:true } } }
-  });
-
-  // Pie Chart - Expense by Type
-  const pieCtx = document.getElementById('pieChart').getContext('2d');
-  new Chart(pieCtx, {
-    type: 'pie',
-    data: {
-      labels: Object.keys(types),
-      datasets: [{
-        data: Object.values(types),
-        backgroundColor: ['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0']
-      }]
-    }
-  });
+window.editExpense=async id=>{
+  const r=await fetch(`${BASE_URL}/user/${id}`);const u=await r.json();
+  name.value=u.name;amount.value=u.amount;type.value=u.type;description.value=u.description;date.value=u.date;editId.value=id;showMessage("✏ Edit mode");
+};
+function renderCharts(data){
+  const dates={},types={};data.forEach(u=>{dates[u.date]=(dates[u.date]||0)+(+u.amount||0);types[u.type]=(types[u.type]||0)+(+u.amount||0);});
+  new Chart(lineChart,{type:'line',data:{labels:Object.keys(dates),datasets:[{label:'Total',data:Object.values(dates),borderColor:'#00bcd4',backgroundColor:'rgba(0,188,212,0.2)',fill:true,tension:.3}]},options:{scales:{y:{beginAtZero:true}}}});
+  new Chart(pieChart,{type:'pie',data:{labels:Object.keys(types),datasets:[{data:Object.values(types),backgroundColor:['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0']}]}})
 }
 </script>
-
-<footer>
-  <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
-    <p style="margin:0;">Developed by <strong class="blinking-name">Prime Sandy</strong></p>
-    <p style="margin:0;">Email: <a href="mailto:santhoshgowtham777@gmail.com" style="color:#00bcd4; text-decoration:none;">santhoshgowtham777@gmail.com</a></p>
-    <p style="margin:0;">&copy; 2025 E-Trax. All rights reserved.</p>
-  </div>
-</footer>
 </body>
 </html>
