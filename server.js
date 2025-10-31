@@ -21,6 +21,7 @@ async function start() {
         console.log("✅ Connected to MongoDB!");
         const db = client.db();
         const expenses = db.collection("expenses");
+        const budgets = db.collection("budgets"); // new collection for budgets
 
         // Serve front-end
         app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
@@ -77,6 +78,56 @@ async function start() {
                 res.status(500).json({ status: "error", message: "❌ Failed to update expense" });
             }
         });
+
+        // ---------- Budget endpoints ----------
+        // Set or reset budget for a user
+        // POST body: { uid, amount, reset?: true }
+        app.post("/setBudget", async (req, res) => {
+            try {
+                const { uid, amount, reset } = req.body;
+                if(!uid) return res.status(400).json({ status: "error", message: "Missing uid" });
+
+                if(reset){
+                    // delete budget doc
+                    await budgets.deleteOne({ uid });
+                    return res.json({ status: "success", message: "✅ Budget reset/deleted" });
+                }
+
+                const amt = parseFloat(amount) || 0;
+                if(amt <= 0) {
+                    // If amount invalid treat as reset
+                    await budgets.deleteOne({ uid });
+                    return res.json({ status: "success", message: "✅ Budget reset (invalid amount)" });
+                }
+
+                // upsert budget doc
+                await budgets.updateOne(
+                    { uid },
+                    { $set: { uid, amount: amt, updatedAt: new Date() } },
+                    { upsert: true }
+                );
+                res.json({ status: "success", message: "✅ Budget saved" });
+            } catch (err) {
+                console.error(err);
+                res.status(500).json({ status: "error", message: "❌ Failed to save budget" });
+            }
+        });
+
+        // Get budget for a user
+        // GET /getBudget?uid=...
+        app.get("/getBudget", async (req, res) => {
+            try {
+                const { uid } = req.query;
+                if(!uid) return res.status(400).json({ status: "error", message: "Missing uid" });
+                const b = await budgets.findOne({ uid });
+                if(!b) return res.json({ amount: 0 });
+                res.json({ amount: b.amount, updatedAt: b.updatedAt });
+            } catch (err) {
+                console.error(err);
+                res.status(500).json({ status: "error", message: "❌ Failed to fetch budget" });
+            }
+        });
+        // ---------- End budget endpoints ----------
 
         const PORT = process.env.PORT || 3000;
         app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
