@@ -52,14 +52,10 @@
 
     /* history modal */
     #aboutModal, #historyModal{display:none; position:fixed; inset:0; z-index:9999; background:rgba(2,6,23,0.6); padding:30px; box-sizing:border-box;}
-    #historyModal .modal-card, #aboutModal .modal-card{max-width:820px; margin:auto; background:var(--card); padding:20px; border-radius:12px; box-shadow:0 10px 30px rgba(11,19,32,0.12); max-height:86vh; overflow:auto;}
+    #historyModal .modal-card, #aboutModal .modal-card{max-width:820px; margin:auto; background:var(--card); padding:20px; border-radius:12px; box-shadow:0 10px 30px rgba(11,19,32,0.12);}
     .field-changed {font-weight:700; color:#ff9900}
     footer{max-width:1100px;margin:20px auto 40px;padding:10px;color:var(--muted); text-align:center}
     .hidden {display:none !important}
-    /* small helpers */
-    .muted-xx { color:var(--muted); font-size:0.85rem }
-    .action-btns button { margin-right:6px; }
-    @media (max-width:520px){ .table-minwidth{ min-width:750px } canvas{ height:220px !important } }
   </style>
 </head>
 <body>
@@ -114,7 +110,7 @@
                 </div>
                 <div class="col-md-6">
                   <label class="small-muted">Amount (₹)</label>
-                  <input id="amount" type="number" step="0.01" class="form-control" required>
+                  <input id="amount" type="number" class="form-control" required>
                 </div>
                 <div class="col-md-6">
                   <label class="small-muted">Type</label>
@@ -217,16 +213,13 @@
     <!-- HISTORY Modal -->
     <div id="historyModal">
       <div class="modal-card" id="historyContent">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h5 id="historyTitle">History</h5>
-          <div class="muted-xx" id="historyExpenseMeta"></div>
-        </div>
+        <!-- <h5 id="historyTitle">History</h5> -->
         <div id="historyList" class="mt-2 small-muted"></div>
         <div class="text-end mt-3"><button id="closeHistoryBtn" class="btn btn-secondary btn-sm">Close</button></div>
       </div>
     </div>
 
-    <div id="msgBox" style="position:fixed; top:18px; right:18px; display:none; z-index:9999; padding:10px 14px; border-radius:8px; color:#fff;"></div>
+    <div id="msgBox" style="position:fixed; top:18px; right:18px; display:none; z-index:9999;"></div>
   </div>
 
   <footer>Developed by <strong style="color:var(--brand)">Prime Sandy</strong> — &copy; 2025 E-Trax</footer>
@@ -237,7 +230,7 @@
       ? "http://localhost:3000"
       : "https://sandy-backend2-0.onrender.com";
 
-    // Firebase config (kept as you provided)
+    // Firebase config (you said it's same & valid)
     const firebaseConfig = {
       apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
       authDomain: "ptspro-31997.firebaseapp.com",
@@ -270,9 +263,8 @@
     const form = document.getElementById('expenseForm');
     const editId = document.getElementById('editId');
     const historyModal = document.getElementById('historyModal');
-    const historyList = document.getElementById('historyList');
-    const historyTitle = document.getElementById('historyTitle');
-    const historyExpenseMeta = document.getElementById('historyExpenseMeta');
+    // const historyList = document.getElementById('historyList');
+    // const historyTitle = document.getElementById('historyTitle');
     const refreshBtn = document.getElementById('refreshBtn');
 
     // charts
@@ -292,8 +284,7 @@
       msgBox.style.display = 'block';
       msgBox.style.background = success ? '#198754' : '#d63384';
       msgBox.style.color = '#fff';
-      clearTimeout(msgBox._t);
-      msgBox._t = setTimeout(()=> msgBox.style.display = 'none', time);
+      setTimeout(()=> msgBox.style.display = 'none', time);
     }
 
     function formatDateString(d){
@@ -303,17 +294,6 @@
       if(!dt || isNaN(dt.getTime())) return String(d);
       const opts = { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' };
       return dt.toLocaleString('en-GB', opts);
-    }
-
-    // convert stored date to yyyy-mm-dd for input
-    function toDateInputValue(d){
-      if(!d) return '';
-      const dt = (typeof d === 'string' || typeof d === 'number') ? new Date(d) : d;
-      if(!dt || isNaN(dt.getTime())) return '';
-      const year = dt.getFullYear();
-      const m = String(dt.getMonth()+1).padStart(2,'0');
-      const day = String(dt.getDate()).padStart(2,'0');
-      return `${year}-${m}-${day}`;
     }
 
     // load socket.io client script from backend
@@ -439,7 +419,6 @@
     function clearBudgetUI(){
       budgetInput.value = '';
       budgetProgressBar.style.width = '0%';
-      budgetProgressBar.className = 'progress-bar';
       budgetStatusText.innerText = 'No budget set';
       budgetAlerts.innerHTML = '';
       currentBudgetAmount = 0;
@@ -500,8 +479,8 @@
         </tr></thead><tbody>`;
         users.forEach((u,i)=>{
           totalAmount += parseFloat(u.amount) || 0;
-          const editCount = u.editCount || (Array.isArray(u.editHistory) ? u.editHistory.length : 0);
-          const lastEdited = u.updatedAt || (Array.isArray(u.editHistory) && u.editHistory.length ? u.editHistory[u.editHistory.length-1].date : u.createdAt) || null;
+          const editCount = u.editCount || 0;
+          const lastEdited = u.updatedAt || u.createdAt || null;
           const id = u._id;
           html += `<tr>
             <td>${i+1}</td>
@@ -509,12 +488,11 @@
             <td>₹${(parseFloat(u.amount)||0).toFixed(2)}</td>
             <td>${escapeHtml(u.type || '')}</td>
             <td>${escapeHtml(u.description || '')}</td>
-            <td>${escapeHtml(u.date || toDateInputValue(u.createdAt) || '')}</td>
-            <td>${editCount}</td>
-            <td>${formatDateString(lastEdited)}</td>
-            <td class="action-btns">
+            <td>${escapeHtml(u.date || '')}</td>
+          
+            <td>
               <button class="btn btn-sm btn-outline-warning" onclick="editExpense('${id}')">Edit</button>
-              <button class="btn btn-sm btn-outline-secondary" onclick="viewHistory('${id}')">History</button>
+              <button class="btn btn-sm btn-outline-info ms-1" onclick="viewHistory('${id}')">History</button>
             </td>
           </tr>`;
         });
@@ -542,8 +520,7 @@
         document.getElementById('amount').value = u.amount || '';
         document.getElementById('type').value = u.type || '';
         document.getElementById('description').value = u.description || '';
-        // ensure date value works for input[type=date]
-        document.getElementById('date').value = (u.date && u.date.length && /^\d{4}-\d{2}-\d{2}/.test(u.date)) ? u.date : toDateInputValue(u.date || u.createdAt || new Date());
+        document.getElementById('date').value = u.date || '';
         editId.value = id;
         window.scrollTo({ top: 0, behavior: 'smooth' });
         showMessage('✏️ Edit mode enabled');
@@ -552,19 +529,12 @@
 
     window.viewHistory = async function(id){
       try{
-        historyList.innerHTML = '<div class="small-muted">Loading history...</div>';
         const res = await fetch(`${BASE_URL}/user/${id}`);
         if(!res.ok) throw new Error('Failed to fetch history');
         const u = await res.json();
-
         historyTitle.innerText = `History for: ${u.name || 'Expense'}`;
-        historyExpenseMeta.innerText = `Amount: ₹${(parseFloat(u.amount)||0).toFixed(2)} • Type: ${u.type || '—'}`;
-
         historyList.innerHTML = '';
-        // Created entry
-        historyList.insertAdjacentHTML('beforeend', `<div><strong>Created:</strong> ${formatDateString(u.createdAt || u._createdAt || u.created)}</div>
-          <div class="small-muted">Initial values.</div><hr>`);
-
+        historyList.insertAdjacentHTML('beforeend', `<div><strong>Created:</strong> ${formatDateString(u.createdAt)}</div><div class="small-muted">Initial values.</div><hr>`);
         const hist = Array.isArray(u.editHistory) ? u.editHistory.slice().reverse() : [];
         if(hist.length === 0){
           historyList.insertAdjacentHTML('beforeend', `<div class="small-muted">No edits yet.</div>`);
@@ -576,17 +546,12 @@
             }
             const changedText = changedFields.length ? `<div>Changed: <span class="field-changed">${changedFields.join(', ')}</span></div>` : `<div class="small-muted">No field differences</div>`;
             const editor = h.editorName || h.editorUid || 'Unknown';
-            historyList.insertAdjacentHTML('beforeend', `<div style="margin-bottom:12px;">
-              <div><strong>${escapeHtml(editor)}</strong> — ${formatDateString(h.date)}</div>
-              ${changedText}
-              <details style="margin-top:8px;"><summary>Show before / after</summary>
-                <pre style="background:#f6f8fb;padding:8px;border-radius:6px;">Before: ${JSON.stringify(h.before||{},null,2)}\n\nAfter: ${JSON.stringify(h.after||{},null,2)}</pre>
-              </details>
-            </div><hr>`);
+            historyList.insertAdjacentHTML('beforeend', `<div style="margin-bottom:12px;"><div><strong>${editor}</strong> — ${formatDateString(h.date)}</div>${changedText}
+              <details style="margin-top:8px;"><summary>Show before / after</summary><pre style="background:#f6f8fb;padding:8px;border-radius:6px;">Before: ${JSON.stringify(h.before,null,2)}\n\nAfter: ${JSON.stringify(h.after,null,2)}</pre></details></div><hr>`);
           });
         }
         historyModal.style.display = 'block';
-      }catch(e){ console.error(e); showMessage('❌ Failed to load history', false); historyList.innerHTML = '<div class="small-muted">Failed to load history.</div>'; }
+      }catch(e){ console.error(e); showMessage('❌ Failed to load history', false); }
     };
 
     // charts
@@ -594,7 +559,7 @@
       const dates = {}, types = {};
       let totalAmount = 0;
       (users||[]).forEach(u=>{
-        const date = u.date || (u.createdAt ? toDateInputValue(u.createdAt) : 'Unknown');
+        const date = u.date || 'Unknown';
         const amount = parseFloat(u.amount) || 0;
         totalAmount += amount;
         dates[date] = (dates[date]||0) + amount;
@@ -639,11 +604,11 @@
       const div = document.getElementById('activityItems'); div.innerHTML = '';
       if(limited.length === 0) { div.innerHTML = '<div class="small-muted">No recent activity</div>'; return; }
       limited.forEach(it=>{
-        if(it.type === 'created') div.insertAdjacentHTML('beforeend', `<div>📌 <strong>${escapeHtml(it.display)}</strong> — ${formatDateString(it.date)}</div>`);
+        if(it.type === 'created') div.insertAdjacentHTML('beforeend', `<div>📌 <strong>${it.display}</strong> — ${formatDateString(it.date)}</div>`);
         else {
           const changed = [];
           if(it.before && it.after) for(const k of Object.keys(it.before)) if(String(it.before[k]) !== String(it.after[k])) changed.push(k);
-          div.insertAdjacentHTML('beforeend', `<div>✏️ <strong>${escapeHtml(it.editorName)}</strong> edited <strong>${escapeHtml(it.expenseName || '')}</strong> — ${changed.length ? `<span class="field-changed">${changed.join(', ')}</span>` : '<span class="small-muted">no fields</span>'} — ${formatDateString(it.date)}</div>`);
+          div.insertAdjacentHTML('beforeend', `<div>✏️ <strong>${it.editorName}</strong> edited <strong>${it.expenseName || ''}</strong> — ${changed.length ? `<span class="field-changed">${changed.join(', ')}</span>` : '<span class="small-muted">no fields</span>'} — ${formatDateString(it.date)}</div>`);
         }
       });
     }
@@ -652,10 +617,7 @@
     refreshBtn.addEventListener('click', ()=> loadData());
 
     // history modal close
-    document.getElementById('closeHistoryBtn').addEventListener('click', ()=> historyModal.style.display='none');
-    document.getElementById('closeAbout').addEventListener('click', ()=> document.getElementById('aboutModal').style.display='none');
-    window.addEventListener('click', e=> { if(e.target === historyModal) historyModal.style.display='none'; if(e.target === document.getElementById('aboutModal')) document.getElementById('aboutModal').style.display='none'; });
-
+   
     // initial ui
     tableContainer.innerHTML = '<div class="small-muted">Login to view your expenses</div>';
   </script>
