@@ -8,30 +8,246 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- socket.io client will be loaded from server below -->
+
 <style>
-/* (Keep your existing CSS - unchanged for brevity) */
-/* ... paste your existing CSS from previous file ... */
-body { background-color:#0b0b0b; color:white; font-family:"Poppins",sans-serif; min-height:100vh; margin:0; }
-/* (include all other CSS you already had) */
+body {
+  background-color: #0b0b0b;
+  color: white;
+  min-height: 100vh;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+}
+
+/* HEADER */
+header {
+  display: none;
+  background: #0b0b0b;
+  border-bottom: 1px solid #222;
+  padding: 15px 20px;
+  border-radius: 0 0 15px 15px;
+}
+header .project-name { font-size: 1.5rem; color: #00bcd4; font-weight: 700; margin-bottom: 3px; }
+header .typing { font-size: 1rem; color: #ffcc00; height: 1.2rem; }
+header .nav-links a { color: #fff; text-decoration:none; font-weight:500; margin-right:1rem; transition:0.3s; }
+header .nav-links a:hover { color:#00bcd4; }
+header button#googleLogoutBtn {
+  background: transparent; border:2px solid #ff3b30; color:#ff3b30;
+  font-weight:600; border-radius:8px; padding:6px 16px; transition:0.3s;
+}
+header button#googleLogoutBtn:hover { background:#ff3b30; color:white; }
+
+#userNameDisplay {
+  flex: 1;
+  text-align: center;
+  color: #ffcc00;
+  font-weight: 600;
+}
+
+/* TABLE */
+.table-container { margin-top: 20px; padding: 20px; background:#1a1a1a; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
+table { color:#fff; font-size:0.95rem; }
+table thead { background:#00bcd4; color:#000; font-weight:600; }
+table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
+
+/* LOGIN */
+#loginContainer { text-align:center; margin-top:100px; }
+#loginContainer button {
+  font-size:1.2rem; padding:10px 30px; border-radius:10px;
+  border:none; background:#00bcd4; color:#000; font-weight:600;
+  cursor:pointer; transition:0.3s;
+}
+#loginContainer button:hover { background:#0097a7; color:white; }
+
+/* BUDGET */
+#budgetCard { display:none; margin-top:20px; border-radius:12px; padding:16px; background:#1a1a1a; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
+#budgetBar { height: 22px; border-radius:8px; overflow:hidden; background:#222; }
+#budgetBar .progress { height:22px; line-height:22px; font-weight:600; }
+
+/* ABOUT */
+#aboutModal {
+  display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.8); color:white; z-index:9999; overflow:auto;
+  padding:50px 20px; box-sizing:border-box;
+}
+#aboutModal .modal-content {
+  max-width:700px; margin:auto; background:#1a1a1a; padding:30px; 
+  border-radius:20px; box-shadow:0 8px 25px rgba(0,0,0,0.6);
+}
+#aboutModal h2 { color:#ffc107; text-align:center; margin-bottom:20px; }
+#aboutModal h4 { color:#ffc107; margin-top:20px; }
+#aboutModal button { 
+  padding:10px 20px; border:none; border-radius:10px; background:#00bcd4; 
+  color:#000; font-weight:600; cursor:pointer; margin-top:20px; 
+}
+#aboutModal button:hover { background:#0097a7; color:white; }
+
+#analyticsBadge { margin-top:10px; font-weight:700; }
+
+/* FOOTER */
+footer {
+  background:#111; color:#aaa; text-align:center; padding:15px 20px; 
+  border-top:1px solid #222; margin-top:40px; font-size:0.9rem;
+}
+.blinking-name { color: #00bcd4; }
+
+@media(min-width:576px){
+  footer div { flex-direction:row; justify-content:center; gap:30px; }
+}
 </style>
 </head>
 <body>
-<!-- (Keep your entire existing HTML structure same) -->
-<!-- Copy the HTML content you already have (login button, header, forms, tableContainer, analyticsContainer, about modal, footer) -->
-<!-- For brevity here we assume entire DOM from your provided index.html remains unchanged -->
-<!-- ... -->
 
-<!-- Add socket.io client script (served by server) -->
+<!-- LOGIN BUTTON -->
+<div id="loginContainer">
+  <button id="googleLoginBtn">Login with Google</button>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap">
+    <div>
+      <h1 class="project-name mb-1">E-TRAX</h1>
+      <div class="typing" id="typingHeader"></div>
+    </div>
+    <div id="userNameDisplay"></div>
+    <nav class="d-flex align-items-center nav-links">
+      <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k">Contact</a>
+      <a href="#" id="aboutLink">About</a>
+      <button id="googleLogoutBtn">Logout</button>
+    </nav>
+  </div>
+</header>
+
+<!-- MAIN CONTAINER -->
+<div class="container my-3">
+
+  <!-- BUDGET CARD (visible after login) -->
+  <div id="budgetCard">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <div>
+        <h5 style="margin:0;color:#ffc107;">Budget Limit</h5>
+        <small class="text-muted">Set a monthly/total budget for your expenses</small>
+      </div>
+      <div>
+        <button id="resetBudgetBtn" class="btn btn-sm btn-outline-danger">Reset Budget</button>
+      </div>
+    </div>
+
+    <div class="row g-2 mb-2">
+      <div class="col-md-4">
+        <input type="number" id="budgetInput" class="form-control" placeholder="Enter budget amount (e.g. 5000)">
+      </div>
+      <div class="col-md-2">
+        <button id="saveBudgetBtn" class="btn btn-primary">Save Budget</button>
+      </div>
+      <div class="col-md-6 text-end">
+        <div id="budgetStatusText" style="font-weight:600;color:#fff;">No budget set</div>
+      </div>
+    </div>
+
+    <div id="budgetBar" class="mb-2">
+      <div id="budgetProgress" class="progress" style="width:100%">
+        <div id="budgetProgressBar" class="progress-bar" role="progressbar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div id="budgetAlerts" style="min-height:22px;"></div>
+  </div>
+
+  <!-- EXPENSE FORM -->
+  <div id="expenseFormContainer" style="display:none;">
+    <div class="card bg-dark text-white mb-4" style="border-radius:20px;">
+      <div class="card-body">
+        <form id="expenseForm" class="row g-3">
+          <input type="hidden" id="editId">
+          <div class="col-md-6">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" id="name" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="number" id="amount" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label for="type" class="form-label">Type</label>
+            <select id="type" class="form-select" required>
+              <option value="">Choose one...</option>
+              <option value="Card">Card</option>
+              <option value="Cash">Cash</option>
+              <option value="Gpay/Paytm">Gpay/Paytm</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" id="description" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" id="date" class="form-control" required>
+          </div>
+          <div class="col-12 d-flex justify-content-between mt-3">
+            <button type="reset" class="btn btn-danger">Clear</button>
+            <button type="submit" class="btn btn-primary">Confirm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE + CHART -->
+  <div id="tableContainer" class="table-responsive"></div>
+
+  <!-- GRAPHICAL ANALYTICS -->
+  <div id="analyticsContainer" class="my-4" style="display:none;">
+    <div class="table-container">
+      <h4 class="text-center text-info mb-3">📊 Expense Analytics</h4>
+      <div class="row">
+        <div class="col-md-6">
+          <canvas id="lineChart"></canvas>
+        </div>
+        <div class="col-md-6">
+          <canvas id="pieChart"></canvas>
+          <div id="analyticsBadge" class="text-center"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT MODAL -->
+<div id="aboutModal">
+  <div class="modal-content">
+    <h2>About Parallel Tracking Sense</h2>
+    <p><strong>Parallel Tracking Sense</strong> helps you <strong>track your daily expenses</strong> and manage your budget efficiently.</p>
+    <h4>💡 Purpose</h4>
+    <p>Record, categorize, and analyze your spending patterns easily.</p>
+    <h4>⚙️ How It Works</h4>
+    <ul>
+      <li>Add expenses with name, amount, and date.</li>
+      <li>View and edit them anytime.</li>
+      <li>Check total expenses instantly.</li>
+      <li>See visual analytics of your spending trends.</li>
+    </ul>
+    <div style="text-align:center;">
+      <button id="closeAbout">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="msgBox" style="
+  position: fixed; top: 20px; right: 20px;
+  background-color: #198754; color: white; padding: 10px 20px;
+  border-radius: 10px; display: none; z-index: 9999;"></div>
+
+<!-- load socket.io client from server -->
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
-// BASE URL - keep as before
-const BASE_URL = window.location.hostname.includes("localhost")
-  ? "http://localhost:3000"
-  : "https://sandy-backend2-0.onrender.com";
+// IMPORTANT: Use relative paths (works both locally & on Render)
+const BASE_URL = "";
 
-// Firebase Config (same as yours)
+// Firebase Config (kept from your code)
 const firebaseConfig = {
   apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
   authDomain: "ptspro-31997.firebaseapp.com",
@@ -46,9 +262,8 @@ const auth = firebase.auth();
 let currentUserUid = null;
 let currentUserName = null;
 
-// socket.io client connect
-// Note: If BASE_URL is remote, ensure socket connects to same origin or pass the URL
-const socket = io(window.location.origin); // connects to same host/port serving page
+// socket.io client: connect to same origin
+const socket = io(window.location.origin);
 
 socket.on("connect", () => {
   console.log("Socket connected:", socket.id);
@@ -56,11 +271,8 @@ socket.on("connect", () => {
 });
 
 socket.on("expenses-changed", (payload) => {
-  // payload: { action: "created"|"updated", id, uid }
   if(!currentUserUid) return;
   if(payload && payload.uid === currentUserUid){
-    // reload data for current user (real-time)
-    console.log("Realtime: expenses changed ->", payload);
     loadData();
     fetchBudget();
   }
@@ -69,24 +281,11 @@ socket.on("expenses-changed", (payload) => {
 socket.on("budget-changed", (payload) => {
   if(!currentUserUid) return;
   if(payload && payload.uid === currentUserUid){
-    console.log("Realtime: budget changed ->", payload);
     fetchBudget();
   }
 });
 
-/* ----- Keep your existing element references and functions ----- */
-/* Copy all DOM element queries, showMessage, toggleLoginState, typing header, etc. */
-/* For brevity, paste your full existing JS here — but we will highlight necessary changes below. */
-
-/* ----------------- REQUIRED CHANGES (frontend) -----------------
-  1) When editing (PUT /update/:id), include editorName in body (current user's displayName).
-  2) When socket connects and after login, emit join with uid so server can push to that room.
-  3) Display edit metadata (createdAt, updatedAt, editCount, editHistory) in table/cards.
----------------------------------------------------------------- */
-
-/* (Now paste your existing JS with these specific updates:) */
-
-// Elements (copy from your original)
+// Elements
 const loginBtn = document.getElementById("googleLoginBtn");
 const logoutBtn = document.getElementById("googleLogoutBtn");
 const loginContainer = document.getElementById("loginContainer");
@@ -104,6 +303,8 @@ const budgetStatusText = document.getElementById("budgetStatusText");
 const budgetAlerts = document.getElementById("budgetAlerts");
 const analyticsBadge = document.getElementById("analyticsBadge");
 let currentBudgetAmount = 0;
+
+// About modal
 const aboutLink = document.getElementById("aboutLink");
 const aboutModal = document.getElementById("aboutModal");
 const closeAbout = document.getElementById("closeAbout");
@@ -132,7 +333,6 @@ auth.onAuthStateChanged(user=>{
     currentUserUid=user.uid;
     currentUserName = user.displayName || "User";
     toggleLoginState(true);
-    // join socket room for this uid
     if(socket && socket.connected) socket.emit("join", currentUserUid);
     loadData();
     userNameDisplay.textContent = user.displayName || "User";
@@ -155,7 +355,6 @@ loginBtn.addEventListener("click", async () => {
     currentUserUid = result.user.uid;
     currentUserName = result.user.displayName || "User";
     toggleLoginState(true);
-    // join user's socket room
     if(socket && socket.connected) socket.emit("join", currentUserUid);
     loadData();
     userNameDisplay.textContent = result.user.displayName || "User";
@@ -178,7 +377,7 @@ logoutBtn.addEventListener("click", async () => {
   } catch(err){ console.error(err); showMessage("❌ Logout failed",2000); }
 });
 
-// typing animation (same as yours)
+// Typing animation
 const headerText = "Drop Your Expenses !";
 const typingHeader = document.getElementById("typingHeader");
 let headerIndex = 0;
@@ -194,13 +393,13 @@ function typeWriterHeader() {
 }
 typeWriterHeader();
 
-// FORM submit (modified: include editorName for updates)
+// Expense form
 const form = document.getElementById("expenseForm");
 const editId = document.getElementById("editId");
 
 form.addEventListener("submit", async e=>{
   e.preventDefault();
-  if(!currentUserUid) return showMessage("Login required");
+  if(!currentUserUid) return;
   const data = {
     uid: currentUserUid,
     name: document.getElementById("name").value.trim(),
@@ -211,27 +410,25 @@ form.addEventListener("submit", async e=>{
   };
   try {
     if(editId.value){
-      // include editorName for edit history
       data.editorName = currentUserName || null;
     }
-    const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
+    const url = editId.value ? `/update/${editId.value}` : `/submit`;
     const method = editId.value ? "PUT" : "POST";
     const res = await fetch(url,{ method, headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data)});
     const result = await res.json();
     showMessage(result.message || "Done");
     editId.value="";
     form.reset();
-    // loadData() will also be triggered by socket event, but do a local refresh to be snappy
     await loadData();
     await fetchBudget();
   } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
 });
 
-// Budget functions (unchanged except real-time handled on server side)
+// Budget functions
 async function saveBudgetToServer(amount){
   if(!currentUserUid) return;
   try {
-    const res = await fetch(`${BASE_URL}/setBudget`, {
+    const res = await fetch(`/setBudget`, {
       method: "POST",
       headers: { "Content-Type":"application/json" },
       body: JSON.stringify({ uid: currentUserUid, amount: parseFloat(amount) || 0 })
@@ -246,7 +443,7 @@ async function saveBudgetToServer(amount){
 async function fetchBudget(){
   if(!currentUserUid) return clearBudgetUI();
   try {
-    const res = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
+    const res = await fetch(`/getBudget?uid=${currentUserUid}`);
     if(!res.ok) return clearBudgetUI();
     const r = await res.json();
     if(!r || typeof r.amount === "undefined" || r.amount === 0){
@@ -255,7 +452,7 @@ async function fetchBudget(){
       return;
     }
     currentBudgetAmount = parseFloat(r.amount) || 0;
-    const expensesRes = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
+    const expensesRes = await fetch(`/users?uid=${currentUserUid}`);
     const arr = await expensesRes.json();
     let totalAmount = 0;
     if(Array.isArray(arr)) arr.forEach(x=> totalAmount += parseFloat(x.amount)||0);
@@ -313,7 +510,7 @@ resetBudgetBtn.addEventListener("click", async () => {
   if(!currentUserUid) return;
   if(!confirm("Reset/delete your budget?")) return;
   try {
-    const res = await fetch(`${BASE_URL}/setBudget`, {
+    const res = await fetch(`/setBudget`, {
       method: "POST",
       headers: { "Content-Type":"application/json" },
       body: JSON.stringify({ uid: currentUserUid, amount: 0, reset: true })
@@ -329,13 +526,13 @@ resetBudgetBtn.addEventListener("click", async () => {
 async function loadData(){
   if(!currentUserUid) return;
   try{
-    const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
+    const res = await fetch(`/users?uid=${currentUserUid}`);
     if(!res.ok) throw new Error("Failed to fetch users");
     const users = await res.json();
     if(!Array.isArray(users) || users.length===0){
       tableContainer.innerHTML = "<p class='text-muted'>No expenses yet.</p>";
       analyticsContainer.style.display="none";
-      const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
+      const bRes = await fetch(`/getBudget?uid=${currentUserUid}`);
       if(bRes.ok){
         const b = await bRes.json();
         if(b && b.amount) updateBudgetUI(parseFloat(b.amount), 0);
@@ -343,7 +540,6 @@ async function loadData(){
       return;
     }
 
-    // We'll render a table but also put an "info" collapsible row for each expense
     let html = `<table class="table table-striped table-bordered text-white">
       <thead><tr>
         <th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Info</th><th>Action</th>
@@ -356,7 +552,6 @@ async function loadData(){
       const createdAt = u.createdAt ? new Date(u.createdAt).toLocaleString() : "N/A";
       const updatedAt = u.updatedAt ? new Date(u.updatedAt).toLocaleString() : "N/A";
       const editCount = u.editCount || 0;
-      // build a small history summary (limit last 5)
       let historyHtml = "<div style='max-height:140px; overflow:auto;'>";
       if(Array.isArray(u.editHistory) && u.editHistory.length>0){
         u.editHistory.slice().reverse().slice(0,10).forEach((h, idx)=>{
@@ -412,8 +607,7 @@ async function loadData(){
     analyticsContainer.style.display="block";
     renderCharts(users);
 
-    // Update budget UI with totals
-    const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
+    const bRes = await fetch(`/getBudget?uid=${currentUserUid}`);
     if(bRes.ok){
       const b = await bRes.json();
       if(b && b.amount && parseFloat(b.amount) > 0){
@@ -425,17 +619,15 @@ async function loadData(){
   } catch(err){ console.error(err); tableContainer.innerHTML="<p class='text-danger'>Failed to load expenses.</p>"; }
 }
 
-// helper toggle info row
 function toggleInfo(id){
   const el = document.getElementById(id);
   if(!el) return;
   el.style.display = (el.style.display === "none" || el.style.display === "") ? "table-row" : "none";
 }
 
-// Edit - fetch single expense and populate form (unchanged but when saving PUT includes editorName)
 window.editExpense = async function(id){
   try{
-    const res = await fetch(`${BASE_URL}/user/${id}`);
+    const res = await fetch(`/user/${id}`);
     if(!res.ok) throw new Error("Failed to fetch user");
     const user = await res.json();
     document.getElementById("name").value=user.name;
@@ -448,7 +640,6 @@ window.editExpense = async function(id){
   } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500);}
 }
 
-// Chart rendering (same as before)
 function renderCharts(users){
   const dates = {};
   const types = {};
@@ -467,38 +658,38 @@ function renderCharts(users){
     types[label] = overAmount;
   }
 
-  const lineCtx = document.getElementById('lineChart').getContext('2d');
-  if(window.lineChartInstance) window.lineChartInstance.destroy();
-  window.lineChartInstance = new Chart(lineCtx, {
-    type: 'line',
-    data: {
-      labels: Object.keys(dates),
-      datasets: [{
-        label: 'Total Expense',
-        data: Object.values(dates),
-        borderColor: '#00bcd4',
-        backgroundColor: 'rgba(0,188,212,0.2)',
-        fill: true,
-        tension: 0.3
-      }]
-    },
-    options: { scales: { y: { beginAtZero:true } } }
-  });
+  const lineCtx = document.getElementById('lineChart')?.getContext('2d');
+  if(lineCtx){
+    if(window.lineChartInstance) window.lineChartInstance.destroy();
+    window.lineChartInstance = new Chart(lineCtx, {
+      type: 'line',
+      data: {
+        labels: Object.keys(dates),
+        datasets: [{
+          label: 'Total Expense',
+          data: Object.values(dates),
+          borderColor: '#00bcd4',
+          backgroundColor: 'rgba(0,188,212,0.2)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: { scales: { y: { beginAtZero:true } } }
+    });
+  }
 
-  const pieCtx = document.getElementById('pieChart').getContext('2d');
-  if(window.pieChartInstance) window.pieChartInstance.destroy();
-  const labels = Object.keys(types);
-  const values = Object.values(types);
-  const baseColors = ['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0','#3f51b5','#009688'];
-  const bgColors = labels.map(l => l.startsWith("Over Budget") ? '#ff3b30' : baseColors.shift() || '#607d8b');
-
-  window.pieChartInstance = new Chart(pieCtx, {
-    type: 'pie',
-    data: {
-      labels,
-      datasets: [{ data: values, backgroundColor: bgColors }]
-    }
-  });
+  const pieCtx = document.getElementById('pieChart')?.getContext('2d');
+  if(pieCtx){
+    if(window.pieChartInstance) window.pieChartInstance.destroy();
+    const labels = Object.keys(types);
+    const values = Object.values(types);
+    const baseColors = ['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0','#3f51b5','#009688'];
+    const bgColors = labels.map(l => l.startsWith("Over Budget") ? '#ff3b30' : baseColors.shift() || '#607d8b');
+    window.pieChartInstance = new Chart(pieCtx, {
+      type: 'pie',
+      data: { labels, datasets: [{ data: values, backgroundColor: bgColors }] }
+    });
+  }
 
   if(overAmount > 0){
     analyticsBadge.innerText = `🚨 Over budget: ₹${overAmount.toFixed(2)} — shown as red slice in chart.`;
@@ -509,7 +700,6 @@ function renderCharts(users){
   }
 }
 
-// simple escape helper for HTML injection safety
 function escapeHtml(unsafe) {
   if(!unsafe && unsafe !== 0) return "";
   return String(unsafe)
@@ -519,13 +709,14 @@ function escapeHtml(unsafe) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
-
-/* ------------------------------------------------------------------- */
-/* That's it — main realtime + edit-history integration done on frontend */
-/* ------------------------------------------------------------------- */
-
 </script>
 
-<!-- footer (keep your existing footer) -->
+<footer>
+  <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
+    <p style="margin:0;">Developed by <strong class="blinking-name">Prime Sandy</strong></p>
+    <p style="margin:0;">Email: <a href="mailto:santhoshgowtham777@gmail.com" style="color:#00bcd4; text-decoration:none;">santhoshgowtham777@gmail.com</a></p>
+    <p style="margin:0;">&copy; 2025 E-Trax. All rights reserved.</p>
+  </div>
+</footer>
 </body>
 </html>
