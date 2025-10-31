@@ -58,6 +58,11 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 }
 #loginContainer button:hover { background:#0097a7; color:white; }
 
+/* BUDGET */
+#budgetCard { display:none; margin-top:20px; border-radius:12px; padding:16px; background:#1a1a1a; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
+#budgetBar { height: 22px; border-radius:8px; overflow:hidden; background:#222; }
+#budgetBar .progress { height:22px; line-height:22px; font-weight:600; }
+
 /* ABOUT */
 #aboutModal {
   display:none; position:fixed; top:0; left:0; width:100%; height:100%;
@@ -82,7 +87,6 @@ footer {
   border-top:1px solid #222; margin-top:40px; font-size:0.9rem;
 }
 .blinking-name { color: #00bcd4; }
-/* @keyframes blink { 0%,50%,100%{opacity:1;} 25%,75%{opacity:0;} } */
 
 @media(min-width:576px){
   footer div { flex-direction:row; justify-content:center; gap:30px; }
@@ -112,8 +116,43 @@ footer {
   </div>
 </header>
 
-<!-- FORM -->
+<!-- MAIN CONTAINER -->
 <div class="container my-3">
+
+  <!-- BUDGET CARD (visible after login) -->
+  <div id="budgetCard">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <div>
+        <h5 style="margin:0;color:#ffc107;">Budget Limit</h5>
+        <small class="text-muted">Set a monthly/total budget for your expenses</small>
+      </div>
+      <div>
+        <button id="resetBudgetBtn" class="btn btn-sm btn-outline-danger">Reset Budget</button>
+      </div>
+    </div>
+
+    <div class="row g-2 mb-2">
+      <div class="col-md-4">
+        <input type="number" id="budgetInput" class="form-control" placeholder="Enter budget amount (e.g. 5000)">
+      </div>
+      <div class="col-md-2">
+        <button id="saveBudgetBtn" class="btn btn-primary">Save Budget</button>
+      </div>
+      <div class="col-md-6 text-end">
+        <div id="budgetStatusText" style="font-weight:600;color:#fff;">No budget set</div>
+      </div>
+    </div>
+
+    <div id="budgetBar" class="mb-2">
+      <div id="budgetProgress" class="progress" style="width:100%">
+        <div id="budgetProgressBar" class="progress-bar" role="progressbar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div id="budgetAlerts" style="min-height:22px;"></div>
+  </div>
+
+  <!-- EXPENSE FORM -->
   <div id="expenseFormContainer" style="display:none;">
     <div class="card bg-dark text-white mb-4" style="border-radius:20px;">
       <div class="card-body">
@@ -228,6 +267,15 @@ const msgBox = document.getElementById("msgBox");
 const userNameDisplay = document.getElementById("userNameDisplay");
 const analyticsContainer = document.getElementById("analyticsContainer");
 
+// Budget elements
+const budgetCard = document.getElementById("budgetCard");
+const budgetInput = document.getElementById("budgetInput");
+const saveBudgetBtn = document.getElementById("saveBudgetBtn");
+const resetBudgetBtn = document.getElementById("resetBudgetBtn");
+const budgetProgressBar = document.getElementById("budgetProgressBar");
+const budgetStatusText = document.getElementById("budgetStatusText");
+const budgetAlerts = document.getElementById("budgetAlerts");
+
 // About modal
 const aboutLink = document.getElementById("aboutLink");
 const aboutModal = document.getElementById("aboutModal");
@@ -249,6 +297,7 @@ function toggleLoginState(isLoggedIn) {
   logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
   expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
   document.querySelector("header").style.display = isLoggedIn ? "block" : "none";
+  budgetCard.style.display = isLoggedIn ? "block" : "none";
 }
 
 // Firebase Auth
@@ -258,12 +307,15 @@ auth.onAuthStateChanged(user=>{
     toggleLoginState(true);
     loadData();
     userNameDisplay.textContent = user.displayName || "User";
+    // fetch budget on login
+    fetchBudget();
   } else {
     currentUserUid=null;
     toggleLoginState(false);
     tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
     analyticsContainer.style.display="none";
     userNameDisplay.textContent = "";
+    clearBudgetUI();
   }
 });
 
@@ -276,6 +328,7 @@ loginBtn.addEventListener("click", async () => {
     loadData();
     userNameDisplay.textContent = result.user.displayName || "User";
     showMessage("✅ Logged in successfully",2000);
+    fetchBudget();
   } catch(err){ console.error(err); showMessage("❌ Login failed",2000); }
 });
 
@@ -287,6 +340,7 @@ logoutBtn.addEventListener("click", async () => {
     tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
     analyticsContainer.style.display="none";
     userNameDisplay.textContent = "";
+    clearBudgetUI();
     showMessage("✅ Logged out successfully",2000);
   } catch(err){ console.error(err); showMessage("❌ Logout failed",2000); }
 });
@@ -329,9 +383,112 @@ form.addEventListener("submit", async e=>{
     showMessage(result.message);
     editId.value="";
     form.reset();
-    loadData();
+    await loadData();
+    // re-fetch budget after adding/updating expense to update progress
+    await fetchBudget();
   } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
 });
+
+// ----------- Budget functions (frontend) -----------
+async function saveBudgetToServer(amount){
+  if(!currentUserUid) return;
+  try {
+    const res = await fetch(`${BASE_URL}/setBudget`, {
+      method: "POST",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify({ uid: currentUserUid, amount: parseFloat(amount) || 0 })
+    });
+    const r = await res.json();
+    if(res.ok) showMessage(r.message || "Budget saved");
+    else showMessage(r.message || "Failed to save budget");
+    await fetchBudget();
+  } catch(err){ console.error(err); showMessage("❌ Failed to save budget",2000); }
+}
+
+async function fetchBudget(){
+  if(!currentUserUid) return clearBudgetUI();
+  try {
+    const res = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
+    if(!res.ok) return clearBudgetUI();
+    const r = await res.json();
+    if(!r || !r.amount) return clearBudgetUI();
+    // compute current total from loaded table (or refetch expenses)
+    // We'll call loadData which will call updateBudgetUI with total.
+    // But to be safe, fetch expenses and compute total here too.
+    const expensesRes = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
+    const arr = await expensesRes.json();
+    let totalAmount = 0;
+    if(Array.isArray(arr)) arr.forEach(x=> totalAmount += parseFloat(x.amount)||0);
+    updateBudgetUI(parseFloat(r.amount), totalAmount);
+    budgetInput.value = parseFloat(r.amount);
+  } catch(err){ console.error(err); clearBudgetUI(); }
+}
+
+function clearBudgetUI(){
+  budgetInput.value = "";
+  budgetProgressBar.style.width = "0%";
+  budgetProgressBar.className = "progress-bar";
+  budgetStatusText.innerText = "No budget set";
+  budgetAlerts.innerHTML = "";
+}
+
+// update UI after we know budgetAmount and totalSpent
+function updateBudgetUI(budgetAmount, totalSpent){
+  if(!budgetAmount || budgetAmount <= 0){
+    clearBudgetUI();
+    return;
+  }
+  const pct = Math.min( (totalSpent / budgetAmount) * 100, 100 );
+  const pctFixed = Math.round(pct);
+  budgetProgressBar.style.width = pctFixed + "%";
+  budgetProgressBar.innerText = `${pctFixed}%`;
+
+  // Color logic: normal -> green, >=80 -> yellow (warning), >100 -> red (danger)
+  budgetProgressBar.className = "progress-bar";
+  if(pct >= 100){
+    budgetProgressBar.classList.add("bg-danger");
+  } else if(pct >= 80){
+    budgetProgressBar.classList.add("bg-warning");
+  } else {
+    budgetProgressBar.classList.add("bg-success");
+  }
+
+  budgetStatusText.innerText = `Budget: ₹${budgetAmount.toFixed(2)}  —  Spent: ₹${totalSpent.toFixed(2)}`;
+
+  // Alerts
+  budgetAlerts.innerHTML = "";
+  if(pct >= 100){
+    budgetAlerts.innerHTML = `<div class="text-danger" style="font-weight:700;">🚨 Budget exceeded! You spent ₹${(totalSpent - budgetAmount).toFixed(2)} over the limit.</div>`;
+  } else if(pct >= 80){
+    budgetAlerts.innerHTML = `<div class="text-warning" style="font-weight:700;">⚠️ You're at ${pctFixed}% of your budget. Be careful!</div>`;
+  }
+}
+
+// Save budget button
+saveBudgetBtn.addEventListener("click", async () => {
+  const val = parseFloat(budgetInput.value);
+  if(!val || val <= 0){ showMessage("Enter valid budget amount"); return; }
+  await saveBudgetToServer(val);
+});
+
+// Reset budget
+resetBudgetBtn.addEventListener("click", async () => {
+  if(!currentUserUid) return;
+  if(!confirm("Reset/delete your budget?")) return;
+  try {
+    const res = await fetch(`${BASE_URL}/setBudget`, {
+      method: "POST",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify({ uid: currentUserUid, amount: 0, reset: true })
+    });
+    const r = await res.json();
+    if(res.ok) showMessage(r.message || "Budget reset");
+    else showMessage(r.message || "Reset failed");
+    clearBudgetUI();
+  } catch(err){ console.error(err); showMessage("❌ Reset failed",2000); }
+});
+// ----------- End Budget functions -----------
+
 
 // Load data
 async function loadData(){
@@ -343,6 +500,12 @@ async function loadData(){
     if(!Array.isArray(users) || users.length===0){
       tableContainer.innerHTML = "<p class='text-muted'>No expenses yet.</p>";
       analyticsContainer.style.display="none";
+      // update budget UI with zero spent
+      const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
+      if(bRes.ok){
+        const b = await bRes.json();
+        if(b && b.amount) updateBudgetUI(parseFloat(b.amount), 0);
+      }
       return;
     }
 
@@ -373,6 +536,18 @@ async function loadData(){
     // Show charts
     analyticsContainer.style.display="block";
     renderCharts(users);
+
+    // Update budget UI with totals
+    const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
+    if(bRes.ok){
+      const b = await bRes.json();
+      if(b && b.amount && parseFloat(b.amount) > 0){
+        updateBudgetUI(parseFloat(b.amount), totalAmount);
+      } else {
+        // no budget set
+        clearBudgetUI();
+      }
+    }
   } catch(err){ console.error(err); tableContainer.innerHTML="<p class='text-danger'>Failed to load expenses.</p>"; }
 }
 
@@ -406,7 +581,9 @@ function renderCharts(users){
 
   // Line Chart - Expense over Time
   const lineCtx = document.getElementById('lineChart').getContext('2d');
-  new Chart(lineCtx, {
+  // destroy existing chart instances if any to avoid duplicates
+  if(window.lineChartInstance) window.lineChartInstance.destroy();
+  window.lineChartInstance = new Chart(lineCtx, {
     type: 'line',
     data: {
       labels: Object.keys(dates),
@@ -424,7 +601,8 @@ function renderCharts(users){
 
   // Pie Chart - Expense by Type
   const pieCtx = document.getElementById('pieChart').getContext('2d');
-  new Chart(pieCtx, {
+  if(window.pieChartInstance) window.pieChartInstance.destroy();
+  window.pieChartInstance = new Chart(pieCtx, {
     type: 'pie',
     data: {
       labels: Object.keys(types),
