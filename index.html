@@ -8,7 +8,10 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- socket.io client will be loaded dynamically from server via /socket.io/socket.io.js -->
+
 <style>
+/* -- your existing styles unchanged (kept concise here) -- */
 body { background-color:#0b0b0b; color:white; min-height:100vh; margin:0; font-family:"Poppins",sans-serif; }
 header { display:none; background:#0b0b0b; border-bottom:1px solid #222; padding:15px 20px; border-radius:0 0 15px 15px; }
 header .project-name { font-size:1.5rem; color:#00bcd4; font-weight:700; margin-bottom:3px; }
@@ -22,13 +25,12 @@ table thead { background:#00bcd4; color:#000; font-weight:600; }
 #loginContainer { text-align:center; margin-top:100px; }
 #budgetCard { display:none; margin-top:20px; border-radius:12px; padding:16px; background:#1a1a1a; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
 #aboutModal, #historyModal { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8); padding:50px 20px; box-sizing:border-box; overflow:auto; }
-#historyModal .history-card { max-width:900px; margin:auto; background:#121212; padding:20px; border-radius:12px; border:1px solid #222; color:#fff; }
+#historyModal .history-card { max-width:900px; margin:auto; background:#121212; padding:20px; border-radius:12px; border:1px solid #222; }
 .history-entry { border-bottom:1px dashed #333; padding:10px 0; }
 .field-changed { font-weight:700; color:#ffc107; }
 .activity-item { padding:8px 0; border-bottom:1px dashed #222; }
 footer { background:#111; color:#aaa; text-align:center; padding:15px 20px; border-top:1px solid #222; margin-top:40px; font-size:0.9rem; }
 .blinking-name { color: #00bcd4; }
-.btn-primary { background:#00bcd4; border-color:#00bcd4; color:#000; }
 </style>
 </head>
 <body>
@@ -170,7 +172,8 @@ footer { background:#111; color:#aaa; text-align:center; padding:15px 20px; bord
 <!-- History Modal -->
 <div id="historyModal">
   <div class="history-card" id="historyContent">
-    <!-- content injected dynamically -->
+    <h4 id="historyTitle" style="color:#ffc107;">History</h4>
+    <div id="historyList"></div>
     <div style="text-align:right; margin-top:12px;">
       <button id="closeHistoryBtn" class="btn btn-sm btn-secondary">Close</button>
     </div>
@@ -183,13 +186,16 @@ footer { background:#111; color:#aaa; text-align:center; padding:15px 20px; bord
 /* --------------------------
   Config & globals
 ---------------------------*/
-// BASE URL for backend: if using same host, use relative root
-const BASE_URL = window.location.hostname.includes("localhost") ? "http://localhost:3000" : window.location.origin;
+// BASE URL for your backend
+const BASE_URL = window.location.hostname.includes("localhost")
+  ? "http://localhost:3000"
+  : "https://sandy-backend2-0.onrender.com";
 
+// socket loader flag
 let socketIoLoaded = false;
 let socket = null;
 
-// Firebase init (keeps your existing config)
+// Firebase init
 const firebaseConfig = {
   apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
   authDomain: "ptspro-31997.firebaseapp.com",
@@ -203,9 +209,11 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
 let currentUserUid = null;
-let currentBudgetAmount = 0;
+let currentBudgetAmount = 0; // <-- important global
 
-/* DOM refs */
+/* --------------------------
+  DOM refs
+---------------------------*/
 const loginBtn = document.getElementById("googleLoginBtn");
 const logoutBtn = document.getElementById("googleLogoutBtn");
 const loginContainer = document.getElementById("loginContainer");
@@ -226,17 +234,21 @@ const aboutLink = document.getElementById("aboutLink");
 const aboutModal = document.getElementById("aboutModal");
 const closeAbout = document.getElementById("closeAbout");
 const historyModal = document.getElementById("historyModal");
-const historyContent = document.getElementById("historyContent");
+const historyList = document.getElementById("historyList");
+const historyTitle = document.getElementById("historyTitle");
 const closeHistoryBtn = document.getElementById("closeHistoryBtn");
 const form = document.getElementById("expenseForm");
 const editId = document.getElementById("editId");
 
-/* Helpers */
+/* --------------------------
+  Helpers
+---------------------------*/
 function showMessage(msg, duration=2000){
   msgBox.innerText = msg;
   msgBox.style.display = "block";
   setTimeout(()=> msgBox.style.display = "none", duration);
 }
+
 function formatDateString(d){
   if(!d) return "—";
   const dt = (typeof d === 'string' || typeof d === 'number') ? new Date(d) : d;
@@ -245,32 +257,45 @@ function formatDateString(d){
   return dt.toLocaleString('en-GB', opts);
 }
 
-/* Socket loader */
+/* --------------------------
+  Load socket.io client then connect
+---------------------------*/
 (function loadSocketIo(){
   const s = document.createElement('script');
   s.src = `${BASE_URL.replace(/\/$/,'')}/socket.io/socket.io.js`;
-  s.onload = ()=> { socketIoLoaded = true; if(currentUserUid) connectSocket(); };
-  s.onerror = ()=> { socketIoLoaded = false; };
+  s.onload = ()=> { console.log("socket.io client loaded"); socketIoLoaded = true; if(currentUserUid) connectSocket(); };
+  s.onerror = ()=> { console.warn("socket.io client failed to load"); socketIoLoaded = false; };
   document.head.appendChild(s);
 })();
+
 function connectSocket(retries = 0){
   try {
     if(typeof io === 'undefined'){
       if(retries < 5) setTimeout(()=> connectSocket(retries+1), 800);
-      else console.warn("socket.io client not available");
+      else console.warn("socket.io client not available (tried retries)");
       return;
     }
+    // prevent duplicate sockets
     if(socket && socket.connected) return;
     socket = io(BASE_URL);
     socket.on("connect", ()=> {
+      console.log("socket connected:", socket.id);
       if(currentUserUid) socket.emit("join", currentUserUid);
     });
-    socket.on("expenses-changed", ()=> loadData());
-    socket.on("budget-changed", ()=> fetchBudget());
+    socket.on("expenses-changed", (payload)=> {
+      console.log("expenses-changed", payload);
+      loadData(); // reload
+    });
+    socket.on("budget-changed", (payload) => {
+      console.log("budget-changed", payload);
+      fetchBudget();
+    });
   } catch(err){ console.error("Socket error", err); }
 }
 
-/* Auth & UI */
+/* --------------------------
+  Auth & UI toggles
+---------------------------*/
 function toggleLoginState(isLoggedIn){
   loginContainer.style.display = isLoggedIn ? "none" : "block";
   logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
@@ -280,13 +305,14 @@ function toggleLoginState(isLoggedIn){
   analyticsContainer.style.display = isLoggedIn ? analyticsContainer.style.display : "none";
   document.getElementById("activityLog").style.display = isLoggedIn ? "block" : "none";
 }
+
 auth.onAuthStateChanged(async user=>{
   if(user){
     currentUserUid = user.uid;
     toggleLoginState(true);
     userNameDisplay.textContent = user.displayName || "User";
     if(socketIoLoaded) connectSocket();
-    else connectSocket();
+    else connectSocket(); // try connecting with retries
     await loadData();
     await fetchBudget();
   } else {
@@ -313,7 +339,8 @@ loginBtn.addEventListener("click", async () => {
     fetchBudget();
   } catch(err){ console.error(err); showMessage("❌ Login failed",2000); }
 });
-logoutBtn && logoutBtn.addEventListener("click", async () => {
+
+logoutBtn.addEventListener("click", async () => {
   try {
     await auth.signOut();
     currentUserUid = null;
@@ -327,7 +354,9 @@ logoutBtn && logoutBtn.addEventListener("click", async () => {
   } catch(err){ console.error(err); showMessage("❌ Logout failed",2000); }
 });
 
-/* Expense submit (create/update) */
+/* --------------------------
+  Expense form submit (create + update)
+---------------------------*/
 form.addEventListener("submit", async e=>{
   e.preventDefault();
   if(!currentUserUid) return showMessage("Login first");
@@ -342,6 +371,7 @@ form.addEventListener("submit", async e=>{
 
   try {
     const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
+    // include editorName when updating
     if(editId.value){
       payload.editorName = (auth.currentUser && auth.currentUser.displayName) ? auth.currentUser.displayName : null;
     }
@@ -356,19 +386,148 @@ form.addEventListener("submit", async e=>{
   } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500); }
 });
 
-/* Budget functions (unchanged) */
-async function saveBudgetToServer(amount){ if(!currentUserUid) return; try { const res = await fetch(`${BASE_URL}/setBudget`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ uid: currentUserUid, amount: parseFloat(amount) || 0 }) }); const r = await res.json(); if(res.ok) showMessage(r.message || "Budget saved"); else showMessage(r.message || "Failed to save budget"); await fetchBudget(); } catch(err){ console.error(err); showMessage("❌ Failed to save budget",2000); } }
-async function fetchBudget(){ if(!currentUserUid) return clearBudgetUI(); try { const res = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`); if(!res.ok) return clearBudgetUI(); const r = await res.json(); if(!r || typeof r.amount === "undefined" || r.amount === 0){ currentBudgetAmount = 0; clearBudgetUI(); return; } currentBudgetAmount = parseFloat(r.amount) || 0; const expensesRes = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`); const arr = await expensesRes.json(); let totalAmount = 0; if(Array.isArray(arr)) arr.forEach(x=> totalAmount += parseFloat(x.amount)||0); updateBudgetUI(currentBudgetAmount, totalAmount); budgetInput.value = currentBudgetAmount; } catch(err){ console.error(err); clearBudgetUI(); } }
-function clearBudgetUI(){ budgetInput.value = ""; if(budgetProgressBar) budgetProgressBar.style.width = "0%"; if(budgetProgressBar) budgetProgressBar.className = "progress-bar"; budgetStatusText.innerText = "No budget set"; budgetAlerts.innerHTML = ""; currentBudgetAmount = 0; analyticsBadge.innerText = ""; }
-function updateBudgetUI(budgetAmount, totalSpent){ if(!budgetAmount || budgetAmount <= 0){ clearBudgetUI(); return; } const pct = (totalSpent / budgetAmount) * 100; const pctClamped = Math.min(Math.round(pct), 999); const widthPct = Math.min(pctClamped, 100); budgetProgressBar.style.width = widthPct + "%"; budgetProgressBar.innerText = `${pctClamped}%`; budgetProgressBar.className = "progress-bar"; if(pct >= 100){ budgetProgressBar.classList.add("bg-danger"); } else if(pct >= 80){ budgetProgressBar.classList.add("bg-warning"); } else { budgetProgressBar.classList.add("bg-success"); } budgetStatusText.innerText = `Budget: ₹${budgetAmount.toFixed(2)}  —  Spent: ₹${totalSpent.toFixed(2)}`; budgetAlerts.innerHTML = ""; analyticsBadge.innerText = ""; if(pct >= 100){ const over = (totalSpent - budgetAmount); budgetAlerts.innerHTML = `<div class="text-danger" style="font-weight:700;">🚨 Budget exceeded! You spent ₹${over.toFixed(2)} over the limit.</div>`; analyticsBadge.innerHTML = `🚨 Over budget: ₹${over.toFixed(2)} (shown as red slice in chart)`; } else if(pct >= 80){ budgetAlerts.innerHTML = `<div class="text-warning" style="font-weight:700;">⚠️ You're at ${Math.round(pct)}% of your budget. Be careful!</div>`; analyticsBadge.innerHTML = `⚠️ Usage: ${Math.round(pct)}% of budget`; } else { analyticsBadge.innerHTML = `✅ Usage: ${Math.round(pct)}% of budget`; } }
-saveBudgetBtn.addEventListener("click", async () => { const val = parseFloat(budgetInput.value); if(!val || val <= 0){ showMessage("Enter valid budget amount"); return; } await saveBudgetToServer(val); });
-resetBudgetBtn.addEventListener("click", async () => { if(!currentUserUid) return; if(!confirm("Reset/delete your budget?")) return; try { const res = await fetch(`${BASE_URL}/setBudget`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ uid: currentUserUid, amount: 0, reset: true }) }); const r = await res.json(); if(res.ok) showMessage(r.message || "Budget reset"); else showMessage(r.message || "Reset failed"); clearBudgetUI(); } catch(err){ console.error(err); showMessage("❌ Reset failed",2000); } });
+/* --------------------------
+  Budget functions
+---------------------------*/
+async function saveBudgetToServer(amount){
+  if(!currentUserUid) return;
+  try {
+    const res = await fetch(`${BASE_URL}/setBudget`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ uid: currentUserUid, amount: parseFloat(amount) || 0 }) });
+    const r = await res.json();
+    if(res.ok) showMessage(r.message || "Budget saved");
+    else showMessage(r.message || "Failed to save budget");
+    await fetchBudget();
+  } catch(err){ console.error(err); showMessage("❌ Failed to save budget",2000); }
+}
 
-/* Activity log helpers (unchanged) */
-function buildActivityLog(allUsers){ const log = []; allUsers.forEach(u => { if(u.createdAt) log.push({ type:'created', uid:u.uid, display:`${u.name} created`, date:u.createdAt, expenseId:u._id, by:u.uid }); if(Array.isArray(u.editHistory)){ u.editHistory.forEach(e=>{ log.push({ type:'edited', expenseName:u.name, expenseId:u._id, editorName:e.editorName || e.editorUid || 'Unknown', date:e.date, before:e.before, after:e.after, editorUid:e.editorUid }); }); } }); log.sort((a,b)=> new Date(b.date) - new Date(a.date)); return log; }
-function renderActivityLog(allUsers){ const itemsDiv = document.getElementById('activityItems'); const container = document.getElementById('activityLog'); const log = buildActivityLog(allUsers); itemsDiv.innerHTML = ""; if(!log || log.length===0){ container.style.display = 'none'; return; } container.style.display = 'block'; const limited = log.slice(0,20); limited.forEach(it=>{ const div = document.createElement('div'); div.className = "activity-item"; if(it.type === 'created'){ div.innerHTML = `<div><strong>${it.display}</strong> — ${formatDateString(it.date)}</div>`; } else { const changed = []; if(it.before && it.after){ for(const k of Object.keys(it.before)) if(String(it.before[k]) !== String(it.after[k])) changed.push(k); } const fieldsText = changed.length ? `<span class="field-changed">${changed.join(', ')}</span>` : `<span class="text-muted">no fields</span>`; div.innerHTML = `<div><strong>${it.editorName}</strong> edited <strong>${it.expenseName || ''}</strong> — ${fieldsText} — ${formatDateString(it.date)}</div>`; } itemsDiv.appendChild(div); }); }
+async function fetchBudget(){
+  if(!currentUserUid) return clearBudgetUI();
+  try {
+    const res = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
+    if(!res.ok) return clearBudgetUI();
+    const r = await res.json();
+    if(!r || typeof r.amount === "undefined" || r.amount === 0){
+      currentBudgetAmount = 0;
+      clearBudgetUI();
+      return;
+    }
+    currentBudgetAmount = parseFloat(r.amount) || 0;
 
-/* Load data (main) */
+    // compute current total from expenses and update UI
+    const expensesRes = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
+    const arr = await expensesRes.json();
+    let totalAmount = 0;
+    if(Array.isArray(arr)) arr.forEach(x=> totalAmount += parseFloat(x.amount)||0);
+    updateBudgetUI(currentBudgetAmount, totalAmount);
+    budgetInput.value = currentBudgetAmount;
+  } catch(err){ console.error(err); clearBudgetUI(); }
+}
+
+function clearBudgetUI(){
+  budgetInput.value = "";
+  if(budgetProgressBar) budgetProgressBar.style.width = "0%";
+  if(budgetProgressBar) budgetProgressBar.className = "progress-bar";
+  budgetStatusText.innerText = "No budget set";
+  budgetAlerts.innerHTML = "";
+  currentBudgetAmount = 0;
+  analyticsBadge.innerText = "";
+}
+
+function updateBudgetUI(budgetAmount, totalSpent){
+  if(!budgetAmount || budgetAmount <= 0){
+    clearBudgetUI();
+    return;
+  }
+  const pct = (totalSpent / budgetAmount) * 100;
+  const pctClamped = Math.min(Math.round(pct), 999);
+  const widthPct = Math.min(pctClamped, 100);
+  budgetProgressBar.style.width = widthPct + "%";
+  budgetProgressBar.innerText = `${pctClamped}%`;
+
+  budgetProgressBar.className = "progress-bar";
+  if(pct >= 100){ budgetProgressBar.classList.add("bg-danger"); }
+  else if(pct >= 80){ budgetProgressBar.classList.add("bg-warning"); }
+  else { budgetProgressBar.classList.add("bg-success"); }
+
+  budgetStatusText.innerText = `Budget: ₹${budgetAmount.toFixed(2)}  —  Spent: ₹${totalSpent.toFixed(2)}`;
+
+  budgetAlerts.innerHTML = "";
+  analyticsBadge.innerText = "";
+  if(pct >= 100){
+    const over = (totalSpent - budgetAmount);
+    budgetAlerts.innerHTML = `<div class="text-danger" style="font-weight:700;">🚨 Budget exceeded! You spent ₹${over.toFixed(2)} over the limit.</div>`;
+    analyticsBadge.innerHTML = `🚨 Over budget: ₹${over.toFixed(2)} (shown as red slice in chart)`;
+  } else if(pct >= 80){
+    budgetAlerts.innerHTML = `<div class="text-warning" style="font-weight:700;">⚠️ You're at ${Math.round(pct)}% of your budget. Be careful!</div>`;
+    analyticsBadge.innerHTML = `⚠️ Usage: ${Math.round(pct)}% of budget`;
+  } else {
+    analyticsBadge.innerHTML = `✅ Usage: ${Math.round(pct)}% of budget`;
+  }
+}
+
+saveBudgetBtn.addEventListener("click", async () => {
+  const val = parseFloat(budgetInput.value);
+  if(!val || val <= 0){ showMessage("Enter valid budget amount"); return; }
+  await saveBudgetToServer(val);
+});
+
+resetBudgetBtn.addEventListener("click", async () => {
+  if(!currentUserUid) return;
+  if(!confirm("Reset/delete your budget?")) return;
+  try {
+    const res = await fetch(`${BASE_URL}/setBudget`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ uid: currentUserUid, amount: 0, reset: true }) });
+    const r = await res.json();
+    if(res.ok) showMessage(r.message || "Budget reset");
+    else showMessage(r.message || "Reset failed");
+    clearBudgetUI();
+  } catch(err){ console.error(err); showMessage("❌ Reset failed",2000); }
+});
+
+/* --------------------------
+  Activity log & history helpers
+---------------------------*/
+function buildActivityLog(allUsers){
+  const log = [];
+  allUsers.forEach(u => {
+    if(u.createdAt) log.push({ type:'created', uid:u.uid, display:`${u.name} created`, date:u.createdAt, expenseId:u._id, by:u.uid });
+    if(Array.isArray(u.editHistory)){
+      u.editHistory.forEach(e=>{
+        log.push({ type:'edited', expenseName:u.name, expenseId:u._id, editorName:e.editorName || e.editorUid || 'Unknown', date:e.date, before:e.before, after:e.after, editorUid:e.editorUid });
+      });
+    }
+  });
+  log.sort((a,b)=> new Date(b.date) - new Date(a.date));
+  return log;
+}
+
+function renderActivityLog(allUsers){
+  const itemsDiv = document.getElementById('activityItems');
+  const container = document.getElementById('activityLog');
+  const log = buildActivityLog(allUsers);
+  itemsDiv.innerHTML = "";
+  if(!log || log.length===0){ container.style.display = 'none'; return; }
+  container.style.display = 'block';
+  const limited = log.slice(0,20);
+  limited.forEach(it=>{
+    const div = document.createElement('div');
+    div.className = "activity-item";
+    if(it.type === 'created'){
+      div.innerHTML = `<div><strong>${it.display}</strong> — ${formatDateString(it.date)}</div>`;
+    } else {
+      const changed = [];
+      if(it.before && it.after){
+        for(const k of Object.keys(it.before)) if(String(it.before[k]) !== String(it.after[k])) changed.push(k);
+      }
+      const fieldsText = changed.length ? `<span class="field-changed">${changed.join(', ')}</span>` : `<span class="text-muted">no fields</span>`;
+      div.innerHTML = `<div><strong>${it.editorName}</strong> edited <strong>${it.expenseName || ''}</strong> — ${fieldsText} — ${formatDateString(it.date)}</div>`;
+    }
+    itemsDiv.appendChild(div);
+  });
+}
+
+/* --------------------------
+  Load data (main)
+---------------------------*/
 async function loadData(){
   if(!currentUserUid) return;
   try{
@@ -435,7 +594,9 @@ async function loadData(){
   }
 }
 
-/* Edit handler */
+/* --------------------------
+  Edit / History handlers (global)
+---------------------------*/
 window.editExpense = async function(id){
   try{
     const res = await fetch(`${BASE_URL}/user/${id}`);
@@ -448,66 +609,51 @@ window.editExpense = async function(id){
     document.getElementById("date").value = user.date || "";
     editId.value = id;
     showMessage("✏ Edit mode enabled",2000);
+    // scroll into view
     window.scrollTo({ top: 0, behavior: "smooth" });
   } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500); }
 };
 
-/* --------------------------
-   FIXED History view function
-   This is the important fix — it now renders Created + each edit (before/after, editor, time)
----------------------------*/
 window.viewHistory = async function(id){
   try{
     const res = await fetch(`${BASE_URL}/user/${id}`);
     if(!res.ok) throw new Error("Failed to fetch history");
     const u = await res.json();
-
-    // Build HTML
-    let html = `<h4 style="color:#ffc107;">History for: ${u.name || 'Expense'}</h4>`;
-    html += `<div style="margin-top:8px;"><strong>Created:</strong> ${formatDateString(u.createdAt)}</div>`;
-    html += `<div class="text-muted" style="margin-bottom:12px;">Initial values.</div>`;
-
+    historyTitle.innerText = `History for: ${u.name || 'Expense'}`;
+    historyList.innerHTML = "";
+    const createdHtml = `<div class="history-entry"><div><strong>Created:</strong> ${formatDateString(u.createdAt)} </div><div class="text-muted">Initial values.</div></div>`;
+    historyList.insertAdjacentHTML('beforeend', createdHtml);
     const hist = Array.isArray(u.editHistory) ? u.editHistory.slice().reverse() : [];
     if(hist.length === 0){
-      html += `<div class="history-entry"><div class="text-muted">No edits yet.</div></div>`;
+      historyList.insertAdjacentHTML('beforeend', `<div class="history-entry"><div class="text-muted">No edits yet.</div></div>`);
     } else {
-      hist.forEach((h, idx) => {
-        // for display we prefer friendly values
+      hist.forEach(h=>{
+        const changedFields = [];
+        if(h.before && h.after){
+          Object.keys(h.before).forEach(k=>{
+            if(String(h.before[k]) !== String(h.after[k])) changedFields.push(k);
+          });
+        }
+        const changedText = changedFields.length ? `<div>Changed: <span class="field-changed">${changedFields.join(', ')}</span></div>` : `<div class="text-muted">No field differences detected</div>`;
         const editor = h.editorName || h.editorUid || "Unknown";
-        const editedAt = formatDateString(h.date || h.editedAt || h.timestamp || null);
-
-        // safe getter for before/after fields (some entries might miss fields)
-        const before = h.before || {};
-        const after = h.after || {};
-
-        html += `<div class="history-entry">
-          <div><strong>#${hist.length - idx}</strong> Edited on <strong>${editedAt}</strong> by <strong>${editor}</strong></div>
-          <div style="margin-top:6px;">
-            <div><strong>Before:</strong> ${before.name ?? '—'}  |  ₹${(before.amount ?? '—')}  |  ${before.type ?? '—'}  ${before.description ? "| " + before.description : ""} ${before.date ? " | " + before.date : ""}</div>
-            <div style="margin-top:6px;"><strong>After:</strong> ${after.name ?? '—'}  |  ₹${(after.amount ?? '—')}  |  ${after.type ?? '—'}  ${after.description ? "| " + after.description : ""} ${after.date ? " | " + after.date : ""}</div>
-          </div>
+        const entryHtml = `<div class="history-entry">
+          <div><strong>${editor}</strong> — ${formatDateString(h.date)}</div>
+          ${changedText}
+          <details style="margin-top:8px;">
+            <summary style="cursor:pointer">Show before / after</summary>
+            <pre style="background:#0b0b0b;padding:10px;border-radius:6px;margin-top:8px;">Before: ${JSON.stringify(h.before,null,2)}\n\nAfter: ${JSON.stringify(h.after,null,2)}</pre>
+          </details>
         </div>`;
+        historyList.insertAdjacentHTML('beforeend', entryHtml);
       });
     }
-
-    // Inject content into modal container
-    // keep close button
-    html += `<div style="text-align:right; margin-top:12px;"><button id="closeHistoryBtnInner" class="btn btn-sm btn-secondary">Close</button></div>`;
-
-    historyContent.innerHTML = html;
-
-    // wire up close button inside injected content
-    const closeInner = document.getElementById("closeHistoryBtnInner");
-    closeInner && closeInner.addEventListener("click", ()=> { historyModal.style.display = "none"; });
-
     historyModal.style.display = "block";
-  } catch(err){
-    console.error(err);
-    showMessage("❌ Failed to load history",2000);
-  }
+  } catch(err){ console.error(err); showMessage("❌ Failed to load history",2000); }
 };
 
-/* Charts (unchanged but complete) */
+/* --------------------------
+  Charts
+---------------------------*/
 function renderCharts(users){
   const dates = {};
   const types = {};
@@ -528,55 +674,51 @@ function renderCharts(users){
   }
 
   // Line Chart
-  const lineCtx = document.getElementById('lineChart')?.getContext('2d');
-  if(lineCtx){
-    if(window.lineChartInstance) window.lineChartInstance.destroy();
-    window.lineChartInstance = new Chart(lineCtx, {
-      type: 'line',
-      data: {
-        labels: Object.keys(dates),
-        datasets: [{
-          label: 'Total Expense',
-          data: Object.values(dates),
-          borderColor: '#00bcd4',
-          backgroundColor: 'rgba(0,188,212,0.2)',
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: { scales: { y: { beginAtZero:true } } }
-    });
-  }
+  const lineCtx = document.getElementById('lineChart').getContext('2d');
+  if(window.lineChartInstance) window.lineChartInstance.destroy();
+  window.lineChartInstance = new Chart(lineCtx, {
+    type: 'line',
+    data: {
+      labels: Object.keys(dates),
+      datasets: [{
+        label: 'Total Expense',
+        data: Object.values(dates),
+        borderColor: '#00bcd4',
+        backgroundColor: 'rgba(0,188,212,0.2)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: { scales: { y: { beginAtZero:true } } }
+  });
 
   // Pie Chart
-  const pieCtx = document.getElementById('pieChart')?.getContext('2d');
-  if(pieCtx){
-    if(window.pieChartInstance) window.pieChartInstance.destroy();
-    const labels = Object.keys(types);
-    const values = Object.values(types);
-    const baseColors = ['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0','#3f51b5','#009688'];
-    const bgColors = labels.map(l => l.startsWith("Over Budget") ? '#ff3b30' : baseColors.shift() || '#607d8b');
+  const pieCtx = document.getElementById('pieChart').getContext('2d');
+  if(window.pieChartInstance) window.pieChartInstance.destroy();
+  const labels = Object.keys(types);
+  const values = Object.values(types);
+  const baseColors = ['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0','#3f51b5','#009688'];
+  const bgColors = labels.map(l => l.startsWith("Over Budget") ? '#ff3b30' : baseColors.shift() || '#607d8b');
 
-    window.pieChartInstance = new Chart(pieCtx, {
-      type: 'pie',
-      data: { labels, datasets: [{ data: values, backgroundColor: bgColors }] },
-      options: {}
-    });
-  }
+  window.pieChartInstance = new Chart(pieCtx, {
+    type: 'pie',
+    data: { labels, datasets: [{ data: values, backgroundColor: bgColors }] },
+    options: {}
+  });
 
   if(overAmount > 0) analyticsBadge.innerText = `🚨 Over budget: ₹${overAmount.toFixed(2)} — shown as red slice in chart.`;
   else if(currentBudgetAmount > 0) analyticsBadge.innerText = `✅ Within budget: Budget ₹${currentBudgetAmount.toFixed(2)}, Spent ₹${totalAmount.toFixed(2)}.`;
   else analyticsBadge.innerText = "";
 }
 
-/* UI modals */
+/* --------------------------
+  UI actions for modals
+---------------------------*/
 aboutLink.addEventListener('click', e=>{ e.preventDefault(); aboutModal.style.display = 'block'; });
 closeAbout.addEventListener('click', ()=> aboutModal.style.display = 'none');
 window.addEventListener('click', e=> { if(e.target === aboutModal) aboutModal.style.display='none'; if(e.target === historyModal) historyModal.style.display='none'; });
 closeHistoryBtn.addEventListener('click', ()=> historyModal.style.display='none');
 
-/* initial fallback UI */
-tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
 </script>
 
 <footer>
