@@ -1,3 +1,4 @@
+// server.js (Node + Express + MongoDB + socket.io)
 require("dotenv").config();
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
@@ -15,7 +16,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "*", // change to your domain in production
     methods: ["GET","POST","PUT"]
   }
 });
@@ -32,7 +33,7 @@ async function start() {
     const expenses = db.collection("expenses");
     const budgets = db.collection("budgets");
 
-    // Serve front-end file if present
+    // Serve front-end (index.html in same folder)
     app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 
     // socket.io
@@ -49,6 +50,7 @@ async function start() {
       try {
         const { uid, name, amount, type, description, date } = req.body;
         const now = new Date();
+        // Normalize date to string if provided (optional)
         const doc = { uid, name, amount, type, description, date, createdAt: now, updatedAt: now, editCount: 0, editHistory: [] };
         const result = await expenses.insertOne(doc);
         io.to(`uid_${uid}`).emit("expenses-changed", { action: "created", id: result.insertedId, uid });
