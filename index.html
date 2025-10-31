@@ -493,7 +493,7 @@
             <td>${formatDateString(lastEdited)}</td>
             <td>
               <button class="btn btn-sm btn-outline-warning" onclick="editExpense('${id}')">Edit</button>
-              <button class="btn btn-sm btn-outline-info ms-1" onclick="viewHistory('${id}')">History</button>
+              
             </td>
           </tr>`;
         });
@@ -533,10 +533,10 @@
         const res = await fetch(`${BASE_URL}/user/${id}`);
         if(!res.ok) throw new Error('Failed to fetch history');
         const u = await res.json();
-        historyTitle.innerText = `History for: ${u.name || 'Expense'}`;
-        historyList.innerHTML = '';
-        historyList.insertAdjacentHTML('beforeend', `<div><strong>Created:</strong> ${formatDateString(u.createdAt)}</div><div class="small-muted">Initial values.</div><hr>`);
-        const hist = Array.isArray(u.editHistory) ? u.editHistory.slice().reverse() : [];
+        // historyTitle.innerText = `History for: ${u.name || 'Expense'}`;
+        // historyList.innerHTML = '';
+        // historyList.insertAdjacentHTML('beforeend', `<div><strong>Created:</strong> ${formatDateString(u.createdAt)}</div><div class="small-muted">Initial values.</div><hr>`);
+        // const hist = Array.isArray(u.editHistory) ? u.editHistory.slice().reverse() : [];
         if(hist.length === 0){
           historyList.insertAdjacentHTML('beforeend', `<div class="small-muted">No edits yet.</div>`);
         } else {
