@@ -1,4 +1,4 @@
-// server.js 
+// server.js
 require("dotenv").config();
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
@@ -163,4 +163,3 @@ async function start() {
 }
 
 start();
-
