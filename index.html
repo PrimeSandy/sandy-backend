@@ -19,15 +19,29 @@ body {
 }
 
 /* HEADER */
-header { display: none; background: #0b0b0b; border-bottom: 1px solid #222; padding: 15px 20px; border-radius: 0 0 15px 15px; }
+header {
+  display: none;
+  background: #0b0b0b;
+  border-bottom: 1px solid #222;
+  padding: 15px 20px;
+  border-radius: 0 0 15px 15px;
+}
 header .project-name { font-size: 1.5rem; color: #00bcd4; font-weight: 700; margin-bottom: 3px; }
 header .typing { font-size: 1rem; color: #ffcc00; height: 1.2rem; }
 header .nav-links a { color: #fff; text-decoration:none; font-weight:500; margin-right:1rem; transition:0.3s; }
 header .nav-links a:hover { color:#00bcd4; }
-header button#googleLogoutBtn { background: transparent; border:2px solid #ff3b30; color:#ff3b30; font-weight:600; border-radius:8px; padding:6px 16px; transition:0.3s; }
+header button#googleLogoutBtn {
+  background: transparent; border:2px solid #ff3b30; color:#ff3b30;
+  font-weight:600; border-radius:8px; padding:6px 16px; transition:0.3s;
+}
 header button#googleLogoutBtn:hover { background:#ff3b30; color:white; }
 
-#userNameDisplay { flex: 1; text-align: center; color: #ffcc00; font-weight: 600; }
+#userNameDisplay {
+  flex: 1;
+  text-align: center;
+  color: #ffcc00;
+  font-weight: 600;
+}
 
 /* TABLE */
 .table-container { margin-top: 20px; padding: 20px; background:#1a1a1a; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
@@ -37,8 +51,12 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 
 /* LOGIN */
 #loginContainer { text-align:center; margin-top:100px; }
-#googleLoginBtn { font-size:1.1rem; padding:10px 26px; border-radius:10px; border:none; background:#00bcd4; color:#000; font-weight:600; cursor:pointer; transition:0.2s; }
-#googleLoginBtn:hover { background:#0097a7; color:#fff; }
+#loginContainer button {
+  font-size:1.2rem; padding:10px 30px; border-radius:10px;
+  border:none; background:#00bcd4; color:#000; font-weight:600;
+  cursor:pointer; transition:0.3s;
+}
+#loginContainer button:hover { background:#0097a7; color:white; }
 
 /* BUDGET */
 #budgetCard { display:none; margin-top:20px; border-radius:12px; padding:16px; background:#1a1a1a; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
@@ -46,25 +64,41 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 #budgetBar .progress { height:22px; line-height:22px; font-weight:600; }
 
 /* ABOUT */
-#aboutModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); color:white; z-index:9999; overflow:auto; padding:50px 20px; box-sizing:border-box; }
-#aboutModal .modal-content { max-width:700px; margin:auto; background:#1a1a1a; padding:30px; border-radius:20px; box-shadow:0 8px 25px rgba(0,0,0,0.6); }
+#aboutModal {
+  display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.8); color:white; z-index:9999; overflow:auto;
+  padding:50px 20px; box-sizing:border-box;
+}
+#aboutModal .modal-content {
+  max-width:700px; margin:auto; background:#1a1a1a; padding:30px; 
+  border-radius:20px; box-shadow:0 8px 25px rgba(0,0,0,0.6);
+}
 #aboutModal h2 { color:#ffc107; text-align:center; margin-bottom:20px; }
-#aboutModal button { padding:10px 20px; border:none; border-radius:10px; background:#00bcd4; color:#000; font-weight:600; cursor:pointer; margin-top:20px; }
+#aboutModal h4 { color:#ffc107; margin-top:20px; }
+#aboutModal button { 
+  padding:10px 20px; border:none; border-radius:10px; background:#00bcd4; 
+  color:#000; font-weight:600; cursor:pointer; margin-top:20px; 
+}
 #aboutModal button:hover { background:#0097a7; color:white; }
 
 #analyticsBadge { margin-top:10px; font-weight:700; }
 
 /* FOOTER */
-footer { background:#111; color:#aaa; text-align:center; padding:15px 20px; border-top:1px solid #222; margin-top:40px; font-size:0.9rem; }
+footer {
+  background:#111; color:#aaa; text-align:center; padding:15px 20px; 
+  border-top:1px solid #222; margin-top:40px; font-size:0.9rem;
+}
 .blinking-name { color: #00bcd4; }
 
-@media(min-width:576px){ footer div { flex-direction:row; justify-content:center; gap:30px; } }
+@media(min-width:576px){
+  footer div { flex-direction:row; justify-content:center; gap:30px; }
+}
 </style>
 </head>
 <body>
 
 <!-- LOGIN BUTTON -->
-<div id="loginContainer" class="container text-center">
+<div id="loginContainer">
   <button id="googleLoginBtn">Login with Google</button>
 </div>
 
@@ -77,7 +111,7 @@ footer { background:#111; color:#aaa; text-align:center; padding:15px 20px; bord
     </div>
     <div id="userNameDisplay"></div>
     <nav class="d-flex align-items-center nav-links">
-      <a href="#" id="contactLink">Contact</a>
+      <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k">Contact</a>
       <a href="#" id="aboutLink">About</a>
       <button id="googleLogoutBtn">Logout</button>
     </nav>
@@ -87,7 +121,7 @@ footer { background:#111; color:#aaa; text-align:center; padding:15px 20px; bord
 <!-- MAIN CONTAINER -->
 <div class="container my-3">
 
-  <!-- BUDGET CARD -->
+  <!-- BUDGET CARD (visible after login) -->
   <div id="budgetCard">
     <div class="d-flex justify-content-between align-items-center mb-2">
       <div>
@@ -201,18 +235,18 @@ footer { background:#111; color:#aaa; text-align:center; padding:15px 20px; bord
   </div>
 </div>
 
-<div id="msgBox" style="position: fixed; top: 20px; right: 20px; background-color: #198754; color: white; padding: 10px 20px; border-radius: 10px; display: none; z-index: 9999;"></div>
-
-<!-- load socket.io client from server -->
-<script src="/socket.io/socket.io.js"></script>
+<div id="msgBox" style="
+  position: fixed; top: 20px; right: 20px;
+  background-color: #198754; color: white; padding: 10px 20px;
+  border-radius: 10px; display: none; z-index: 9999;"></div>
 
 <script>
-// BASE URL (keeps your earlier logic)
+// BASE URL
 const BASE_URL = window.location.hostname.includes("localhost")
   ? "http://localhost:3000"
   : "https://sandy-backend2-0.onrender.com";
 
-// Firebase Config (yours)
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
   authDomain: "ptspro-31997.firebaseapp.com",
@@ -225,32 +259,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 let currentUserUid = null;
-let currentUserName = null;
-
-// socket.io client connect to same origin
-const socket = io(window.location.origin);
-
-socket.on("connect", () => {
-  console.log("Socket connected:", socket.id);
-  if(currentUserUid) socket.emit("join", currentUserUid);
-});
-
-socket.on("expenses-changed", (payload) => {
-  if(!currentUserUid) return;
-  if(payload && payload.uid === currentUserUid){
-    console.log("Realtime: expenses changed ->", payload);
-    loadData();
-    fetchBudget();
-  }
-});
-
-socket.on("budget-changed", (payload) => {
-  if(!currentUserUid) return;
-  if(payload && payload.uid === currentUserUid){
-    console.log("Realtime: budget changed ->", payload);
-    fetchBudget();
-  }
-});
 
 // Elements
 const loginBtn = document.getElementById("googleLoginBtn");
@@ -261,6 +269,8 @@ const tableContainer = document.getElementById("tableContainer");
 const msgBox = document.getElementById("msgBox");
 const userNameDisplay = document.getElementById("userNameDisplay");
 const analyticsContainer = document.getElementById("analyticsContainer");
+
+// Budget elements
 const budgetCard = document.getElementById("budgetCard");
 const budgetInput = document.getElementById("budgetInput");
 const saveBudgetBtn = document.getElementById("saveBudgetBtn");
@@ -269,8 +279,11 @@ const budgetProgressBar = document.getElementById("budgetProgressBar");
 const budgetStatusText = document.getElementById("budgetStatusText");
 const budgetAlerts = document.getElementById("budgetAlerts");
 const analyticsBadge = document.getElementById("analyticsBadge");
+
+// small global to hold budget (used in charts)
 let currentBudgetAmount = 0;
 
+// About modal
 const aboutLink = document.getElementById("aboutLink");
 const aboutModal = document.getElementById("aboutModal");
 const closeAbout = document.getElementById("closeAbout");
@@ -278,43 +291,34 @@ aboutLink.addEventListener("click", e => { e.preventDefault(); aboutModal.style.
 closeAbout.addEventListener("click", () => { aboutModal.style.display = "none"; });
 window.addEventListener("click", e => { if(e.target == aboutModal) aboutModal.style.display="none"; });
 
+// Message
 function showMessage(msg, duration=2000) {
   msgBox.innerText = msg;
   msgBox.style.display = "block";
   setTimeout(()=> msgBox.style.display="none", duration);
 }
 
+// Toggle login
 function toggleLoginState(isLoggedIn) {
   loginContainer.style.display = isLoggedIn ? "none" : "block";
-  if(logoutBtn) logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
+  logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
   expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
   document.querySelector("header").style.display = isLoggedIn ? "block" : "none";
   budgetCard.style.display = isLoggedIn ? "block" : "none";
   analyticsContainer.style.display = isLoggedIn ? analyticsContainer.style.display : "none";
 }
 
-// Enable Enter key to trigger Google Sign-In when not logged in
-document.addEventListener("keydown", (e) => {
-  // If Enter and user not logged in, trigger Google login
-  if(e.key === "Enter" && !currentUserUid) {
-    e.preventDefault();
-    loginBtn.click();
-  }
-});
-
-// Firebase Auth state
+// Firebase Auth
 auth.onAuthStateChanged(user=>{
   if(user){
     currentUserUid=user.uid;
-    currentUserName = user.displayName || "User";
     toggleLoginState(true);
-    if(socket && socket.connected) socket.emit("join", currentUserUid);
     loadData();
     userNameDisplay.textContent = user.displayName || "User";
+    // fetch budget on login
     fetchBudget();
   } else {
     currentUserUid=null;
-    currentUserName=null;
     toggleLoginState(false);
     tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
     analyticsContainer.style.display="none";
@@ -323,15 +327,12 @@ auth.onAuthStateChanged(user=>{
   }
 });
 
-// Google login button
 loginBtn.addEventListener("click", async () => {
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
     const result = await auth.signInWithPopup(provider);
     currentUserUid = result.user.uid;
-    currentUserName = result.user.displayName || "User";
     toggleLoginState(true);
-    if(socket && socket.connected) socket.emit("join", currentUserUid);
     loadData();
     userNameDisplay.textContent = result.user.displayName || "User";
     showMessage("✅ Logged in successfully",2000);
@@ -339,29 +340,24 @@ loginBtn.addEventListener("click", async () => {
   } catch(err){ console.error(err); showMessage("❌ Login failed",2000); }
 });
 
-// Logout
-if(logoutBtn) {
-  logoutBtn.addEventListener("click", async () => {
-    try {
-      await auth.signOut();
-      currentUserUid = null;
-      currentUserName = null;
-      toggleLoginState(false);
-      tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
-      analyticsContainer.style.display="none";
-      userNameDisplay.textContent = "";
-      clearBudgetUI();
-      showMessage("✅ Logged out successfully",2000);
-    } catch(err){ console.error(err); showMessage("❌ Logout failed",2000); }
-  });
-}
+logoutBtn.addEventListener("click", async () => {
+  try {
+    await auth.signOut();
+    currentUserUid = null;
+    toggleLoginState(false);
+    tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
+    analyticsContainer.style.display="none";
+    userNameDisplay.textContent = "";
+    clearBudgetUI();
+    showMessage("✅ Logged out successfully",2000);
+  } catch(err){ console.error(err); showMessage("❌ Logout failed",2000); }
+});
 
 // Typing animation
 const headerText = "Drop Your Expenses !";
 const typingHeader = document.getElementById("typingHeader");
 let headerIndex = 0;
 function typeWriterHeader() {
-  if(!typingHeader) return;
   if(headerIndex < headerText.length){
     typingHeader.innerHTML += headerText.charAt(headerIndex);
     headerIndex++;
@@ -372,13 +368,13 @@ function typeWriterHeader() {
 }
 typeWriterHeader();
 
-// Expense form handling
+// Expense form
 const form = document.getElementById("expenseForm");
 const editId = document.getElementById("editId");
 
 form.addEventListener("submit", async e=>{
   e.preventDefault();
-  if(!currentUserUid) return showMessage("Login required");
+  if(!currentUserUid) return;
   const data = {
     uid: currentUserUid,
     name: document.getElementById("name").value.trim(),
@@ -388,22 +384,20 @@ form.addEventListener("submit", async e=>{
     date: document.getElementById("date").value
   };
   try {
-    if(editId.value){
-      data.editorName = currentUserName || null;
-    }
     const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
     const method = editId.value ? "PUT" : "POST";
     const res = await fetch(url,{ method, headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data)});
     const result = await res.json();
-    showMessage(result.message || "Done");
+    showMessage(result.message);
     editId.value="";
     form.reset();
     await loadData();
+    // re-fetch budget after adding/updating expense to update progress
     await fetchBudget();
   } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
 });
 
-// Budget functions (same as your logic)
+// ----------- Budget functions (frontend) -----------
 async function saveBudgetToServer(amount){
   if(!currentUserUid) return;
   try {
@@ -425,12 +419,14 @@ async function fetchBudget(){
     const res = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
     if(!res.ok) return clearBudgetUI();
     const r = await res.json();
+    // server returns { amount: X } or { amount:0 }
     if(!r || typeof r.amount === "undefined" || r.amount === 0){
       currentBudgetAmount = 0;
       clearBudgetUI();
       return;
     }
     currentBudgetAmount = parseFloat(r.amount) || 0;
+    // compute current total from expenses and update UI
     const expensesRes = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
     const arr = await expensesRes.json();
     let totalAmount = 0;
@@ -441,15 +437,16 @@ async function fetchBudget(){
 }
 
 function clearBudgetUI(){
-  if(budgetInput) budgetInput.value = "";
-  if(budgetProgressBar) budgetProgressBar.style.width = "0%";
-  if(budgetProgressBar) budgetProgressBar.className = "progress-bar";
-  if(budgetStatusText) budgetStatusText.innerText = "No budget set";
-  if(budgetAlerts) budgetAlerts.innerHTML = "";
+  budgetInput.value = "";
+  budgetProgressBar.style.width = "0%";
+  budgetProgressBar.className = "progress-bar";
+  budgetStatusText.innerText = "No budget set";
+  budgetAlerts.innerHTML = "";
   currentBudgetAmount = 0;
-  if(analyticsBadge) analyticsBadge.innerText = "";
+  analyticsBadge.innerText = "";
 }
 
+// update UI after we know budgetAmount and totalSpent
 function updateBudgetUI(budgetAmount, totalSpent){
   if(!budgetAmount || budgetAmount <= 0){
     clearBudgetUI();
@@ -460,11 +457,20 @@ function updateBudgetUI(budgetAmount, totalSpent){
   const widthPct = Math.min(pctClamped, 100);
   budgetProgressBar.style.width = widthPct + "%";
   budgetProgressBar.innerText = `${pctClamped}%`;
+
+  // Color logic: normal -> green, >=80 -> yellow (warning), >100 -> red (danger)
   budgetProgressBar.className = "progress-bar";
-  if(pct >= 100) budgetProgressBar.classList.add("bg-danger");
-  else if(pct >= 80) budgetProgressBar.classList.add("bg-warning");
-  else budgetProgressBar.classList.add("bg-success");
+  if(pct >= 100){
+    budgetProgressBar.classList.add("bg-danger");
+  } else if(pct >= 80){
+    budgetProgressBar.classList.add("bg-warning");
+  } else {
+    budgetProgressBar.classList.add("bg-success");
+  }
+
   budgetStatusText.innerText = `Budget: ₹${budgetAmount.toFixed(2)}  —  Spent: ₹${totalSpent.toFixed(2)}`;
+
+  // Alerts
   budgetAlerts.innerHTML = "";
   analyticsBadge.innerText = "";
   if(pct >= 100){
@@ -479,13 +485,15 @@ function updateBudgetUI(budgetAmount, totalSpent){
   }
 }
 
-if(saveBudgetBtn) saveBudgetBtn.addEventListener("click", async () => {
+// Save budget button
+saveBudgetBtn.addEventListener("click", async () => {
   const val = parseFloat(budgetInput.value);
   if(!val || val <= 0){ showMessage("Enter valid budget amount"); return; }
   await saveBudgetToServer(val);
 });
 
-if(resetBudgetBtn) resetBudgetBtn.addEventListener("click", async () => {
+// Reset budget
+resetBudgetBtn.addEventListener("click", async () => {
   if(!currentUserUid) return;
   if(!confirm("Reset/delete your budget?")) return;
   try {
@@ -500,8 +508,10 @@ if(resetBudgetBtn) resetBudgetBtn.addEventListener("click", async () => {
     clearBudgetUI();
   } catch(err){ console.error(err); showMessage("❌ Reset failed",2000); }
 });
+// ----------- End Budget functions -----------
 
-// Load data & render table + metadata
+
+// Load data
 async function loadData(){
   if(!currentUserUid) return;
   try{
@@ -511,6 +521,7 @@ async function loadData(){
     if(!Array.isArray(users) || users.length===0){
       tableContainer.innerHTML = "<p class='text-muted'>No expenses yet.</p>";
       analyticsContainer.style.display="none";
+      // update budget UI with zero spent
       const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
       if(bRes.ok){
         const b = await bRes.json();
@@ -521,82 +532,47 @@ async function loadData(){
 
     let html = `<table class="table table-striped table-bordered text-white">
       <thead><tr>
-        <th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Info</th><th>Action</th>
+        <th>#</th><th>Name</th><th>Amount</th><th>Type</th><th>Description</th><th>Date</th><th>Action</th>
       </tr></thead><tbody>`;
 
     let totalAmount = 0;
     users.forEach((u,i)=>{
       totalAmount += parseFloat(u.amount) || 0;
-      const infoId = `info_${u._id}`;
-      const createdAt = u.createdAt ? new Date(u.createdAt).toLocaleString() : "N/A";
-      const updatedAt = u.updatedAt ? new Date(u.updatedAt).toLocaleString() : "N/A";
-      const editCount = u.editCount || 0;
-      let historyHtml = "<div style='max-height:140px; overflow:auto;'>";
-      if(Array.isArray(u.editHistory) && u.editHistory.length>0){
-        u.editHistory.slice().reverse().slice(0,10).forEach((h, idx)=>{
-          const when = h.date ? new Date(h.date).toLocaleString() : "N/A";
-          const who = h.editorName || h.editorUid || "Unknown";
-          historyHtml += `<div style="border-bottom:1px solid rgba(255,255,255,0.06); padding:6px 0;">
-            <small><b>${who}</b> — ${when}</small>
-            <div style="font-size:0.85rem; color:#ddd;">Before: ${h.before?.name || "-"} | ${h.before?.amount || "-"} | ${h.before?.type || "-"}</div>
-            <div style="font-size:0.85rem; color:#bfbfbf;">After: ${h.after?.name || "-"} | ${h.after?.amount || "-"} | ${h.after?.type || "-"}</div>
-          </div>`;
-        });
-      } else {
-        historyHtml += "<div style='color:#bbb; padding:6px 0;'>No edits yet</div>";
-      }
-      historyHtml += "</div>";
-
       const actionBtn = `<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>`;
-      const infoBtn = `<button class="btn btn-sm btn-info" onclick="toggleInfo('${infoId}')">View</button>`;
-
       html += `<tr>
-        <td>${i+1}</td>
-        <td>${escapeHtml(u.name)}</td>
-        <td>${u.amount}</td>
-        <td>${escapeHtml(u.type)}</td>
-        <td>${escapeHtml(u.description)}</td>
-        <td>${u.date}</td>
-        <td>${infoBtn}</td>
-        <td>${actionBtn}</td>
-      </tr>
-      <tr id="${infoId}" class="info-row" style="display:none; background:#111;">
-        <td colspan="8" style="color:#ddd;">
-          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
-            <div><b>Created:</b> ${createdAt}</div>
-            <div><b>Last Updated:</b> ${updatedAt}</div>
-            <div><b>Edited:</b> ${editCount} time(s)</div>
-          </div>
-          <hr style="border-color:rgba(255,255,255,0.05);" />
-          <div>${historyHtml}</div>
-        </td>
+        <td>${i+1}</td><td>${u.name}</td><td>${u.amount}</td><td>${u.type}</td>
+        <td>${u.description}</td><td>${u.date}</td><td>${actionBtn}</td>
       </tr>`;
     });
 
-    html += `<tr style="background:#00bcd4; color:#000; font-weight:700;">
+    html += `
+      <tr style="background:#00bcd4; color:#000; font-weight:700;">
         <td colspan="2" class="text-end">Total</td>
-        <td colspan="6">${totalAmount.toFixed(2)}</td>
-      </tr>`;
+        <td colspan="5">${totalAmount.toFixed(2)}</td>
+      </tr>
+    `;
     html += "</tbody></table>";
     tableContainer.innerHTML=html;
 
+    // Show charts
     analyticsContainer.style.display="block";
     renderCharts(users);
 
+    // Update budget UI with totals
     const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
     if(bRes.ok){
       const b = await bRes.json();
       if(b && b.amount && parseFloat(b.amount) > 0){
         updateBudgetUI(parseFloat(b.amount), totalAmount);
       } else {
+        // no budget set
         clearBudgetUI();
       }
     }
   } catch(err){ console.error(err); tableContainer.innerHTML="<p class='text-danger'>Failed to load expenses.</p>"; }
 }
 
-function toggleInfo(id){ const el = document.getElementById(id); if(!el) return; el.style.display = (el.style.display === "none" || el.style.display === "") ? "table-row" : "none"; }
-
+// Edit
 window.editExpense = async function(id){
   try{
     const res = await fetch(`${BASE_URL}/user/${id}`);
@@ -612,25 +588,78 @@ window.editExpense = async function(id){
   } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500);}
 }
 
+// Render Charts
 function renderCharts(users){
-  const dates = {}; const types = {}; let totalAmount = 0;
-  users.forEach(u=>{ const date = u.date || "Unknown"; const amount = parseFloat(u.amount) || 0; totalAmount += amount; dates[date] = (dates[date]||0)+amount; types[u.type] = (types[u.type]||0)+amount; });
+  const dates = {};
+  const types = {};
 
+  let totalAmount = 0;
+  users.forEach(u=>{
+    const date = u.date || "Unknown";
+    const amount = parseFloat(u.amount) || 0;
+    totalAmount += amount;
+    dates[date] = (dates[date]||0)+amount;
+    types[u.type] = (types[u.type]||0)+amount;
+  });
+
+  // If budget exists and exceeded, add "Over Budget" slice
   const overAmount = currentBudgetAmount && totalAmount > currentBudgetAmount ? (totalAmount - currentBudgetAmount) : 0;
-  if(overAmount > 0){ const label = `Over Budget (₹${overAmount.toFixed(2)})`; types[label] = overAmount; }
+  if(overAmount > 0){
+    // add to types with label showing rupee value
+    const label = `Over Budget (₹${overAmount.toFixed(2)})`;
+    types[label] = overAmount;
+  }
 
-  const lineCtx = document.getElementById('lineChart')?.getContext('2d');
-  if(lineCtx){ if(window.lineChartInstance) window.lineChartInstance.destroy(); window.lineChartInstance = new Chart(lineCtx, { type: 'line', data: { labels: Object.keys(dates), datasets: [{ label: 'Total Expense', data: Object.values(dates), borderColor: '#00bcd4', backgroundColor: 'rgba(0,188,212,0.2)', fill: true, tension: 0.3 }] }, options: { scales: { y: { beginAtZero:true } } } }); }
+  // Line Chart - Expense over Time
+  const lineCtx = document.getElementById('lineChart').getContext('2d');
+  if(window.lineChartInstance) window.lineChartInstance.destroy();
+  window.lineChartInstance = new Chart(lineCtx, {
+    type: 'line',
+    data: {
+      labels: Object.keys(dates),
+      datasets: [{
+        label: 'Total Expense',
+        data: Object.values(dates),
+        borderColor: '#00bcd4',
+        backgroundColor: 'rgba(0,188,212,0.2)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: { scales: { y: { beginAtZero:true } } }
+  });
 
-  const pieCtx = document.getElementById('pieChart')?.getContext('2d');
-  if(pieCtx){ if(window.pieChartInstance) window.pieChartInstance.destroy(); const labels = Object.keys(types); const values = Object.values(types); const baseColors = ['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0','#3f51b5','#009688']; const bgColors = labels.map(l => l.startsWith("Over Budget") ? '#ff3b30' : baseColors.shift() || '#607d8b'); window.pieChartInstance = new Chart(pieCtx, { type: 'pie', data: { labels, datasets: [{ data: values, backgroundColor: bgColors }] } }); }
+  // Pie Chart - Expense by Type (with Over Budget slice colored red)
+  const pieCtx = document.getElementById('pieChart').getContext('2d');
+  if(window.pieChartInstance) window.pieChartInstance.destroy();
 
-  if(overAmount > 0) analyticsBadge.innerText = `🚨 Over budget: ₹${overAmount.toFixed(2)} — shown as red slice in chart.`;
-  else if(currentBudgetAmount > 0) analyticsBadge.innerText = `✅ Within budget: Budget ₹${currentBudgetAmount.toFixed(2)}, Spent ₹${totalAmount.toFixed(2)}.`;
-  else analyticsBadge.innerText = "";
+  const labels = Object.keys(types);
+  const values = Object.values(types);
+
+  // colors: pick defaults, but make Over Budget red if present
+  const baseColors = ['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0','#3f51b5','#009688'];
+  const bgColors = labels.map(l => l.startsWith("Over Budget") ? '#ff3b30' : baseColors.shift() || '#607d8b');
+
+  window.pieChartInstance = new Chart(pieCtx, {
+    type: 'pie',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: bgColors
+      }]
+    }
+  });
+
+  // Put a small textual badge below pie (for accessibility)
+  if(overAmount > 0){
+    analyticsBadge.innerText = `🚨 Over budget: ₹${overAmount.toFixed(2)} — shown as red slice in chart.`;
+  } else if(currentBudgetAmount > 0) {
+    analyticsBadge.innerText = `✅ Within budget: Budget ₹${currentBudgetAmount.toFixed(2)}, Spent ₹${totalAmount.toFixed(2)}.`;
+  } else {
+    analyticsBadge.innerText = "";
+  }
 }
-
-function escapeHtml(unsafe) { if(!unsafe && unsafe !== 0) return ""; return String(unsafe).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
 </script>
 
 <footer>
