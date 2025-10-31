@@ -18,9 +18,41 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
-/* HEADER */
-header {
-  display: none;
+/* ---------- LOGIN CARD (professional) ---------- */
+.login-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(180deg, #0f1720 0%, #111214 100%);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  padding: 28px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+.login-card h1 { color: #00bcd4; margin-bottom: 6px; font-size: 1.6rem; }
+.login-card p { color: #cbd5e1; margin-bottom: 20px; }
+.google-btn {
+  display:flex; align-items:center; gap:12px; justify-content:center;
+  width:100%; background:#fff; color:#000; border-radius:10px; padding:10px 12px;
+  font-weight:700; cursor:pointer; border:1px solid #e6e6e6;
+  box-shadow: 0 4px 12px rgba(2,6,23,0.4);
+}
+.google-btn img { width:20px; height:20px; }
+.small-note { color: #9ca3af; font-size:0.9rem; margin-top:12px; }
+
+/* Hide original header until login */
+header { display: none; }
+
+/* HEADER (shown after login) */
+header.visible {
+  display: block;
   background: #0b0b0b;
   border-bottom: 1px solid #222;
   padding: 15px 20px;
@@ -49,15 +81,6 @@ table { color:#fff; font-size:0.95rem; }
 table thead { background:#00bcd4; color:#000; font-weight:600; }
 table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
 
-/* LOGIN */
-#loginContainer { text-align:center; margin-top:100px; }
-#loginContainer button {
-  font-size:1.2rem; padding:10px 30px; border-radius:10px;
-  border:none; background:#00bcd4; color:#000; font-weight:600;
-  cursor:pointer; transition:0.3s;
-}
-#loginContainer button:hover { background:#0097a7; color:white; }
-
 /* BUDGET */
 #budgetCard { display:none; margin-top:20px; border-radius:12px; padding:16px; background:#1a1a1a; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
 #budgetBar { height: 22px; border-radius:8px; overflow:hidden; background:#222; }
@@ -74,7 +97,6 @@ table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
   border-radius:20px; box-shadow:0 8px 25px rgba(0,0,0,0.6);
 }
 #aboutModal h2 { color:#ffc107; text-align:center; margin-bottom:20px; }
-#aboutModal h4 { color:#ffc107; margin-top:20px; }
 #aboutModal button { 
   padding:10px 20px; border:none; border-radius:10px; background:#00bcd4; 
   color:#000; font-weight:600; cursor:pointer; margin-top:20px; 
@@ -97,13 +119,27 @@ footer {
 </head>
 <body>
 
-<!-- LOGIN BUTTON -->
-<div id="loginContainer">
-  <button id="googleLoginBtn">Login with Google</button>
+<!-- PROFESSIONAL LOGIN (shown before login) -->
+<div id="loginView" class="login-wrapper">
+  <div class="login-card">
+    <h1>E-TRAX</h1>
+    <p>Track expenses — smarter. Sign in with Google to continue.</p>
+
+    <!-- Google login button (uses your existing Firebase client auth) -->
+    <button id="googleLoginBtn" class="google-btn" aria-label="Login with Google">
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
+      <span>Sign in with Google</span>
+    </button>
+
+    <div class="small-note">We only use Google to authenticate you — no payment info required.</div>
+    <div style="margin-top:14px;">
+      <small style="color:#94a3b8">Developed by <strong style="color:#00bcd4">Prime Sandy</strong></small>
+    </div>
+  </div>
 </div>
 
-<!-- HEADER -->
-<header>
+<!-- HEADER (hidden until login) -->
+<header id="mainHeader">
   <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap">
     <div>
       <h1 class="project-name mb-1">E-TRAX</h1>
@@ -111,7 +147,7 @@ footer {
     </div>
     <div id="userNameDisplay"></div>
     <nav class="d-flex align-items-center nav-links">
-      <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k">Contact</a>
+      <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank" rel="noopener">Contact</a>
       <a href="#" id="aboutLink">About</a>
       <button id="googleLogoutBtn">Logout</button>
     </nav>
@@ -246,7 +282,7 @@ const BASE_URL = window.location.hostname.includes("localhost")
   ? "http://localhost:3000"
   : "https://sandy-backend2-0.onrender.com";
 
-// Firebase Config
+// Firebase Config (unchanged)
 const firebaseConfig = {
   apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
   authDomain: "ptspro-31997.firebaseapp.com",
@@ -263,7 +299,8 @@ let currentUserUid = null;
 // Elements
 const loginBtn = document.getElementById("googleLoginBtn");
 const logoutBtn = document.getElementById("googleLogoutBtn");
-const loginContainer = document.getElementById("loginContainer");
+const loginView = document.getElementById("loginView");
+const mainHeader = document.getElementById("mainHeader");
 const expenseFormContainer = document.getElementById("expenseFormContainer");
 const tableContainer = document.getElementById("tableContainer");
 const msgBox = document.getElementById("msgBox");
@@ -287,8 +324,8 @@ let currentBudgetAmount = 0;
 const aboutLink = document.getElementById("aboutLink");
 const aboutModal = document.getElementById("aboutModal");
 const closeAbout = document.getElementById("closeAbout");
-aboutLink.addEventListener("click", e => { e.preventDefault(); aboutModal.style.display = "block"; });
-closeAbout.addEventListener("click", () => { aboutModal.style.display = "none"; });
+aboutLink && aboutLink.addEventListener("click", e => { e.preventDefault(); aboutModal.style.display = "block"; });
+closeAbout && closeAbout.addEventListener("click", () => { aboutModal.style.display = "none"; });
 window.addEventListener("click", e => { if(e.target == aboutModal) aboutModal.style.display="none"; });
 
 // Message
@@ -298,24 +335,23 @@ function showMessage(msg, duration=2000) {
   setTimeout(()=> msgBox.style.display="none", duration);
 }
 
-// Toggle login
+// Toggle login state: show header & dashboard only after login
 function toggleLoginState(isLoggedIn) {
-  loginContainer.style.display = isLoggedIn ? "none" : "block";
+  loginView.style.display = isLoggedIn ? "none" : "flex";
+  mainHeader.classList.toggle('visible', isLoggedIn);
   logoutBtn.style.display = isLoggedIn ? "inline-block" : "none";
   expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
-  document.querySelector("header").style.display = isLoggedIn ? "block" : "none";
   budgetCard.style.display = isLoggedIn ? "block" : "none";
-  analyticsContainer.style.display = isLoggedIn ? analyticsContainer.style.display : "none";
+  analyticsContainer.style.display = isLoggedIn ? (analyticsContainer.style.display === "block" ? "block" : "block") : "none";
 }
 
-// Firebase Auth
+// Firebase Auth state
 auth.onAuthStateChanged(user=>{
   if(user){
     currentUserUid=user.uid;
     toggleLoginState(true);
     loadData();
     userNameDisplay.textContent = user.displayName || "User";
-    // fetch budget on login
     fetchBudget();
   } else {
     currentUserUid=null;
@@ -327,6 +363,7 @@ auth.onAuthStateChanged(user=>{
   }
 });
 
+// Login button -> Firebase popup
 loginBtn.addEventListener("click", async () => {
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
@@ -340,7 +377,8 @@ loginBtn.addEventListener("click", async () => {
   } catch(err){ console.error(err); showMessage("❌ Login failed",2000); }
 });
 
-logoutBtn.addEventListener("click", async () => {
+// Logout button
+logoutBtn && logoutBtn.addEventListener("click", async () => {
   try {
     await auth.signOut();
     currentUserUid = null;
@@ -368,11 +406,10 @@ function typeWriterHeader() {
 }
 typeWriterHeader();
 
-// Expense form
+// Expense form handling (same as original)
 const form = document.getElementById("expenseForm");
 const editId = document.getElementById("editId");
-
-form.addEventListener("submit", async e=>{
+form && form.addEventListener("submit", async e=>{
   e.preventDefault();
   if(!currentUserUid) return;
   const data = {
@@ -392,7 +429,6 @@ form.addEventListener("submit", async e=>{
     editId.value="";
     form.reset();
     await loadData();
-    // re-fetch budget after adding/updating expense to update progress
     await fetchBudget();
   } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
 });
@@ -419,34 +455,31 @@ async function fetchBudget(){
     const res = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
     if(!res.ok) return clearBudgetUI();
     const r = await res.json();
-    // server returns { amount: X } or { amount:0 }
     if(!r || typeof r.amount === "undefined" || r.amount === 0){
       currentBudgetAmount = 0;
       clearBudgetUI();
       return;
     }
     currentBudgetAmount = parseFloat(r.amount) || 0;
-    // compute current total from expenses and update UI
     const expensesRes = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
     const arr = await expensesRes.json();
     let totalAmount = 0;
     if(Array.isArray(arr)) arr.forEach(x=> totalAmount += parseFloat(x.amount)||0);
     updateBudgetUI(currentBudgetAmount, totalAmount);
-    budgetInput.value = currentBudgetAmount;
+    budgetInput && (budgetInput.value = currentBudgetAmount);
   } catch(err){ console.error(err); clearBudgetUI(); }
 }
 
 function clearBudgetUI(){
-  budgetInput.value = "";
-  budgetProgressBar.style.width = "0%";
-  budgetProgressBar.className = "progress-bar";
-  budgetStatusText.innerText = "No budget set";
-  budgetAlerts.innerHTML = "";
+  if(budgetInput) budgetInput.value = "";
+  if(budgetProgressBar) budgetProgressBar.style.width = "0%";
+  if(budgetProgressBar) budgetProgressBar.className = "progress-bar";
+  if(budgetStatusText) budgetStatusText.innerText = "No budget set";
+  if(budgetAlerts) budgetAlerts.innerHTML = "";
   currentBudgetAmount = 0;
-  analyticsBadge.innerText = "";
+  if(analyticsBadge) analyticsBadge.innerText = "";
 }
 
-// update UI after we know budgetAmount and totalSpent
 function updateBudgetUI(budgetAmount, totalSpent){
   if(!budgetAmount || budgetAmount <= 0){
     clearBudgetUI();
@@ -457,8 +490,6 @@ function updateBudgetUI(budgetAmount, totalSpent){
   const widthPct = Math.min(pctClamped, 100);
   budgetProgressBar.style.width = widthPct + "%";
   budgetProgressBar.innerText = `${pctClamped}%`;
-
-  // Color logic: normal -> green, >=80 -> yellow (warning), >100 -> red (danger)
   budgetProgressBar.className = "progress-bar";
   if(pct >= 100){
     budgetProgressBar.classList.add("bg-danger");
@@ -467,10 +498,7 @@ function updateBudgetUI(budgetAmount, totalSpent){
   } else {
     budgetProgressBar.classList.add("bg-success");
   }
-
   budgetStatusText.innerText = `Budget: ₹${budgetAmount.toFixed(2)}  —  Spent: ₹${totalSpent.toFixed(2)}`;
-
-  // Alerts
   budgetAlerts.innerHTML = "";
   analyticsBadge.innerText = "";
   if(pct >= 100){
@@ -485,15 +513,13 @@ function updateBudgetUI(budgetAmount, totalSpent){
   }
 }
 
-// Save budget button
-saveBudgetBtn.addEventListener("click", async () => {
+// Save/Reset event listeners
+saveBudgetBtn && saveBudgetBtn.addEventListener("click", async () => {
   const val = parseFloat(budgetInput.value);
   if(!val || val <= 0){ showMessage("Enter valid budget amount"); return; }
   await saveBudgetToServer(val);
 });
-
-// Reset budget
-resetBudgetBtn.addEventListener("click", async () => {
+resetBudgetBtn && resetBudgetBtn.addEventListener("click", async () => {
   if(!currentUserUid) return;
   if(!confirm("Reset/delete your budget?")) return;
   try {
@@ -508,10 +534,8 @@ resetBudgetBtn.addEventListener("click", async () => {
     clearBudgetUI();
   } catch(err){ console.error(err); showMessage("❌ Reset failed",2000); }
 });
-// ----------- End Budget functions -----------
 
-
-// Load data
+// Load data and render table + charts
 async function loadData(){
   if(!currentUserUid) return;
   try{
@@ -521,7 +545,6 @@ async function loadData(){
     if(!Array.isArray(users) || users.length===0){
       tableContainer.innerHTML = "<p class='text-muted'>No expenses yet.</p>";
       analyticsContainer.style.display="none";
-      // update budget UI with zero spent
       const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
       if(bRes.ok){
         const b = await bRes.json();
@@ -538,9 +561,12 @@ async function loadData(){
     let totalAmount = 0;
     users.forEach((u,i)=>{
       totalAmount += parseFloat(u.amount) || 0;
-      const actionBtn = `<button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">Edit</button>`;
+      const actionBtn = `
+        <button class="btn btn-warning btn-sm me-1" onclick="editExpense('${u._id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteExpense('${u._id}','${u.name}')">Delete</button>
+      `;
       html += `<tr>
-        <td>${i+1}</td><td>${u.name}</td><td>${u.amount}</td><td>${u.type}</td>
+        <td>${i+1}</td><td>${u.name}</td><td>₹${parseFloat(u.amount).toFixed(2)}</td><td>${u.type}</td>
         <td>${u.description}</td><td>${u.date}</td><td>${actionBtn}</td>
       </tr>`;
     });
@@ -548,31 +574,26 @@ async function loadData(){
     html += `
       <tr style="background:#00bcd4; color:#000; font-weight:700;">
         <td colspan="2" class="text-end">Total</td>
-        <td colspan="5">${totalAmount.toFixed(2)}</td>
+        <td colspan="5">₹${totalAmount.toFixed(2)}</td>
       </tr>
     `;
     html += "</tbody></table>";
     tableContainer.innerHTML=html;
 
-    // Show charts
     analyticsContainer.style.display="block";
     renderCharts(users);
 
-    // Update budget UI with totals
     const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
     if(bRes.ok){
       const b = await bRes.json();
       if(b && b.amount && parseFloat(b.amount) > 0){
         updateBudgetUI(parseFloat(b.amount), totalAmount);
-      } else {
-        // no budget set
-        clearBudgetUI();
-      }
+      } else clearBudgetUI();
     }
   } catch(err){ console.error(err); tableContainer.innerHTML="<p class='text-danger'>Failed to load expenses.</p>"; }
 }
 
-// Edit
+// Edit and Delete handlers
 window.editExpense = async function(id){
   try{
     const res = await fetch(`${BASE_URL}/user/${id}`);
@@ -588,7 +609,22 @@ window.editExpense = async function(id){
   } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500);}
 }
 
-// Render Charts
+window.deleteExpense = async function(id, name){
+  if(!confirm(`Delete expense "${name}"? This action cannot be undone.`)) return;
+  try{
+    const res = await fetch(`${BASE_URL}/delete/${id}`, { method: "DELETE" });
+    const r = await res.json();
+    if(res.ok){
+      showMessage(r.message || "Deleted");
+      await loadData();
+      await fetchBudget();
+    } else {
+      showMessage(r.message || "Delete failed",2000);
+    }
+  } catch(err){ console.error(err); showMessage("❌ Failed to delete",2000); }
+}
+
+// Charts renderer (same logic)
 function renderCharts(users){
   const dates = {};
   const types = {};
@@ -602,15 +638,12 @@ function renderCharts(users){
     types[u.type] = (types[u.type]||0)+amount;
   });
 
-  // If budget exists and exceeded, add "Over Budget" slice
   const overAmount = currentBudgetAmount && totalAmount > currentBudgetAmount ? (totalAmount - currentBudgetAmount) : 0;
   if(overAmount > 0){
-    // add to types with label showing rupee value
     const label = `Over Budget (₹${overAmount.toFixed(2)})`;
     types[label] = overAmount;
   }
 
-  // Line Chart - Expense over Time
   const lineCtx = document.getElementById('lineChart').getContext('2d');
   if(window.lineChartInstance) window.lineChartInstance.destroy();
   window.lineChartInstance = new Chart(lineCtx, {
@@ -629,14 +662,12 @@ function renderCharts(users){
     options: { scales: { y: { beginAtZero:true } } }
   });
 
-  // Pie Chart - Expense by Type (with Over Budget slice colored red)
   const pieCtx = document.getElementById('pieChart').getContext('2d');
   if(window.pieChartInstance) window.pieChartInstance.destroy();
 
   const labels = Object.keys(types);
   const values = Object.values(types);
 
-  // colors: pick defaults, but make Over Budget red if present
   const baseColors = ['#00bcd4','#ff9800','#8bc34a','#e91e63','#9c27b0','#3f51b5','#009688'];
   const bgColors = labels.map(l => l.startsWith("Over Budget") ? '#ff3b30' : baseColors.shift() || '#607d8b');
 
@@ -651,7 +682,6 @@ function renderCharts(users){
     }
   });
 
-  // Put a small textual badge below pie (for accessibility)
   if(overAmount > 0){
     analyticsBadge.innerText = `🚨 Over budget: ₹${overAmount.toFixed(2)} — shown as red slice in chart.`;
   } else if(currentBudgetAmount > 0) {
