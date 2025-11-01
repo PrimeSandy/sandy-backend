@@ -26,7 +26,7 @@
     "socket.io": "^4.7.5"
   },
   "engines": {
-    "node": "22.x"
+    "node": "18.x"
   },
   "repository": {
     "type": "git",
@@ -37,3 +37,6 @@
   },
   "homepage": "https://github.com/PrimeSandy/BASE-FILES#readme"
 }
+
+
+
