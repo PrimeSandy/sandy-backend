@@ -25,3 +25,9 @@
   }, 
   "homepage": "https://github.com/PrimeSandy/BASE-FILES#readme"
 }
+"dependencies": {
+  "express": "^4.19.2",
+  "cors": "^2.8.5",
+  "dotenv": "^16.0.3",
+  "socket.io": "^4.7.5"
+}
