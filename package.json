@@ -11,9 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.19.2",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "socket.io": "^4.7.5",
     "mongodb": "^6.20.0"
   },
   "repository": {
@@ -22,12 +23,7 @@
   },
   "bugs": {
     "url": "https://github.com/PrimeSandy/BASE-FILES/issues"
-  }, 
+  },
   "homepage": "https://github.com/PrimeSandy/BASE-FILES#readme"
 }
-"dependencies": {
-  "express": "^4.19.2",
-  "cors": "^2.8.5",
-  "dotenv": "^16.0.3",
-  "socket.io": "^4.7.5"
-}
+
