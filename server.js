@@ -1,4 +1,3 @@
-
 // server.js
 require("dotenv").config();
 const express = require("express");
@@ -6,20 +5,16 @@ const { MongoClient, ObjectId } = require("mongodb");
 const path = require("path");
 const cors = require("cors");
 const http = require("http");
-const { Server } = require("socket.io");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-// ⚙️ Create HTTP + Socket.io (works locally only)
+// Create HTTP server
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: { origin: "*", methods: ["GET", "POST", "PUT", "DELETE"] },
-});
 
-// ⚙️ MongoDB Connection
+// MongoDB Connection
 const client = new MongoClient(process.env.MONGODB_URI);
 let db, expenses, budgets;
 
@@ -39,11 +34,9 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// ⚡ Socket.IO Connection (for local testing only)
-io.on("connection", (socket) => {
-  socket.on("join", (uid) => {
-    if (uid) socket.join(`uid_${uid}`);
-  });
+// ✅ Health Check
+app.get("/health", (req, res) => {
+  res.json({ status: "OK", message: "Server is running!" });
 });
 
 // ✅ Create Expense
@@ -65,7 +58,6 @@ app.post("/submit", async (req, res) => {
       editHistory: [],
     };
     const result = await expenses.insertOne(doc);
-    io.to(`uid_${uid}`).emit("expenses-changed", { action: "created", id: result.insertedId, uid });
     res.json({ status: "success", message: "✅ Expense saved!", id: result.insertedId });
   } catch (err) {
     console.error(err);
@@ -130,7 +122,6 @@ app.put("/update/:id", async (req, res) => {
       }
     );
 
-    io.to(`uid_${uid}`).emit("expenses-changed", { action: "updated", id, uid });
     res.json({ status: "success", message: "✅ Expense updated successfully!" });
   } catch (err) {
     console.error(err);
@@ -146,7 +137,6 @@ app.delete("/delete/:id", async (req, res) => {
     const exp = await expenses.findOne({ _id: new ObjectId(id) });
     if (!exp) return res.status(404).json({ status: "error", message: "Expense not found" });
     await expenses.deleteOne({ _id: new ObjectId(id) });
-    io.to(`uid_${exp.uid}`).emit("expenses-changed", { action: "deleted", id, uid: exp.uid });
     res.json({ status: "success", message: "✅ Expense deleted" });
   } catch (err) {
     console.error(err);
@@ -163,13 +153,11 @@ app.post("/setBudget", async (req, res) => {
 
     if (reset) {
       await budgets.deleteOne({ uid });
-      io.to(`uid_${uid}`).emit("budget-changed", { uid, amount: 0 });
       return res.json({ status: "success", message: "✅ Budget reset" });
     }
 
     const amt = parseFloat(amount) || 0;
     await budgets.updateOne({ uid }, { $set: { uid, amount: amt, updatedAt: new Date() } }, { upsert: true });
-    io.to(`uid_${uid}`).emit("budget-changed", { uid, amount: amt });
     res.json({ status: "success", message: "✅ Budget saved" });
   } catch (err) {
     console.error(err);
@@ -190,12 +178,9 @@ app.get("/getBudget", async (req, res) => {
   }
 });
 
-// ⚡ Export app for Vercel
-module.exports = app;
-
-// ✅ Local development only
-if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 3000;
-  server.listen(PORT, () => console.log(`🚀 Local server running on http://localhost:${PORT}`));
-}
-
+// ✅ Always start server (both local and production)
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+});
