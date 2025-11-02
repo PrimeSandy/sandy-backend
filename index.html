@@ -3,49 +3,129 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>E-Trax!</title>
+<title>E-TRAX | Smart Expense Tracker</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+:root {
+  --primary: #00bcd4;
+  --primary-dark: #0097a7;
+  --secondary: #ffcc00;
+  --dark: #0b0b0b;
+  --dark-card: #1a1a1a;
+  --light: #ffffff;
+  --success: #28a745;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --text-light: #cbd5e1;
+  --text-muted: #9ca3af;
+  --border-radius: 12px;
+  --box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  --transition: all 0.3s ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background-color: #0b0b0b;
-  color: white;
+  background-color: var(--dark);
+  color: var(--light);
   min-height: 100vh;
   margin: 0;
   font-family: "Poppins", sans-serif;
+  line-height: 1.6;
 }
 
-/* ---------- LOGIN CARD (professional) ---------- */
+/* ---------- LOGIN CARD (enhanced) ---------- */
 .login-wrapper {
   display: flex;
   align-items: center; 
   justify-content: center;
   min-height: 100vh;
   padding: 24px;
+  background: linear-gradient(135deg, #0b0b0b 0%, #1a1a1a 100%);
+  position: relative;
+  overflow: hidden;
 }
+
+.login-wrapper::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0,188,212,0.1) 0%, transparent 70%);
+  animation: pulse 15s infinite linear;
+}
+
+@keyframes pulse {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
 .login-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 460px;
   background: linear-gradient(180deg, #0f1720 0%, #111214 100%);
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  padding: 28px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 40px 32px;
   text-align: center;
-  border: 1px solid rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  position: relative;
+  z-index: 1;
+  transition: var(--transition);
 }
-.login-card h1 { color: #00bcd4; margin-bottom: 6px; font-size: 1.6rem; }
-.login-card p { color: #cbd5e1; margin-bottom: 20px; }
+
+.login-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+}
+
+.login-card h1 { 
+  color: var(--primary); 
+  margin-bottom: 8px; 
+  font-size: 2.2rem; 
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.login-card p { 
+  color: var(--text-light); 
+  margin-bottom: 28px; 
+  font-size: 1.05rem;
+}
+
 .google-btn {
-  display:flex; align-items:center; gap:12px; justify-content:center;
-  width:100%; background:#fff; color:#000; border-radius:10px; padding:10px 12px;
-  font-weight:700; cursor:pointer; border:1px solid #e6e6e6;
+  display:flex; 
+  align-items:center; 
+  gap:12px; 
+  justify-content:center;
+  width:100%; 
+  background:var(--light); 
+  color:#000; 
+  border-radius:10px; 
+  padding:14px 16px;
+  font-weight:600; 
+  cursor:pointer; 
+  border:none;
   box-shadow: 0 4px 12px rgba(2,6,23,0.4);
+  transition: var(--transition);
+  font-size: 1rem;
 }
+
+.google-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(2,6,23,0.5);
+}
+
 .google-btn img { width:20px; height:20px; }
-.small-note { color: #9ca3af; font-size:0.9rem; margin-top:12px; }
+.small-note { color: var(--text-muted); font-size:0.9rem; margin-top:16px; }
 
 /* Hide original header until login */
 header { display: none; }
@@ -53,67 +133,422 @@ header { display: none; }
 /* HEADER (shown after login) */
 header.visible {
   display: block;
-  background: #0b0b0b;
-  border-bottom: 1px solid #222;
+  background: rgba(11, 11, 11, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
   padding: 15px 20px;
-  border-radius: 0 0 15px 15px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: var(--transition);
 }
-header .project-name { font-size: 1.5rem; color: #00bcd4; font-weight: 700; margin-bottom: 3px; }
-header .typing { font-size: 1rem; color: #ffcc00; height: 1.2rem; }
-header .nav-links a { color: #fff; text-decoration:none; font-weight:500; margin-right:1rem; transition:0.3s; }
-header .nav-links a:hover { color:#00bcd4; }
+
+header .project-name { 
+  font-size: 1.5rem; 
+  color: var(--primary); 
+  font-weight: 700; 
+  margin-bottom: 3px; 
+}
+
+header .typing { 
+  font-size: 1rem; 
+  color: var(--secondary); 
+  height: 1.2rem; 
+  font-weight: 500;
+}
+
+header .nav-links a { 
+  color: var(--light); 
+  text-decoration:none; 
+  font-weight:500; 
+  margin-right:1.5rem; 
+  transition:var(--transition); 
+  position: relative;
+}
+
+header .nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -5px;
+  left: 0;
+  background-color: var(--primary);
+  transition: var(--transition);
+}
+
+header .nav-links a:hover { color:var(--primary); }
+header .nav-links a:hover::after { width: 100%; }
+
 header button#googleLogoutBtn {
-  background: transparent; border:2px solid #ff3b30; color:#ff3b30;
-  font-weight:600; border-radius:8px; padding:6px 16px; transition:0.3s;
+  background: transparent; 
+  border:2px solid var(--danger); 
+  color:var(--danger);
+  font-weight:600; 
+  border-radius:8px; 
+  padding:8px 18px; 
+  transition:var(--transition);
 }
-header button#googleLogoutBtn:hover { background:#ff3b30; color:white; }
+
+header button#googleLogoutBtn:hover { 
+  background:var(--danger); 
+  color:white; 
+  transform: translateY(-2px);
+}
 
 #userNameDisplay {
   flex: 1;
   text-align: center;
-  color: #ffcc00;
+  color: var(--secondary);
   font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* MAIN CONTENT */
+.container {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* CARDS */
+.card {
+  background: var(--dark-card);
+  border-radius: var(--border-radius);
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  transition: var(--transition);
+  margin-bottom: 20px;
+}
+
+.card:hover {
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+}
+
+.card-header {
+  background: rgba(0,0,0,0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 15px 20px;
+  border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+}
+
+.card-body {
+  padding: 20px;
 }
 
 /* TABLE */
-.table-container { margin-top: 20px; padding: 20px; background:#1a1a1a; border-radius:15px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
-table { color:#fff; font-size:0.95rem; }
-table thead { background:#00bcd4; color:#000; font-weight:600; }
-table tbody tr:hover { background-color: rgba(0,188,212,0.1); transition:0.3s; }
+.table-container { 
+  margin-top: 20px; 
+  padding: 20px; 
+  background:var(--dark-card); 
+  border-radius:var(--border-radius); 
+  box-shadow:0 8px 25px rgba(0,0,0,0.4); 
+  overflow: hidden;
+}
+
+table { 
+  color:var(--light); 
+  font-size:0.95rem; 
+  margin-bottom: 0;
+}
+
+table thead { 
+  background:var(--primary); 
+  color:#000; 
+  font-weight:600; 
+}
+
+table tbody tr { 
+  transition: var(--transition);
+}
+
+table tbody tr:hover { 
+  background-color: rgba(0,188,212,0.1); 
+}
 
 /* BUDGET */
-#budgetCard { display:none; margin-top:20px; border-radius:12px; padding:16px; background:#1a1a1a; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
-#budgetBar { height: 22px; border-radius:8px; overflow:hidden; background:#222; }
-#budgetBar .progress { height:22px; line-height:22px; font-weight:600; }
+#budgetCard { 
+  display:none; 
+  margin-top:20px; 
+  border-radius:var(--border-radius); 
+  padding:20px; 
+  background:var(--dark-card); 
+  box-shadow:0 8px 25px rgba(0,0,0,0.4); 
+}
 
-/* ABOUT */
+#budgetBar { 
+  height: 22px; 
+  border-radius:8px; 
+  overflow:hidden; 
+  background:#222; 
+  margin-top: 10px;
+}
+
+#budgetBar .progress { 
+  height:22px; 
+  line-height:22px; 
+  font-weight:600; 
+  transition: width 0.5s ease;
+}
+
+/* BUTTONS */
+.btn {
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 10px 20px;
+  transition: var(--transition);
+  border: none;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #000;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  color: #000;
+}
+
+.btn-danger {
+  background: var(--danger);
+}
+
+.btn-warning {
+  background: var(--warning);
+  color: #000;
+}
+
+.btn-outline-danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.btn-outline-danger:hover {
+  background: var(--danger);
+  color: white;
+}
+
+/* FORM CONTROLS */
+.form-control, .form-select {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--light);
+  border-radius: 8px;
+  padding: 10px 15px;
+  transition: var(--transition);
+}
+
+.form-control:focus, .form-select:focus {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--primary);
+  color: var(--light);
+  box-shadow: 0 0 0 0.2rem rgba(0,188,212,0.25);
+}
+
+.form-label {
+  color: var(--text-light);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+/* ABOUT MODAL */
 #aboutModal {
-  display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-  background: rgba(0,0,0,0.8); color:white; z-index:9999; overflow:auto;
-  padding:50px 20px; box-sizing:border-box;
+  display:none; 
+  position:fixed; 
+  top:0; 
+  left:0; 
+  width:100%; 
+  height:100%;
+  background: rgba(0,0,0,0.8); 
+  color:white; 
+  z-index:9999; 
+  overflow:auto;
+  padding:50px 20px; 
+  box-sizing:border-box;
+  backdrop-filter: blur(5px);
 }
-#aboutModal .modal-content {
-  max-width:700px; margin:auto; background:#1a1a1a; padding:30px; 
-  border-radius:20px; box-shadow:0 8px 25px rgba(0,0,0,0.6);
-}
-#aboutModal h2 { color:#ffc107; text-align:center; margin-bottom:20px; }
-#aboutModal button { 
-  padding:10px 20px; border:none; border-radius:10px; background:#00bcd4; 
-  color:#000; font-weight:600; cursor:pointer; margin-top:20px; 
-}
-#aboutModal button:hover { background:#0097a7; color:white; }
 
-#analyticsBadge { margin-top:10px; font-weight:700; }
+#aboutModal .modal-content {
+  max-width:700px; 
+  margin:auto; 
+  background:var(--dark-card); 
+  padding:30px; 
+  border-radius:20px; 
+  box-shadow:0 8px 25px rgba(0,0,0,0.6);
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#aboutModal h2 { color:var(--warning); text-align:center; margin-bottom:20px; }
+#aboutModal h4 { color: var(--primary); margin-top: 20px; }
+#aboutModal ul { padding-left: 20px; }
+#aboutModal li { margin-bottom: 8px; }
+
+#aboutModal button { 
+  padding:10px 20px; 
+  border:none; 
+  border-radius:10px; 
+  background:var(--primary); 
+  color:#000; 
+  font-weight:600; 
+  cursor:pointer; 
+  margin-top:20px; 
+  transition: var(--transition);
+}
+
+#aboutModal button:hover { 
+  background:var(--primary-dark); 
+  color:white; 
+  transform: translateY(-2px);
+}
+
+#analyticsBadge { 
+  margin-top:10px; 
+  font-weight:700; 
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+/* MESSAGE BOX */
+#msgBox {
+  position: fixed; 
+  top: 20px; 
+  right: 20px;
+  background-color: var(--success); 
+  color: white; 
+  padding: 12px 24px;
+  border-radius: 10px; 
+  display: none; 
+  z-index: 9999;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
 
 /* FOOTER */
 footer {
-  background:#111; color:#aaa; text-align:center; padding:15px 20px; 
-  border-top:1px solid #222; margin-top:40px; font-size:0.9rem;
+  background:#111; 
+  color:#aaa; 
+  text-align:center; 
+  padding:20px; 
+  border-top:1px solid #222; 
+  margin-top:40px; 
+  font-size:0.9rem;
 }
-.blinking-name { color: #00bcd4; }
 
-@media(min-width:576px){
-  footer div { flex-direction:row; justify-content:center; gap:30px; }
+.blinking-name { 
+  color: var(--primary); 
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+footer a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+footer a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .login-card {
+    padding: 30px 20px;
+  }
+  
+  header .container-fluid {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  #userNameDisplay {
+    order: -1;
+    margin-bottom: 10px;
+  }
+  
+  .nav-links {
+    margin-top: 10px;
+    justify-content: center;
+  }
+  
+  .table-responsive {
+    font-size: 0.85rem;
+  }
+  
+  .btn-sm {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+  
+  #aboutModal .modal-content {
+    padding: 20px;
+  }
+  
+  .card-body {
+    padding: 15px;
+  }
+}
+
+@media (min-width: 576px) {
+  footer div { 
+    flex-direction:row; 
+    justify-content:center; 
+    gap:30px; 
+  }
+}
+
+/* LOADING ANIMATION */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: var(--primary);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* CHART CONTAINERS */
+.chart-container {
+  position: relative;
+  height: 300px;
+  margin-bottom: 20px;
+}
+
+/* EXPENSE FORM STYLING */
+#expenseFormContainer .card {
+  border: 1px solid rgba(0,188,212,0.2);
+}
+
+#expenseFormContainer .card-header {
+  background: rgba(0,188,212,0.1);
+  color: var(--primary);
+  font-weight: 600;
 }
 </style>
 </head>
@@ -158,41 +593,46 @@ footer {
 <div class="container my-3">
 
   <!-- BUDGET CARD (visible after login) -->
-  <div id="budgetCard">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <div>
-        <h5 style="margin:0;color:#ffc107;">Budget Limit</h5>
-        <small class="text-muted">Set a monthly/total budget for your expenses</small>
+  <div id="budgetCard" class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h5 style="margin:0;color:#ffc107;">Budget Limit</h5>
+          <small class="text-muted">Set a monthly/total budget for your expenses</small>
+        </div>
+        <div>
+          <button id="resetBudgetBtn" class="btn btn-outline-danger btn-sm">Reset Budget</button>
+        </div>
       </div>
-      <div>
-        <button id="resetBudgetBtn" class="btn btn-sm btn-outline-danger">Reset Budget</button>
-      </div>
-    </div>
 
-    <div class="row g-2 mb-2">
-      <div class="col-md-4">
-        <input type="number" id="budgetInput" class="form-control" placeholder="Enter budget amount (e.g. 5000)">
+      <div class="row g-2 mb-3">
+        <div class="col-md-5">
+          <input type="number" id="budgetInput" class="form-control" placeholder="Enter budget amount (e.g. 5000)">
+        </div>
+        <div class="col-md-3">
+          <button id="saveBudgetBtn" class="btn btn-primary w-100">Save Budget</button>
+        </div>
+        <div class="col-md-4 text-end">
+          <div id="budgetStatusText" style="font-weight:600;color:#fff;">No budget set</div>
+        </div>
       </div>
-      <div class="col-md-2">
-        <button id="saveBudgetBtn" class="btn btn-primary">Save Budget</button>
-      </div>
-      <div class="col-md-6 text-end">
-        <div id="budgetStatusText" style="font-weight:600;color:#fff;">No budget set</div>
-      </div>
-    </div>
 
-    <div id="budgetBar" class="mb-2">
-      <div id="budgetProgress" class="progress" style="width:100%">
-        <div id="budgetProgressBar" class="progress-bar" role="progressbar" style="width:0%"></div>
+      <div id="budgetBar" class="mb-2">
+        <div id="budgetProgress" class="progress" style="width:100%">
+          <div id="budgetProgressBar" class="progress-bar" role="progressbar" style="width:0%"></div>
+        </div>
       </div>
-    </div>
 
-    <div id="budgetAlerts" style="min-height:22px;"></div>
+      <div id="budgetAlerts" style="min-height:22px;"></div>
+    </div>
   </div>
 
   <!-- EXPENSE FORM -->
   <div id="expenseFormContainer" style="display:none;">
-    <div class="card bg-dark text-white mb-4" style="border-radius:20px;">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Add New Expense</h5>
+      </div>
       <div class="card-body">
         <form id="expenseForm" class="row g-3">
           <input type="hidden" id="editId">
@@ -240,10 +680,14 @@ footer {
       <h4 class="text-center text-info mb-3">📊 Expense Analytics</h4>
       <div class="row">
         <div class="col-md-6">
-          <canvas id="lineChart"></canvas>
+          <div class="chart-container">
+            <canvas id="lineChart"></canvas>
+          </div>
         </div>
         <div class="col-md-6">
-          <canvas id="pieChart"></canvas>
+          <div class="chart-container">
+            <canvas id="pieChart"></canvas>
+          </div>
           <div id="analyticsBadge" class="text-center"></div>
         </div>
       </div>
@@ -254,8 +698,8 @@ footer {
 <!-- ABOUT MODAL -->
 <div id="aboutModal">
   <div class="modal-content">
-    <h2>About Parallel Tracking Sense</h2>
-    <p><strong>Parallel Tracking Sense</strong> helps you <strong>track your daily expenses</strong> and manage your budget efficiently.</p>
+    <h2>About E-TRAX</h2>
+    <p><strong>E-TRAX</strong> helps you <strong>track your daily expenses</strong> and manage your budget efficiently.</p>
     <h4>💡 Purpose</h4>
     <p>Record, categorize, and analyze your spending patterns easily.</p>
     <h4>⚙️ How It Works</h4>
@@ -264,9 +708,10 @@ footer {
       <li>View and edit them anytime.</li>
       <li>Check total expenses instantly.</li>
       <li>See visual analytics of your spending trends.</li>
+      <li>Set budget limits and track your spending against them.</li>
     </ul>
     <div style="text-align:center;">
-      <button id="closeAbout">Close</button>
+      <button id="closeAbout" class="btn btn-primary">Close</button>
     </div>
   </div>
 </div>
@@ -281,7 +726,6 @@ footer {
 const BASE_URL = window.location.hostname.includes("localhost")
   ? "http://localhost:3000"
   : "https://sandy-backend2-0.onrender.com";
-
 
 // Firebase Config (unchanged)
 const firebaseConfig = {
@@ -660,7 +1104,36 @@ function renderCharts(users){
         tension: 0.3
       }]
     },
-    options: { scales: { y: { beginAtZero:true } } }
+    options: { 
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { 
+        y: { 
+          beginAtZero:true,
+          ticks: {
+            color: '#cbd5e1'
+          },
+          grid: {
+            color: 'rgba(255,255,255,0.1)'
+          }
+        },
+        x: {
+          ticks: {
+            color: '#cbd5e1'
+          },
+          grid: {
+            color: 'rgba(255,255,255,0.1)'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: '#cbd5e1'
+          }
+        }
+      }
+    }
   });
 
   const pieCtx = document.getElementById('pieChart').getContext('2d');
@@ -680,15 +1153,33 @@ function renderCharts(users){
         data: values,
         backgroundColor: bgColors
       }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#cbd5e1',
+            padding: 15
+          }
+        }
+      }
     }
   });
 
   if(overAmount > 0){
     analyticsBadge.innerText = `🚨 Over budget: ₹${overAmount.toFixed(2)} — shown as red slice in chart.`;
+    analyticsBadge.style.backgroundColor = 'rgba(220, 53, 69, 0.2)';
+    analyticsBadge.style.color = '#ff6b6b';
   } else if(currentBudgetAmount > 0) {
     analyticsBadge.innerText = `✅ Within budget: Budget ₹${currentBudgetAmount.toFixed(2)}, Spent ₹${totalAmount.toFixed(2)}.`;
+    analyticsBadge.style.backgroundColor = 'rgba(40, 167, 69, 0.2)';
+    analyticsBadge.style.color = '#51cf66';
   } else {
     analyticsBadge.innerText = "";
+    analyticsBadge.style.backgroundColor = 'transparent';
   }
 }
 </script>
@@ -696,7 +1187,7 @@ function renderCharts(users){
 <footer>
   <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
     <p style="margin:0;">Developed by <strong class="blinking-name">Prime Sandy</strong></p>
-    <p style="margin:0;">Email: <a href="mailto:santhoshgowtham777@gmail.com" style="color:#00bcd4; text-decoration:none;">santhoshgowtham777@gmail.com</a></p>
+    <p style="margin:0;">Email: <a href="mailto:santhoshgowtham777@gmail.com">santhoshgowtham777@gmail.com</a></p>
     <p style="margin:0;">&copy; 2025 E-Trax. All rights reserved.</p>
   </div>
 </footer>
