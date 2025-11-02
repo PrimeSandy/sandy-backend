@@ -1374,7 +1374,7 @@ async function showHistory() {
   }
 }
 
-// Charts renderer
+// FIXED Charts renderer - Proper colors for each category
 function renderCharts(users){
   const dates = {};
   const types = {};
@@ -1389,9 +1389,10 @@ function renderCharts(users){
   });
 
   const overAmount = currentBudgetAmount && totalAmount > currentBudgetAmount ? (totalAmount - currentBudgetAmount) : 0;
-  if(overAmount > 0){
-    const label = `Over Budget (₹${overAmount.toFixed(2)})`;
-    types[label] = overAmount;
+  
+  // Add over budget as separate category if exists
+  if (overAmount > 0) {
+    types['Over Budget'] = overAmount;
   }
 
   const lineCtx = document.getElementById('lineChart').getContext('2d');
@@ -1437,8 +1438,20 @@ function renderCharts(users){
   const labels = Object.keys(types);
   const values = Object.values(types);
 
-  const baseColors = ['var(--primary)', '#ff9800', '#8bc34a', '#e91e63', '#9c27b0', '#3f51b5', '#009688'];
-  const bgColors = labels.map(l => l.startsWith("Over Budget") ? 'var(--danger)' : baseColors.shift() || '#607d8b');
+  // FIXED: Proper color assignment for each category
+  const categoryColors = {
+    'Card': '#00bcd4',      // Cyan
+    'Cash': '#ff9800',      // Orange
+    'Gpay/Paytm': '#8bc34a', // Green
+    'Other': '#e91e63',     // Pink
+    'Over Budget': '#ff3b30' // Red
+  };
+
+  // Assign colors - use predefined or generate unique ones
+  const bgColors = labels.map(label => {
+    return categoryColors[label] || 
+           `hsl(${Math.random() * 360}, 70%, 60%)`; // Random color for unknown categories
+  });
 
   window.pieChartInstance = new Chart(pieCtx, {
     type: 'pie',
@@ -1462,10 +1475,31 @@ function renderCharts(users){
             padding: 15,
             font: { size: 11 }
           }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.raw || 0;
+              const total = context.dataset.data.reduce((a, b) => a + b, 0);
+              const percentage = Math.round((value / total) * 100);
+              return `${label}: ₹${value.toFixed(2)} (${percentage}%)`;
+            }
+          }
         }
       }
     }
   });
+
+  // Update analytics badge
+  if(overAmount > 0){
+    analyticsBadge.innerHTML = `<span class="badge badge-danger">🚨 Over budget: ₹${overAmount.toFixed(2)}</span>`;
+  } else if(currentBudgetAmount > 0) {
+    const usagePercent = Math.round((totalAmount / currentBudgetAmount) * 100);
+    analyticsBadge.innerHTML = `<span class="badge badge-success">✅ Usage: ${usagePercent}% of budget</span>`;
+  } else {
+    analyticsBadge.innerHTML = `<span class="badge badge-info">📊 Total: ₹${totalAmount.toFixed(2)}</span>`;
+  }
 }
 
 // Start the typing animation
