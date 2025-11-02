@@ -1,4 +1,3 @@
-// server.js
 require("dotenv").config();
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
@@ -48,7 +47,7 @@ app.post("/submit", async (req, res) => {
     const doc = {
       uid,
       name,
-      amount,
+      amount: parseFloat(amount),
       type,
       description,
       date,
@@ -58,10 +57,10 @@ app.post("/submit", async (req, res) => {
       editHistory: [],
     };
     const result = await expenses.insertOne(doc);
-    res.json({ status: "success", message: "✅ Expense saved!", id: result.insertedId });
+    res.json({ status: "success", message: "✅ Expense saved successfully!", id: result.insertedId });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ status: "error", message: "❌ Failed to save" });
+    res.status(500).json({ status: "error", message: "❌ Failed to save expense" });
   }
 });
 
@@ -70,12 +69,12 @@ app.get("/users", async (req, res) => {
   try {
     await connectDB();
     const { uid } = req.query;
-    if (!uid) return res.status(400).json({ status: "error", message: "Missing uid" });
+    if (!uid) return res.status(400).json({ status: "error", message: "Missing user ID" });
     const all = await expenses.find({ uid }).sort({ createdAt: -1 }).toArray();
     res.json(all);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ status: "error", message: "❌ Failed to load" });
+    res.status(500).json({ status: "error", message: "❌ Failed to load expenses" });
   }
 });
 
@@ -84,11 +83,11 @@ app.get("/user/:id", async (req, res) => {
   try {
     await connectDB();
     const user = await expenses.findOne({ _id: new ObjectId(req.params.id) });
-    if (!user) return res.status(404).json({ status: "error", message: "Not found" });
+    if (!user) return res.status(404).json({ status: "error", message: "Expense not found" });
     res.json(user);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ status: "error", message: "❌ Invalid ID" });
+    res.status(500).json({ status: "error", message: "❌ Invalid expense ID" });
   }
 });
 
@@ -98,34 +97,72 @@ app.put("/update/:id", async (req, res) => {
     await connectDB();
     const { uid, editorName, name, amount, type, description, date } = req.body;
     const id = req.params.id;
+    
     const exp = await expenses.findOne({ _id: new ObjectId(id) });
     if (!exp) return res.status(404).json({ status: "error", message: "Expense not found" });
-    if (exp.uid !== uid) return res.status(403).json({ status: "error", message: "Not your expense" });
+    if (exp.uid !== uid) return res.status(403).json({ status: "error", message: "Not authorized to edit this expense" });
 
-    const before = { name: exp.name, amount: exp.amount, type: exp.type, description: exp.description, date: exp.date };
-    const after = { name, amount, type, description, date };
+    const before = { 
+      name: exp.name, 
+      amount: exp.amount, 
+      type: exp.type, 
+      description: exp.description, 
+      date: exp.date 
+    };
+    
+    const after = { 
+      name, 
+      amount: parseFloat(amount), 
+      type, 
+      description, 
+      date 
+    };
 
-    await expenses.updateOne(
+    // Track changes
+    const changes = [];
+    if (before.name !== after.name) changes.push(`Name changed from "${before.name}" to "${after.name}"`);
+    if (before.amount !== after.amount) changes.push(`Amount changed from ₹${before.amount} to ₹${after.amount}`);
+    if (before.type !== after.type) changes.push(`Type changed from ${before.type} to ${after.type}`);
+    if (before.description !== after.description) changes.push(`Description changed from "${before.description}" to "${after.description}"`);
+    if (before.date !== after.date) changes.push(`Date changed from ${before.date} to ${after.date}`);
+
+    const updateResult = await expenses.updateOne(
       { _id: new ObjectId(id) },
       {
-        $set: { name, amount, type, description, date, updatedAt: new Date() },
+        $set: { 
+          name, 
+          amount: parseFloat(amount), 
+          type, 
+          description, 
+          date, 
+          updatedAt: new Date() 
+        },
         $inc: { editCount: 1 },
         $push: {
           editHistory: {
             editorUid: uid,
-            editorName: editorName || "Unknown",
+            editorName: editorName || "Unknown User",
             date: new Date(),
             before,
             after,
+            changes: changes.length > 0 ? changes : ["No significant changes detected"]
           },
         },
       }
     );
 
-    res.json({ status: "success", message: "✅ Expense updated successfully!" });
+    if (updateResult.modifiedCount === 0) {
+      return res.status(400).json({ status: "error", message: "No changes made" });
+    }
+
+    res.json({ 
+      status: "success", 
+      message: "✅ Expense updated successfully!",
+      changes: changes
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ status: "error", message: "❌ Failed to update" });
+    res.status(500).json({ status: "error", message: "❌ Failed to update expense" });
   }
 });
 
@@ -136,11 +173,12 @@ app.delete("/delete/:id", async (req, res) => {
     const id = req.params.id;
     const exp = await expenses.findOne({ _id: new ObjectId(id) });
     if (!exp) return res.status(404).json({ status: "error", message: "Expense not found" });
+    
     await expenses.deleteOne({ _id: new ObjectId(id) });
-    res.json({ status: "success", message: "✅ Expense deleted" });
+    res.json({ status: "success", message: "✅ Expense deleted successfully" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ status: "error", message: "❌ Failed to delete" });
+    res.status(500).json({ status: "error", message: "❌ Failed to delete expense" });
   }
 });
 
@@ -149,16 +187,20 @@ app.post("/setBudget", async (req, res) => {
   try {
     await connectDB();
     const { uid, amount, reset } = req.body;
-    if (!uid) return res.status(400).json({ status: "error", message: "Missing uid" });
+    if (!uid) return res.status(400).json({ status: "error", message: "Missing user ID" });
 
     if (reset) {
       await budgets.deleteOne({ uid });
-      return res.json({ status: "success", message: "✅ Budget reset" });
+      return res.json({ status: "success", message: "✅ Budget reset successfully" });
     }
 
     const amt = parseFloat(amount) || 0;
-    await budgets.updateOne({ uid }, { $set: { uid, amount: amt, updatedAt: new Date() } }, { upsert: true });
-    res.json({ status: "success", message: "✅ Budget saved" });
+    await budgets.updateOne(
+      { uid }, 
+      { $set: { uid, amount: amt, updatedAt: new Date() } }, 
+      { upsert: true }
+    );
+    res.json({ status: "success", message: "✅ Budget saved successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ status: "error", message: "❌ Budget operation failed" });
@@ -169,7 +211,7 @@ app.get("/getBudget", async (req, res) => {
   try {
     await connectDB();
     const { uid } = req.query;
-    if (!uid) return res.status(400).json({ status: "error", message: "Missing uid" });
+    if (!uid) return res.status(400).json({ status: "error", message: "Missing user ID" });
     const b = await budgets.findOne({ uid });
     res.json({ amount: b?.amount || 0, updatedAt: b?.updatedAt || null });
   } catch (err) {
@@ -183,4 +225,5 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📊 MongoDB: Connected to PTS_PRO database`);
 });
