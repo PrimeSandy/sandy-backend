@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,45 +14,51 @@
 
 <style>
 :root {
-  /* Dark Theme (Default) */
+  /* Dark Theme (Default) - HIGH CONTRAST */
   --primary: #00bcd4;
   --primary-dark: #0097a7;
   --secondary: #ffcc00;
   --background: #0b0b0b;
   --card-bg: #1a1a1a;
   --text: #ffffff;
-  --text-light: #cbd5e1;
-  --text-muted: #9ca3af;
-  --border: rgba(255,255,255,0.1);
-  --success: #28a745;
-  --warning: #ffc107;
-  --danger: #dc3545;
+  --text-light: #f1f5f9;
+  --text-muted: #cbd5e1;
+  --border: rgba(255,255,255,0.2);
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
   --shadow: 0 10px 30px rgba(0,0,0,0.6);
 }
 
 [data-theme="light"] {
-  --primary: #007bff;
-  --primary-dark: #0056b3;
-  --secondary: #ff6b00;
-  --background: #f8f9fa;
-  --card-bg: #ffffff;
-  --text: #212529;
-  --text-light: #495057;
-  --text-muted: #6c757d;
-  --border: rgba(0,0,0,0.1);
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --secondary: #dc2626;
+  --background: #ffffff;
+  --card-bg: #f8fafc;
+  --text: #000000;
+  --text-light: #1e293b;
+  --text-muted: #475569;
+  --border: rgba(0,0,0,0.15);
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
   --shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 [data-theme="professional"] {
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
   --secondary: #f59e0b;
   --background: #0f172a;
   --card-bg: #1e293b;
-  --text: #f1f5f9;
-  --text-light: #cbd5e1;
+  --text: #ffffff;
+  --text-light: #e2e8f0;
   --text-muted: #94a3b8;
-  --border: rgba(255,255,255,0.1);
+  --border: rgba(255,255,255,0.2);
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
   --shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
@@ -67,6 +74,7 @@ body {
   margin: 0;
   font-family: "Poppins", sans-serif;
   line-height: 1.6;
+  font-weight: 500;
 }
 
 /* ---------- LOGIN CARD ---------- */
@@ -123,9 +131,10 @@ body {
 }
 
 .login-card p { 
-  color: var(--text-light); 
+  color: var(--text); 
   margin-bottom: 28px; 
   font-size: 1.05rem;
+  font-weight: 500;
 }
 
 .google-btn {
@@ -152,7 +161,7 @@ body {
 }
 
 .google-btn img { width:20px; height:20px; }
-.small-note { color: var(--text-muted); font-size:0.9rem; margin-top:16px; }
+.small-note { color: var(--text-muted); font-size:0.9rem; margin-top:16px; font-weight: 500; }
 
 /* HEADER */
 header { 
@@ -195,7 +204,7 @@ header.visible {
 .typing { 
   font-size: 0.9rem; 
   color: var(--secondary); 
-  font-weight: 500;
+  font-weight: 600;
   min-height: 1.2rem;
 }
 
@@ -207,7 +216,7 @@ header.visible {
 
 #userNameDisplay {
   color: var(--secondary);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1rem;
 }
 
@@ -222,6 +231,7 @@ header.visible {
   align-items: center;
   gap: 8px;
   transition: all 0.3s ease;
+  font-weight: 600;
 }
 
 .theme-toggle:hover {
@@ -238,7 +248,7 @@ header.visible {
 .nav-links a { 
   color: var(--text); 
   text-decoration:none; 
-  font-weight:500; 
+  font-weight:600; 
   transition:all 0.3s ease; 
   position: relative;
   padding: 8px 12px;
@@ -259,6 +269,7 @@ header.visible {
   padding:8px 16px; 
   transition:all 0.3s ease;
   cursor: pointer;
+  font-weight: 600;
 }
 
 #googleLogoutBtn:hover { 
@@ -281,6 +292,7 @@ header.visible {
   box-shadow: 0 8px 25px rgba(0,0,0,0.4);
   transition: all 0.3s ease;
   margin-bottom: 20px;
+  color: var(--text);
 }
 
 .card:hover {
@@ -294,11 +306,17 @@ header.visible {
   padding: 15px 20px;
   border-radius: 12px 12px 0 0 !important;
   color: var(--primary);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .card-body {
   padding: 20px;
+  color: var(--text);
+}
+
+.card h5, .card h6 {
+  color: var(--text);
+  font-weight: 600;
 }
 
 /* TABLE */
@@ -309,10 +327,11 @@ header.visible {
   border-radius: 12px; 
   box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
   overflow: hidden;
+  color: var(--text);
 }
 
 table { 
-  color: var(--text); 
+  color: var(--text) !important; 
   font-size:0.95rem; 
   margin-bottom: 0;
 }
@@ -325,6 +344,7 @@ table thead {
 
 table tbody tr { 
   transition: all 0.3s ease;
+  color: var(--text) !important;
 }
 
 table tbody tr:hover { 
@@ -384,6 +404,7 @@ table tbody tr:hover {
 .btn-warning {
   background: var(--warning);
   color: black;
+  font-weight: 600;
 }
 
 .btn-outline-danger {
@@ -410,6 +431,7 @@ table tbody tr:hover {
   border-radius: 8px;
   padding: 10px 15px;
   transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .form-control:focus, .form-select:focus {
@@ -421,7 +443,7 @@ table tbody tr:hover {
 
 .form-label {
   color: var(--text-light);
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 8px;
 }
 
@@ -451,6 +473,7 @@ table tbody tr:hover {
   box-shadow: 0 8px 25px rgba(0,0,0,0.6);
   animation: modalFadeIn 0.3s ease;
   border: 1px solid var(--border);
+  color: var(--text);
 }
 
 @keyframes modalFadeIn {
@@ -462,11 +485,18 @@ table tbody tr:hover {
   color: var(--warning); 
   text-align:center; 
   margin-bottom:20px; 
+  font-weight: 700;
 }
 
 .modal-content h4 { 
   color: var(--primary); 
   margin-top: 20px; 
+  font-weight: 600;
+}
+
+.modal-content p, .modal-content li {
+  color: var(--text);
+  font-weight: 500;
 }
 
 /* HISTORY TABLE */
@@ -474,6 +504,7 @@ table tbody tr:hover {
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
+  color: var(--text);
 }
 
 .history-table th,
@@ -481,6 +512,8 @@ table tbody tr:hover {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 500;
 }
 
 .history-table th {
@@ -502,6 +535,8 @@ table tbody tr:hover {
   padding: 2px 5px;
   border-radius: 3px;
   background: rgba(0,188,212,0.1);
+  color: var(--text);
+  font-weight: 500;
 }
 
 /* MESSAGE BOX */
@@ -517,6 +552,7 @@ table tbody tr:hover {
   z-index: 9999;
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   animation: slideInRight 0.3s ease;
+  font-weight: 600;
 }
 
 @keyframes slideInRight {
@@ -533,11 +569,13 @@ footer {
   border-top:1px solid var(--border);
   margin-top:40px; 
   font-size:0.9rem;
+  font-weight: 500;
 }
 
 .blinking-name { 
   color: var(--primary); 
   animation: blink 2s infinite;
+  font-weight: 700;
 }
 
 @keyframes blink {
@@ -549,6 +587,7 @@ footer a {
   color: var(--primary);
   text-decoration: none;
   transition: all 0.3s ease;
+  font-weight: 600;
 }
 
 footer a:hover {
@@ -639,7 +678,8 @@ footer a:hover {
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
+  color: white;
 }
 
 .badge-success {
@@ -666,6 +706,7 @@ footer a:hover {
 .expense-card {
   transition: all 0.3s ease;
   border-radius: 12px;
+  color: var(--text);
 }
 
 .expense-card:hover {
@@ -675,6 +716,13 @@ footer a:hover {
 
 .expense-details {
   font-size: 0.9rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.expense-card .card-title {
+  color: var(--primary) !important;
+  font-weight: 700;
 }
 
 /* Mobile responsive buttons */
@@ -730,6 +778,24 @@ footer a:hover {
   .table {
     min-width: 600px;
   }
+}
+
+/* Budget status text */
+#budgetStatusText {
+  color: var(--text) !important;
+  font-weight: 600;
+}
+
+/* Text muted with better contrast */
+.text-muted {
+  color: var(--text-muted) !important;
+  font-weight: 500;
+}
+
+/* Ensure all critical text is bright */
+.high-contrast-text {
+  color: var(--text) !important;
+  font-weight: 600 !important;
 }
 </style>
 </head>
