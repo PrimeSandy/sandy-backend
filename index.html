@@ -1006,21 +1006,8 @@ const BASE_URL = window.location.hostname.includes("localhost")
   ? "http://localhost:3000"
   : "https://sandy-backend2-0.onrender.com";
 
-// Firebase Config
-app.get("/firebase-config", (req, res) => {
-  res.json({
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID,
-    measurementId: process.env.FIREBASE_MEASUREMENT_ID
-  });
-});
-    
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+// Firebase will be initialized after fetching config from backend
+let auth = null;
 let currentUserUid = null;
 let currentUserName = null;
 
@@ -1042,6 +1029,51 @@ function applyTheme(theme) {
 function cycleTheme() {
   currentThemeIndex = (currentThemeIndex + 1) % themes.length;
   applyTheme(themes[currentThemeIndex]);
+}
+
+// Initialize Firebase securely
+async function initializeFirebase() {
+  try {
+    const response = await fetch(`${BASE_URL}/firebase-config`);
+    const firebaseConfig = await response.json();
+    
+    if (!firebaseConfig.apiKey) {
+      throw new Error('Firebase config not available');
+    }
+    
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    console.log('Firebase initialized securely');
+    
+    // Now initialize auth state listener
+    setupAuthListener();
+    
+  } catch (error) {
+    console.error('Failed to initialize Firebase:', error);
+    showMessage('❌ Failed to initialize app. Please refresh.', 5000);
+  }
+}
+
+// Setup auth state listener after Firebase is initialized
+function setupAuthListener() {
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      currentUserUid = user.uid;
+      currentUserName = user.displayName || "User";
+      toggleLoginState(true);
+      loadData();
+      userNameDisplay.textContent = currentUserName;
+      fetchBudget();
+    } else {
+      currentUserUid = null;
+      currentUserName = null;
+      toggleLoginState(false);
+      tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
+      analyticsContainer.style.display = "none";
+      userNameDisplay.textContent = "";
+      clearBudgetUI();
+    }
+  });
 }
 
 // Elements
@@ -1089,8 +1121,9 @@ window.addEventListener("click", e => {
   if(e.target == historyModal) historyModal.style.display="none";
 });
 
-// Initialize theme
+// Initialize theme and Firebase
 initTheme();
+initializeFirebase();
 
 // Message function
 function showMessage(msg, duration=2000) {
@@ -1107,28 +1140,13 @@ function toggleLoginState(isLoggedIn) {
   budgetCard.style.display = isLoggedIn ? "block" : "none";
 }
 
-// Firebase Auth state
-auth.onAuthStateChanged(user=>{
-  if(user){
-    currentUserUid = user.uid;
-    currentUserName = user.displayName || "User";
-    toggleLoginState(true);
-    loadData();
-    userNameDisplay.textContent = currentUserName;
-    fetchBudget();
-  } else {
-    currentUserUid = null;
-    currentUserName = null;
-    toggleLoginState(false);
-    tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
-    analyticsContainer.style.display="none";
-    userNameDisplay.textContent = "";
-    clearBudgetUI();
-  }
-});
-
 // Login button
 loginBtn.addEventListener("click", async () => {
+  if (!auth) {
+    showMessage("❌ App not ready. Please wait...", 2000);
+    return;
+  }
+  
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
     const result = await auth.signInWithPopup(provider);
@@ -1139,11 +1157,16 @@ loginBtn.addEventListener("click", async () => {
     userNameDisplay.textContent = currentUserName;
     showMessage("✅ Logged in successfully",2000);
     fetchBudget();
-  } catch(err){ console.error(err); showMessage("❌ Login failed",2000); }
+  } catch(err){ 
+    console.error(err); 
+    showMessage("❌ Login failed",2000); 
+  }
 });
 
 // Logout button
 logoutBtn && logoutBtn.addEventListener("click", async () => {
+  if (!auth) return;
+  
   try {
     await auth.signOut();
     currentUserUid = null;
@@ -1154,7 +1177,10 @@ logoutBtn && logoutBtn.addEventListener("click", async () => {
     userNameDisplay.textContent = "";
     clearBudgetUI();
     showMessage("✅ Logged out successfully",2000);
-  } catch(err){ console.error(err); showMessage("❌ Logout failed",2000); }
+  } catch(err){ 
+    console.error(err); 
+    showMessage("❌ Logout failed",2000); 
+  }
 });
 
 // Typing animation
@@ -1739,7 +1765,6 @@ function renderCharts(users){
 // Start the typing animation
 typeWriterHeader();
 </script>
-
 <footer>
   <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
     <p style="margin:0;">Developed by <strong class="blinking-name">Prime Sandy</strong></p>
