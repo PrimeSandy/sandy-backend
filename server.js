@@ -33,9 +33,38 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
+// ✅ SECURE: Serve Firebase Config from Environment Variables
+app.get("/firebase-config", (req, res) => {
+  const firebaseConfig = {
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
+  };
+  
+  // Validate that all required config values are present
+  const missingKeys = Object.keys(firebaseConfig).filter(key => !firebaseConfig[key]);
+  if (missingKeys.length > 0) {
+    console.error('Missing Firebase config keys:', missingKeys);
+    return res.status(500).json({ error: 'Firebase configuration incomplete' });
+  }
+  
+  res.json(firebaseConfig);
+});
+
 // ✅ Health Check
 app.get("/health", (req, res) => {
-  res.json({ status: "OK", message: "Server is running!" });
+  res.json({ 
+    status: "OK", 
+    message: "Server is running!",
+    firebase: {
+      configured: !!process.env.FIREBASE_API_KEY,
+      project: process.env.FIREBASE_PROJECT_ID
+    }
+  });
 });
 
 // ✅ Create Expense
@@ -220,11 +249,20 @@ app.get("/getBudget", async (req, res) => {
   }
 });
 
+// Error handling
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Promise Rejection:', err);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+
 // ✅ Always start server (both local and production)
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`📊 MongoDB: Connected to PTS_PRO database`);
+  console.log(`🔐 Firebase: ${process.env.FIREBASE_PROJECT_ID ? 'Configured' : 'Not configured'}`);
 });
-
