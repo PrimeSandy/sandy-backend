@@ -1,8 +1,10 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00bcd4">
+
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>E-TRAX | Smart Expense Tracker</title>
@@ -12,6 +14,17 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js")
+      .then(() => console.log("Service Worker registered"))
+      .catch(err => console.error("SW failed", err));
+  });
+}
+</script>
+
 
 <style>
 :root {
@@ -1775,3 +1788,4 @@ typeWriterHeader();
 </footer>
 </body>
 </html>
+
