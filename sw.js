@@ -1,11 +1,17 @@
-self.addEventListener("install", event => {
-  self.skipWaiting();
+self.addEventListener("install", e => {
+  e.waitUntil(
+    caches.open("e-trax-cache").then(cache => {
+      return cache.addAll([
+        "/",
+        "/index.html",
+        "/manifest.json"
+      ]);
+    })
+  );
 });
 
-self.addEventListener("activate", event => {
-  self.clients.claim();
-});
-
-self.addEventListener("fetch", event => {
-  event.respondWith(fetch(event.request));
+self.addEventListener("fetch", e => {
+  e.respondWith(
+    caches.match(e.request).then(res => res || fetch(e.request))
+  );
 });
