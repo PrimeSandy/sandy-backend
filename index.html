@@ -1,8 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#00bcd4">
 
 <meta charset="UTF-8" />
@@ -16,13 +15,14 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
+<script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js")
-      .then(() => console.log("Service Worker registered"))
-      .catch(err => console.error("SW failed", err));
+    navigator.serviceWorker.register("/sw.js");
   });
 }
+</script>
+
 </script>
 
 
