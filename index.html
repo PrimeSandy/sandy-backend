@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <!-- Main App View (Hidden initially) -->
+    <!-- Main App View -->
     <div id="appView" class="app-view" style="display: none;">
         <!-- Header -->
         <header class="app-header">
@@ -49,7 +49,7 @@
                     <i class="fas fa-chart-line"></i>
                     <span>E-TRAX</span>
                 </div>
-                <div class="typing-text" id="typingText"></div>
+                <div id="typingText" class="typing-text">Track your expenses...</div>
             </div>
             
             <div class="header-right">
@@ -148,7 +148,6 @@
                 
                 <div class="expenses-container">
                     <div id="expensesList" class="expenses-list">
-                        <!-- Expenses will be loaded here -->
                         <div class="empty-state">
                             <i class="fas fa-receipt"></i>
                             <h3>No expenses yet</h3>
@@ -180,7 +179,6 @@
     <!-- Message Toast -->
     <div id="toast" class="toast"></div>
 
-    <!-- Firebase & App Script -->
     <script src="app.js"></script>
 </body>
 </html>
