@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://alphaprime.co.in/sitemap.xml
