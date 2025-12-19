@@ -1,1832 +1,992 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <title>E-TRAX | Smart Expense Tracker</title>
-   
-    <meta name="description" content="E-TRAX is a smart expense tracker to manage daily income and expenses with analytics, Firebase login, and secure cloud storage." />
-    <meta name="keywords" content="expense tracker, budget app, money manager, finance tracker, E-TRAX, alphaprime" />
-    <meta name="author" content="AlphaPrime" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="index, follow" />
-    <meta property="og:title" content="E-TRAX | Smart Expense Tracker" />
-    <meta property="og:description" content="Track your expenses smartly with E-TRAX. Secure, fast and simple expense tracking app." />
-    <meta property="og:url" content="https://alphaprime.co.in" />
-    <meta property="og:type" content="website" />
-    <link rel="canonical" href="https://alphaprime.co.in" />
-    <link rel="icon" href="/favicon.ico" />
-
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#00bcd4">
-
+    
     <style>
-      :root {
-        /* Dark Theme (Default) - HIGH CONTRAST */
-        --primary: #00bcd4;
-        --primary-dark: #0097a7;
-        --secondary: #ffcc00;
-        --background: #0b0b0b;
-        --card-bg: #1a1a1a;
-        --text: #ffffff;
-        --text-light: #f1f5f9;
-        --text-muted: #cbd5e1;
-        --border: rgba(255,255,255,0.2);
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        --shadow: 0 10px 30px rgba(0,0,0,0.6);
-      }
+        :root {
+            --primary: #00bcd4;
+            --primary-dark: #0097a7;
+            --secondary: #ffcc00;
+            --background: #0b0b0b;
+            --card-bg: #1a1a1a;
+            --text: #ffffff;
+            --text-light: #f1f5f9;
+            --text-muted: #cbd5e1;
+            --border: rgba(255,255,255,0.2);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        [data-theme="light"] {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #dc2626;
+            --background: #ffffff;
+            --card-bg: #f8fafc;
+            --text: #000000;
+            --text-light: #1e293b;
+            --text-muted: #475569;
+            --border: rgba(0,0,0,0.15);
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="professional"] {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #f59e0b;
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text: #ffffff;
+            --text-light: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: rgba(255,255,255,0.2);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Login Styles */
+        .login-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--background) 0%, var(--card-bg) 100%);
+        }
 
-      [data-theme="light"] {
-        --primary: #2563eb;
-        --primary-dark: #1d4ed8;
-        --secondary: #dc2626;
-        --background: #ffffff;
-        --card-bg: #f8fafc;
-        --text: #000000;
-        --text-light: #1e293b;
-        --text-muted: #475569;
-        --border: rgba(0,0,0,0.15);
-        --success: #059669;
-        --warning: #d97706;
-        --danger: #dc2626;
-        --shadow: 0 10px 30px rgba(0,0,0,0.1);
-      }
-
-      [data-theme="professional"] {
-        --primary: #3b82f6;
-        --primary-dark: #2563eb;
-        --secondary: #f59e0b;
-        --background: #0f172a;
-        --card-bg: #1e293b;
-        --text: #ffffff;
-        --text-light: #e2e8f0;
-        --text-muted: #94a3b8;
-        --border: rgba(255,255,255,0.2);
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        --shadow: 0 10px 30px rgba(0,0,0,0.5);
-      }
-
-      * {
-        box-sizing: border-box;
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-      }
-
-      body {
-        background-color: var(--background);
-        color: var(--text);
-        min-height: 100vh;
-        margin: 0;
-        font-family: "Poppins", sans-serif;
-        line-height: 1.6;
-        font-weight: 500;
-      }
-
-      /* ---------- LOGIN CARD ---------- */
-      .login-wrapper {
-        display: flex;
-        align-items: center; 
-        justify-content: center;
-        min-height: 100vh;
-        padding: 24px;
-        background: linear-gradient(135deg, var(--background) 0%, var(--card-bg) 100%);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .login-wrapper::before {
-        content: '';
-        position: absolute;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(0,188,212,0.1) 0%, transparent 70%);
-        animation: pulse 15s infinite linear;
-      }
-
-      @keyframes pulse {
-        0% { transform: translate(-50%, -50%) scale(1); }
-        50% { transform: translate(-50%, -50%) scale(1.1); }
-        100% { transform: translate(-50%, -50%) scale(1); }
-      }
-
-      .login-card {
-        width: 100%;
-        max-width: 460px;
-        background: var(--card-bg);
-        border-radius: 16px;
-        box-shadow: var(--shadow);
-        padding: 40px 32px;
-        text-align: center;
-        border: 1px solid var(--border);
-        position: relative;
-        z-index: 1;
-        transition: transform 0.3s ease;
-      }
-
-      .login-card:hover {
-        transform: translateY(-5px);
-      }
-
-      .login-card h1 { 
-        color: var(--primary); 
-        margin-bottom: 8px; 
-        font-size: 2.2rem; 
-        font-weight: 700;
-        letter-spacing: 1px;
-      }
-
-      .login-card p { 
-        color: var(--text); 
-        margin-bottom: 28px; 
-        font-size: 1.05rem;
-        font-weight: 500;
-      }
-
-      .google-btn {
-        display:flex; 
-        align-items:center; 
-        gap:12px; 
-        justify-content:center;
-        width:100%; 
-        background: var(--text);
-        color: var(--background);
-        border-radius:10px; 
-        padding:14px 16px;
-        font-weight:600; 
-        cursor:pointer; 
-        border:none;
-        box-shadow: 0 4px 12px rgba(2,6,23,0.4);
-        transition: all 0.3s ease;
-        font-size: 1rem;
-      }
-
-      .google-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(2,6,23,0.5);
-      }
-
-      .google-btn img { width:20px; height:20px; }
-      .small-note { color: var(--text-muted); font-size:0.9rem; margin-top:16px; font-weight: 500; }
-
-      /* HEADER */
-      header { 
-        display: none;
-        background: var(--card-bg);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid var(--border);
-        padding: 12px 20px;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-      }
-
-      header.visible {
-        display: block;
-      }
-
-      .header-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 15px;
-      }
-
-      .brand-section {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-
-      .brand-section h1 {
-        font-size: 1.5rem; 
-        color: var(--primary); 
-        font-weight: 700; 
-        margin: 0;
-      }
-
-      .typing { 
-        font-size: 0.9rem; 
-        color: var(--secondary); 
-        font-weight: 600;
-        min-height: 1.2rem;
-      }
-
-      .header-controls {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-
-      #userNameDisplay {
-        color: var(--secondary);
-        font-weight: 700;
-        font-size: 1rem;
-      }
-
-      .theme-toggle {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 8px 12px;
-        color: var(--text);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s ease;
-        font-weight: 600;
-      }
-
-      .theme-toggle:hover {
-        background: var(--primary);
-        color: white;
-      }
-
-      .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-
-      .nav-links a { 
-        color: var(--text); 
-        text-decoration:none; 
-        font-weight:600; 
-        transition:all 0.3s ease; 
-        position: relative;
-        padding: 8px 12px;
-        border-radius: 6px;
-      }
-
-      .nav-links a:hover { 
-        color: var(--primary);
-        background: rgba(0,188,212,0.1);
-      }
-
-      #googleLogoutBtn {
-        background: transparent; 
-        border: 2px solid var(--danger); 
-        color: var(--danger);
-        font-weight:600; 
-        border-radius:8px; 
-        padding:8px 16px; 
-        transition:all 0.3s ease;
-        cursor: pointer;
-        font-weight: 600;
-      }
-
-      #googleLogoutBtn:hover { 
-        background:var(--danger); 
-        color:white; 
-        transform: translateY(-2px);
-      }
-
-      /* MAIN CONTENT */
-      .container {
-        padding-top: 20px;
-        padding-bottom: 20px;
-      }
-
-      /* CARDS */
-      .card {
-        background: var(--card-bg);
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-        transition: all 0.3s ease;
-        margin-bottom: 20px;
-        color: var(--text);
-      }
-
-      .card:hover {
-        box-shadow: 0 12px 30px rgba(0,0,0,0.5);
-        transform: translateY(-2px);
-      }
-
-      .card-header {
-        background: rgba(0,0,0,0.1);
-        border-bottom: 1px solid var(--border);
-        padding: 15px 20px;
-        border-radius: 12px 12px 0 0 !important;
-        color: var(--primary);
-        font-weight: 700;
-      }
-
-      .card-body {
-        padding: 20px;
-        color: var(--text);
-      }
-
-      .card h5, .card h6 {
-        color: var(--text);
-        font-weight: 600;
-      }
-
-      /* TABLE */
-      .table-container { 
-        margin-top: 20px; 
-        padding: 20px; 
-        background: var(--card-bg); 
-        border-radius: 12px; 
-        box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
-        overflow: hidden;
-        color: var(--text);
-      }
-
-      table { 
-        color: var(--text) !important; 
-        font-size:0.95rem; 
-        margin-bottom: 0;
-      }
-
-      table thead { 
-        background: var(--primary); 
-        color: white; 
-        font-weight:600; 
-      }
-
-      table tbody tr { 
-        transition: all 0.3s ease;
-        color: var(--text) !important;
-      }
-
-      table tbody tr:hover { 
-        background-color: rgba(0,188,212,0.1); 
-      }
-
-      /* BUDGET */
-      #budgetCard { 
-        display:none; 
-      }
-
-      #budgetBar { 
-        height: 22px; 
-        border-radius:8px; 
-        overflow:hidden; 
-        background: var(--border);
-        margin-top: 10px;
-      }
-
-      #budgetBar .progress { 
-        height:22px; 
-        line-height:22px; 
-        font-weight:600; 
-        transition: width 0.5s ease;
-      }
-
-      /* BUTTONS */
-      .btn {
-        border-radius: 8px;
-        font-weight: 600;
-        padding: 10px 20px;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-      }
-
-      .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      }
-
-      .btn-primary {
-        background: var(--primary);
-        color: white;
-      }
-
-      .btn-primary:hover {
-        background: var(--primary-dark);
-        color: white;
-      }
-
-      .btn-danger {
-        background: var(--danger);
-        color: white;
-      }
-
-      .btn-warning {
-        background: var(--warning);
-        color: black;
-        font-weight: 600;
-      }
-
-      .btn-outline-danger {
-        border-color: var(--danger);
-        color: var(--danger);
-        background: transparent;
-      }
-
-      .btn-outline-danger:hover {
-        background: var(--danger);
-        color: white;
-      }
-
-      .btn-info {
-        background: var(--primary);
-        color: white;
-      }
-
-      /* FORM CONTROLS */
-      .form-control, .form-select {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        color: var(--text);
-        border-radius: 8px;
-        padding: 10px 15px;
-        transition: all 0.3s ease;
-        font-weight: 500;
-      }
-
-      .form-control:focus, .form-select:focus {
-        background: var(--card-bg);
-        border-color: var(--primary);
-        color: var(--text);
-        box-shadow: 0 0 0 0.2rem rgba(0,188,212,0.25);
-      }
-
-      .form-label {
-        color: var(--text-light);
-        font-weight: 600;
-        margin-bottom: 8px;
-      }
-
-      /* MODALS */
-      .modal-overlay {
-        display:none; 
-        position:fixed; 
-        top:0; 
-        left:0; 
-        width:100%; 
-        height:100%;
-        background: rgba(0,0,0,0.8); 
-        color: var(--text); 
-        z-index:9999; 
-        overflow:auto;
-        padding:50px 20px; 
-        box-sizing:border-box;
-        backdrop-filter: blur(5px);
-      }
-
-      .modal-content {
-        max-width:800px; 
-        margin:auto; 
-        background: var(--card-bg); 
-        padding:30px; 
-        border-radius:20px; 
-        box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-        animation: modalFadeIn 0.3s ease;
-        border: 1px solid var(--border);
-        color: var(--text);
-      }
-
-      @keyframes modalFadeIn {
-        from { opacity: 0; transform: translateY(-20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-
-      .modal-content h2 { 
-        color: var(--warning); 
-        text-align:center; 
-        margin-bottom:20px; 
-        font-weight: 700;
-      }
-
-      .modal-content h4 { 
-        color: var(--primary); 
-        margin-top: 20px; 
-        font-weight: 600;
-      }
-
-      .modal-content p, .modal-content li {
-        color: var(--text);
-        font-weight: 500;
-      }
-
-      /* HISTORY TABLE */
-      .history-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-        color: var(--text);
-      }
-
-      .history-table th,
-      .history-table td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid var(--border);
-        color: var(--text);
-        font-weight: 500;
-      }
-
-      .history-table th {
-        background: var(--primary);
-        color: white;
-        font-weight: 600;
-      }
-
-      .history-table tr:hover {
-        background: rgba(0,188,212,0.05);
-      }
-
-      .changes-list {
-        font-size: 0.85rem;
-      }
-
-      .changes-list div {
-        margin: 2px 0;
-        padding: 2px 5px;
-        border-radius: 3px;
-        background: rgba(0,188,212,0.1);
-        color: var(--text);
-        font-weight: 500;
-      }
-
-      /* MESSAGE BOX */
-      #msgBox {
-        position: fixed; 
-        top: 20px; 
-        right: 20px;
-        background-color: var(--success); 
-        color: white; 
-        padding: 12px 24px;
-        border-radius: 10px; 
-        display: none; 
-        z-index: 9999;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        animation: slideInRight 0.3s ease;
-        font-weight: 600;
-      }
-
-      @keyframes slideInRight {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-      }
-
-      /* FOOTER */
-      footer {
-        background: var(--card-bg);
-        color: var(--text-muted);
-        text-align:center; 
-        padding:20px; 
-        border-top:1px solid var(--border);
-        margin-top:40px; 
-        font-size:0.9rem;
-        font-weight: 500;
-      }
-
-      .blinking-name { 
-        color: var(--primary); 
-        animation: blink 2s infinite;
-        font-weight: 700;
-      }
-
-      @keyframes blink {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
-      }
-
-      footer a {
-        color: var(--primary);
-        text-decoration: none;
-        transition: all 0.3s ease;
-        font-weight: 600;
-      }
-
-      footer a:hover {
-        color: var(--primary-dark);
-        text-decoration: underline;
-      }
-
-      /* RESPONSIVE DESIGN */
-      @media (max-width: 768px) {
         .login-card {
-          padding: 30px 20px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
         }
-        
-        .header-content {
-          flex-direction: column;
-          text-align: center;
-          gap: 10px;
+
+        .login-card h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
         }
-        
-        .brand-section {
-          flex-direction: column;
-          gap: 5px;
+
+        .google-btn {
+            background: white;
+            color: #333;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 20px;
         }
-        
-        .header-controls {
-          flex-direction: column;
-          gap: 10px;
+
+        .google-btn:hover {
+            background: #f5f5f5;
         }
-        
-        .nav-links {
-          justify-content: center;
-          flex-wrap: wrap;
+
+        /* Header */
+        header {
+            display: none;
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
-        
-        .table-responsive {
-          font-size: 0.85rem;
+
+        header.visible {
+            display: block;
         }
-        
-        .btn-sm {
-          padding: 5px 10px;
-          font-size: 0.8rem;
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            margin-bottom: 20px;
         }
-        
-        .modal-content {
-          padding: 20px;
-          margin: 20px;
+
+        .card-header {
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid var(--border);
+            color: var(--primary);
+            font-weight: 600;
+            padding: 15px 20px;
         }
-        
+
         .card-body {
-          padding: 15px;
+            padding: 20px;
         }
-      }
 
-      @media (max-width: 576px) {
-        .header-controls {
-          flex-direction: column;
+        /* Forms */
+        .form-control, .form-select {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
         }
-        
-        .theme-toggle span {
-          display: none;
+
+        .form-control:focus, .form-select:focus {
+            background: var(--card-bg);
+            color: var(--text);
+            border-color: var(--primary);
         }
-      }
 
-      /* CHART CONTAINERS */
-      .chart-container {
-        position: relative;
-        height: 300px;
-        margin-bottom: 20px;
-      }
-
-      /* LOADING */
-      .loading {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 3px solid rgba(255,255,255,.3);
-        border-radius: 50%;
-        border-top-color: var(--primary);
-        animation: spin 1s ease-in-out infinite;
-      }
-
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-
-      /* BADGES */
-      .badge {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        color: white;
-      }
-
-      .badge-success {
-        background: var(--success);
-        color: white;
-      }
-
-      .badge-warning {
-        background: var(--warning);
-        color: black;
-      }
-
-      .badge-danger {
-        background: var(--danger);
-        color: white;
-      }
-
-      .badge-info {
-        background: var(--primary);
-        color: white;
-      }
-
-      /* Mobile Expense Cards */
-      .expense-card {
-        transition: all 0.3s ease;
-        border-radius: 12px;
-        color: var(--text);
-      }
-
-      .expense-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-      }
-
-      .expense-details {
-        font-size: 0.9rem;
-        color: var(--text-light);
-        font-weight: 500;
-      }
-
-      .expense-card .card-title {
-        color: var(--primary) !important;
-        font-weight: 700;
-      }
-
-      /* Mobile responsive buttons */
-      @media (max-width: 576px) {
-        .btn-sm {
-          padding: 6px 10px;
-          font-size: 0.75rem;
+        /* Buttons */
+        .btn {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
         }
-        
-        .expense-card .card-body {
-          padding: 15px;
-        }
-        
-        .expense-details {
-          font-size: 0.85rem;
-        }
-      }
 
-      /* Better table responsiveness */
-      .table-responsive {
-        border-radius: 12px;
-        overflow: hidden;
-      }
-
-      /* Action buttons styling */
-      .btn-group .btn {
-        border-radius: 6px;
-        margin: 2px;
-      }
-
-      /* Mobile Table Fix */
-      @media (max-width: 768px) {
-        .table-responsive {
-          font-size: 0.8rem;
+        .btn-primary {
+            background: var(--primary);
+            border: none;
         }
-        
-        .btn-sm {
-          padding: 4px 8px;
-          font-size: 0.7rem;
-          margin: 1px;
-        }
-        
-        .table td, .table th {
-          padding: 8px 4px;
-        }
-        
-        /* Force horizontal scroll */
-        .table-container {
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-        }
-        
-        .table {
-          min-width: 600px;
-        }
-      }
 
-      /* Budget status text */
-      #budgetStatusText {
-        color: var(--text) !important;
-        font-weight: 600;
-      }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
 
-      /* Text muted with better contrast */
-      .text-muted {
-        color: var(--text-muted) !important;
-        font-weight: 500;
-      }
+        .btn-danger {
+            background: var(--danger);
+            border: none;
+        }
 
-      /* Ensure all critical text is bright */
-      .high-contrast-text {
-        color: var(--text) !important;
-        font-weight: 600 !important;
-      }
+        .btn-warning {
+            background: var(--warning);
+            color: black;
+            border: none;
+        }
+
+        /* Message Box */
+        #msgBox {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            display: none;
+            z-index: 9999;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--card-bg);
+            color: var(--text-muted);
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-top: 1px solid var(--border);
+        }
     </style>
-  </head>
-
+</head>
 <body>
 
-<!-- LOGIN VIEW -->
+<!-- Login View -->
 <div id="loginView" class="login-wrapper">
-  <div class="login-card">
-    <h1>E-TRAX</h1>
-    <p>Track expenses — smarter. Sign in with Google to continue.</p>
-
-    <button id="googleLoginBtn" class="google-btn" aria-label="Login with Google">
-      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
-      <span>Sign in with Google</span>
-    </button>
-
-    <div class="small-note">We only use Google to authenticate you — no payment info required.</div>
-    <div style="margin-top:14px;">
-      <small style="color:var(--text-muted)">Developed by <strong style="color:var(--primary)">ALPHA DEVELOPERS </strong></small>
+    <div class="login-card">
+        <h1>E-TRAX</h1>
+        <p>Track your expenses smartly. Sign in with Google to continue.</p>
+        <button id="googleLoginBtn" class="google-btn">
+            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" width="20" height="20">
+            Sign in with Google
+        </button>
+        <p class="small-note mt-3" style="color: var(--text-muted); font-size: 0.9rem;">
+            We only use Google to authenticate you.
+        </p>
     </div>
-  </div>
 </div>
 
-<!-- HEADER -->
+<!-- Header -->
 <header id="mainHeader">
-  <div class="header-content">
-    <div class="brand-section">
-      <h1 class="project-name">E-TRAX</h1>
-      <div class="typing" id="typingHeader"></div>
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 style="color: var(--primary); margin: 0; font-size: 1.5rem;">E-TRAX</h1>
+                <div id="typingHeader" style="color: var(--secondary); font-size: 0.9rem;"></div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div id="userNameDisplay" style="color: var(--secondary); font-weight: 600;"></div>
+                <button id="themeToggle" class="btn btn-sm" style="background: var(--card-bg); color: var(--text);">
+                    <i class="fas fa-palette"></i>
+                </button>
+                <button id="googleLogoutBtn" class="btn btn-sm btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
     </div>
-    
-    <div class="header-controls">
-      <div id="userNameDisplay"></div>
-      
-      <button class="theme-toggle" id="themeToggle">
-        <i class="fas fa-palette"></i>
-        <span>Theme</span>
-      </button>
-      
-      <nav class="nav-links">
-        <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank" rel="noopener">
-          <i class="fas fa-phone"></i> Contact
-        </a>
-        <a href="#" id="aboutLink">
-          <i class="fas fa-info-circle"></i> About
-        </a>
-        <a href="#" id="historyLink">
-          <i class="fas fa-history"></i> History
-        </a>
-        <button id="googleLogoutBtn">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
-      </nav>
-    </div>
-  </div>
 </header>
 
-<!-- MAIN CONTAINER -->
-<div class="container my-3">
-  <!-- BUDGET CARD -->
-  <div id="budgetCard" class="card">
-    <div class="card-body">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <h5 style="margin:0;color:var(--warning);">Budget Limit</h5>
-          <small class="text-muted">Set a monthly/total budget for your expenses</small>
+<!-- Main Content -->
+<div class="container my-4" id="mainContent" style="display: none;">
+    
+    <!-- Budget Card -->
+    <div class="card" id="budgetCard">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-wallet"></i> Budget Management</h5>
         </div>
-        <div>
-          <button id="resetBudgetBtn" class="btn btn-outline-danger btn-sm">Reset Budget</button>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <input type="number" id="budgetInput" class="form-control" placeholder="Enter budget amount">
+                </div>
+                <div class="col-md-3">
+                    <button id="saveBudgetBtn" class="btn btn-primary w-100">Save Budget</button>
+                </div>
+                <div class="col-md-3">
+                    <button id="resetBudgetBtn" class="btn btn-outline-danger w-100">Reset</button>
+                </div>
+            </div>
+            <div class="mt-3">
+                <div id="budgetStatusText" style="font-weight: 600;"></div>
+                <div id="budgetBar" class="mt-2" style="height: 20px; background: var(--border); border-radius: 4px; overflow: hidden;">
+                    <div id="budgetProgressBar" style="height: 100%; background: var(--success); width: 0%; transition: width 0.5s;"></div>
+                </div>
+                <div id="budgetAlerts" class="mt-2"></div>
+            </div>
         </div>
-      </div>
-
-      <div class="row g-2 mb-3">
-        <div class="col-md-5">
-          <input type="number" id="budgetInput" class="form-control" placeholder="Enter budget amount (e.g. 5000)">
-        </div>
-        <div class="col-md-3">
-          <button id="saveBudgetBtn" class="btn btn-primary w-100">Save Budget</button>
-        </div>
-        <div class="col-md-4 text-end">
-          <div id="budgetStatusText" style="font-weight:600;color:var(--text);">No budget set</div>
-        </div>
-      </div>
-
-      <div id="budgetBar" class="mb-2">
-        <div id="budgetProgress" class="progress" style="width:100%">
-          <div id="budgetProgressBar" class="progress-bar" role="progressbar" style="width:0%"></div>
-        </div>
-      </div>
-
-      <div id="budgetAlerts" style="min-height:22px;"></div>
     </div>
-  </div>
 
-  <!-- EXPENSE FORM -->
-  <div id="expenseFormContainer" style="display:none;">
+    <!-- Expense Form -->
     <div class="card">
-      <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-plus-circle"></i> Add New Expense</h5>
-      </div>
-      <div class="card-body">
-        <form id="expenseForm" class="row g-3">
-          <input type="hidden" id="editId">
-          <div class="col-md-6">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" id="name" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="amount" class="form-label">Amount</label>
-            <input type="number" id="amount" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="type" class="form-label">Type</label>
-            <select id="type" class="form-select" required>
-              <option value="">Choose one...</option>
-              <option value="Card">Card</option>
-              <option value="Cash">Cash</option>
-              <option value="Gpay/Paytm">Gpay/Paytm</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="description" class="form-label">Description</label>
-            <input type="text" id="description" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="date" class="form-label">Date</label>
-            <input type="date" id="date" class="form-control" required>
-          </div>
-          <div class="col-12 d-flex justify-content-between mt-3">
-            <button type="reset" class="btn btn-danger">
-              <i class="fas fa-times"></i> Clear
-            </button>
-            <button type="submit" class="btn btn-primary">
-              <i class="fas fa-check"></i> Confirm
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- TABLE -->
-  <div id="tableContainer" class="table-responsive"></div>
-
-  <!-- ANALYTICS -->
-  <div id="analyticsContainer" class="my-4" style="display:none;">
-    <div class="table-container">
-      <h4 class="text-center" style="color:var(--primary);">📊 Expense Analytics</h4>
-      <div class="row">
-        <div class="col-md-6">
-          <div class="chart-container">
-            <canvas id="lineChart"></canvas>
-          </div>
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-plus-circle"></i> Add New Expense</h5>
         </div>
-        <div class="col-md-6">
-          <div class="chart-container">
-            <canvas id="pieChart"></canvas>
-          </div>
-          <div id="analyticsBadge" class="text-center mt-3"></div>
+        <div class="card-body">
+            <form id="expenseForm">
+                <input type="hidden" id="editId">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Name</label>
+                        <input type="text" id="name" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Amount (₹)</label>
+                        <input type="number" id="amount" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Type</label>
+                        <select id="type" class="form-select" required>
+                            <option value="">Select type</option>
+                            <option value="Card">Card</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Gpay/Paytm">Gpay/Paytm</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Date</label>
+                        <input type="date" id="date" class="form-control" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Description</label>
+                        <input type="text" id="description" class="form-control" required>
+                    </div>
+                    <div class="col-12 d-flex justify-content-between mt-3">
+                        <button type="reset" class="btn btn-danger">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check"></i> Confirm
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
-      </div>
     </div>
-  </div>
+
+    <!-- Expenses Table -->
+    <div id="tableContainer" class="mt-4">
+        <!-- Will be populated by JavaScript -->
+    </div>
+
+    <!-- Analytics -->
+    <div id="analyticsContainer" class="mt-4" style="display: none;">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Analytics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="lineChart" height="250"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas id="pieChart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- ABOUT MODAL -->
-<div id="aboutModal" class="modal-overlay">
-  <div class="modal-content">
-    <h2>About E-TRAX</h2>
-    <p><strong>E-TRAX</strong> helps you <strong>track your daily expenses</strong> and manage your budget efficiently.</p>
-    <h4>💡 Purpose</h4>
-    <p>Record, categorize, and analyze your spending patterns easily.</p>
-    <h4>⚙️ How It Works</h4>
-    <ul>
-      <li>Add expenses with name, amount, and date.</li>
-      <li>View and edit them anytime.</li>
-      <li>Check total expenses instantly.</li>
-      <li>See visual analytics of your spending trends.</li>
-      <li>Set budget limits and track your spending against them.</li>
-      <li>Track complete edit history with user details.</li>
-    </ul>
-    <div style="text-align:center;">
-      <button id="closeAbout" class="btn btn-primary">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- HISTORY MODAL -->
-<div id="historyModal" class="modal-overlay">
-  <div class="modal-content">
-    <h2>📝 Edit History</h2>
-    <div id="historyContent">
-      <p>Loading history...</p>
-    </div>
-    <div style="text-align:center; margin-top: 20px;">
-      <button id="closeHistory" class="btn btn-primary">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- MESSAGE BOX -->
+<!-- Message Box -->
 <div id="msgBox"></div>
 
 <script>
-  // Firebase Configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
-    authDomain: "ptspro-31997.firebaseapp.com",
-    projectId: "ptspro-31997",
-    storageBucket: "ptspro-31997.firebasestorage.app",
-    messagingSenderId: "191965542623",
-    appId: "1:191965542623:web:b461ceedfc3a773267516a",
-    measurementId: "G-6LNC29KRQF"
-  };
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDgeOmsWD36spVcXw9QVSbUs4nmx-iXGak",
+        authDomain: "ptspro-31997.firebaseapp.com",
+        projectId: "ptspro-31997",
+        storageBucket: "ptspro-31997.firebasestorage.app",
+        messagingSenderId: "191965542623",
+        appId: "1:191965542623:web:b461ceedfc3a773267516a",
+        measurementId: "G-6LNC29KRQF"
+    };
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  // Theme Management
-  const themes = ['dark', 'light', 'professional'];
-  let currentThemeIndex = 0;
-  let currentUserUid = null;
-  let currentUserName = null;
-  let currentBudgetAmount = 0;
-
-  function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    currentThemeIndex = themes.indexOf(savedTheme);
-    applyTheme(savedTheme);
-  }
-
-  function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }
-
-  function cycleTheme() {
-    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-    applyTheme(themes[currentThemeIndex]);
-  }
-
-  // Elements
-  const loginBtn = document.getElementById("googleLoginBtn");
-  const logoutBtn = document.getElementById("googleLogoutBtn");
-  const loginView = document.getElementById("loginView");
-  const mainHeader = document.getElementById("mainHeader");
-  const expenseFormContainer = document.getElementById("expenseFormContainer");
-  const tableContainer = document.getElementById("tableContainer");
-  const msgBox = document.getElementById("msgBox");
-  const userNameDisplay = document.getElementById("userNameDisplay");
-  const analyticsContainer = document.getElementById("analyticsContainer");
-  const themeToggle = document.getElementById("themeToggle");
-  const historyLink = document.getElementById("historyLink");
-  const historyModal = document.getElementById("historyModal");
-  const closeHistory = document.getElementById("closeHistory");
-  const historyContent = document.getElementById("historyContent");
-  const budgetCard = document.getElementById("budgetCard");
-  const budgetInput = document.getElementById("budgetInput");
-  const saveBudgetBtn = document.getElementById("saveBudgetBtn");
-  const resetBudgetBtn = document.getElementById("resetBudgetBtn");
-  const budgetProgressBar = document.getElementById("budgetProgressBar");
-  const budgetStatusText = document.getElementById("budgetStatusText");
-  const budgetAlerts = document.getElementById("budgetAlerts");
-  const analyticsBadge = document.getElementById("analyticsBadge");
-  const aboutLink = document.getElementById("aboutLink");
-  const aboutModal = document.getElementById("aboutModal");
-  const closeAbout = document.getElementById("closeAbout");
-
-  // Event Listeners
-  aboutLink && aboutLink.addEventListener("click", e => { e.preventDefault(); aboutModal.style.display = "block"; });
-  closeAbout && closeAbout.addEventListener("click", () => { aboutModal.style.display = "none"; });
-  historyLink && historyLink.addEventListener("click", e => { e.preventDefault(); showHistory(); });
-  closeHistory && closeHistory.addEventListener("click", () => { historyModal.style.display = "none"; });
-  themeToggle && themeToggle.addEventListener("click", cycleTheme);
-
-  window.addEventListener("click", e => { 
-    if(e.target == aboutModal) aboutModal.style.display="none";
-    if(e.target == historyModal) historyModal.style.display="none";
-  });
-
-  // Initialize theme
-  initTheme();
-
-  // Message function
-  function showMessage(msg, duration=2000) {
-    msgBox.innerText = msg;
-    msgBox.style.display = "block";
-    setTimeout(()=> msgBox.style.display="none", duration);
-  }
-
-  // Toggle login state
-  function toggleLoginState(isLoggedIn) {
-    loginView.style.display = isLoggedIn ? "none" : "flex";
-    mainHeader.classList.toggle('visible', isLoggedIn);
-    expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
-    budgetCard.style.display = isLoggedIn ? "block" : "none";
-  }
-
-  // Auth State Listener
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      currentUserUid = user.uid;
-      currentUserName = user.displayName || "User";
-      toggleLoginState(true);
-      loadData();
-      userNameDisplay.textContent = currentUserName;
-      fetchBudget();
-      showMessage("✅ Logged in successfully", 2000);
-    } else {
-      currentUserUid = null;
-      currentUserName = null;
-      toggleLoginState(false);
-      tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
-      analyticsContainer.style.display = "none";
-      userNameDisplay.textContent = "";
-      clearBudgetUI();
-    }
-  });
-
-  // Login button
-  loginBtn.addEventListener("click", async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
+    // Initialize Firebase
     try {
-      await auth.signInWithPopup(provider);
-    } catch(err){ 
-      console.error(err); 
-      showMessage("❌ Login failed",2000); 
+        firebase.initializeApp(firebaseConfig);
+        console.log("✅ Firebase initialized successfully");
+    } catch (error) {
+        console.error("❌ Firebase initialization error:", error);
+        alert("Firebase initialization failed. Please check console for details.");
     }
-  });
 
-  // Logout button
-  logoutBtn && logoutBtn.addEventListener("click", async () => {
-    try {
-      await auth.signOut();
-      showMessage("✅ Logged out successfully",2000);
-    } catch(err){ 
-      console.error(err); 
-      showMessage("❌ Logout failed",2000); 
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // State variables
+    let currentUser = null;
+    let currentTheme = 'dark';
+    let currentBudget = 0;
+
+    // DOM Elements
+    const loginView = document.getElementById('loginView');
+    const mainHeader = document.getElementById('mainHeader');
+    const mainContent = document.getElementById('mainContent');
+    const userNameDisplay = document.getElementById('userNameDisplay');
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    const googleLogoutBtn = document.getElementById('googleLogoutBtn');
+    const themeToggle = document.getElementById('themeToggle');
+    const tableContainer = document.getElementById('tableContainer');
+    const analyticsContainer = document.getElementById('analyticsContainer');
+    const msgBox = document.getElementById('msgBox');
+
+    // Budget elements
+    const budgetCard = document.getElementById('budgetCard');
+    const budgetInput = document.getElementById('budgetInput');
+    const saveBudgetBtn = document.getElementById('saveBudgetBtn');
+    const resetBudgetBtn = document.getElementById('resetBudgetBtn');
+    const budgetStatusText = document.getElementById('budgetStatusText');
+    const budgetProgressBar = document.getElementById('budgetProgressBar');
+    const budgetAlerts = document.getElementById('budgetAlerts');
+
+    // Expense form elements
+    const expenseForm = document.getElementById('expenseForm');
+    const editId = document.getElementById('editId');
+    const nameInput = document.getElementById('name');
+    const amountInput = document.getElementById('amount');
+    const typeInput = document.getElementById('type');
+    const dateInput = document.getElementById('date');
+    const descriptionInput = document.getElementById('description');
+
+    // Set default date to today
+    dateInput.valueAsDate = new Date();
+
+    // Initialize theme
+    function initTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        currentTheme = savedTheme;
     }
-  });
 
-  // Typing animation
-  const headerText = "Track Your Expenses Smartly!";
-  const typingHeader = document.getElementById("typingHeader");
-  let headerIndex = 0;
-  function typeWriterHeader() {
-    if(headerIndex < headerText.length){
-      typingHeader.innerHTML += headerText.charAt(headerIndex);
-      headerIndex++;
-      setTimeout(typeWriterHeader,100);
-    } else {
-      setTimeout(()=>{ typingHeader.innerHTML=""; headerIndex=0; typeWriterHeader(); },2000);
-    }
-  }
-  typeWriterHeader();
-
-  // Expense form handling
-  const form = document.getElementById("expenseForm");
-  const editId = document.getElementById("editId");
-  form && form.addEventListener("submit", async e=>{
-    e.preventDefault();
-    if(!currentUserUid) return;
-    
-    const data = {
-      name: document.getElementById("name").value.trim(),
-      amount: parseFloat(document.getElementById("amount").value) || 0,
-      type: document.getElementById("type").value,
-      description: document.getElementById("description").value.trim(),
-      date: document.getElementById("date").value,
-      uid: currentUserUid,
-      editorName: currentUserName || "User"
-    };
-
-    try {
-      if (editId.value) {
-        // Update existing expense
-        await updateExpense(editId.value, data);
-        showMessage("✅ Expense updated successfully!");
-      } else {
-        // Create new expense
-        await createExpense(data);
-        showMessage("✅ Expense saved successfully!");
-      }
-      
-      editId.value = "";
-      form.reset();
-      await loadData();
-      await fetchBudget();
-    } catch(err){ 
-      console.error(err); 
-      showMessage("❌ Failed to save expense",2500);
-    }
-  });
-
-  // Firestore Functions
-  async function createExpense(data) {
-    const now = new Date();
-    const expenseData = {
-      ...data,
-      amount: parseFloat(data.amount),
-      createdAt: now,
-      updatedAt: now,
-      editCount: 0,
-      editHistory: []
-    };
-    
-    await db.collection("expenses").add(expenseData);
-  }
-
-  async function updateExpense(id, newData) {
-    const expenseRef = db.collection("expenses").doc(id);
-    const expenseDoc = await expenseRef.get();
-    
-    if (!expenseDoc.exists) {
-      throw new Error("Expense not found");
-    }
-    
-    const expense = expenseDoc.data();
-    
-    // Check if user owns this expense
-    if (expense.uid !== currentUserUid) {
-      throw new Error("Not authorized to edit this expense");
-    }
-    
-    const before = { 
-      name: expense.name, 
-      amount: expense.amount, 
-      type: expense.type, 
-      description: expense.description, 
-      date: expense.date 
-    };
-    
-    const after = { 
-      name: newData.name, 
-      amount: parseFloat(newData.amount), 
-      type: newData.type, 
-      description: newData.description, 
-      date: newData.date 
-    };
-    
-    // Track changes
-    const changes = [];
-    if (before.name !== after.name) changes.push(`Name changed from "${before.name}" to "${after.name}"`);
-    if (before.amount !== after.amount) changes.push(`Amount changed from ₹${before.amount} to ₹${after.amount}`);
-    if (before.type !== after.type) changes.push(`Type changed from ${before.type} to ${after.type}`);
-    if (before.description !== after.description) changes.push(`Description changed from "${before.description}" to "${after.description}"`);
-    if (before.date !== after.date) changes.push(`Date changed from ${before.date} to ${after.date}`);
-    
-    // Get existing history
-    const existingHistory = expense.editHistory || [];
-    
-    await expenseRef.update({
-      ...after,
-      updatedAt: new Date(),
-      editCount: firebase.firestore.FieldValue.increment(1),
-      editHistory: firebase.firestore.FieldValue.arrayUnion({
-        editorUid: currentUserUid,
-        editorName: newData.editorName,
-        date: new Date(),
-        before,
-        after,
-        changes: changes.length > 0 ? changes : ["No significant changes detected"]
-      })
+    // Toggle theme
+    themeToggle.addEventListener('click', () => {
+        const themes = ['dark', 'light', 'professional'];
+        const currentIndex = themes.indexOf(currentTheme);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        currentTheme = themes[nextIndex];
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        localStorage.setItem('theme', currentTheme);
     });
-  }
 
-  async function deleteExpense(id) {
-    await db.collection("expenses").doc(id).delete();
-  }
-
-  async function getExpenses() {
-    const snapshot = await db.collection("expenses")
-      .where("uid", "==", currentUserUid)
-      .orderBy("createdAt", "desc")
-      .get();
-    
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-  }
-
-  async function getExpenseById(id) {
-    const doc = await db.collection("expenses").doc(id).get();
-    if (!doc.exists) return null;
-    return { id: doc.id, ...doc.data() };
-  }
-
-  // Budget Functions
-  async function saveBudgetToServer(amount) {
-    if(!currentUserUid) return;
-    try {
-      await db.collection("budgets").doc(currentUserUid).set({
-        uid: currentUserUid,
-        amount: parseFloat(amount) || 0,
-        updatedAt: new Date()
-      });
-      showMessage("✅ Budget saved successfully");
-      await fetchBudget();
-    } catch(err){ console.error(err); showMessage("❌ Failed to save budget",2000); }
-  }
-
-  async function fetchBudget(){
-    if(!currentUserUid) return clearBudgetUI();
-    try {
-      const doc = await db.collection("budgets").doc(currentUserUid).get();
-      if(!doc.exists){
-        clearBudgetUI();
-        return;
-      }
-      
-      const budgetData = doc.data();
-      currentBudgetAmount = parseFloat(budgetData.amount) || 0;
-      
-      const expenses = await getExpenses();
-      let totalAmount = 0;
-      expenses.forEach(exp => totalAmount += parseFloat(exp.amount) || 0);
-      
-      updateBudgetUI(currentBudgetAmount, totalAmount);
-      budgetInput && (budgetInput.value = currentBudgetAmount);
-    } catch(err){ console.error(err); clearBudgetUI(); }
-  }
-
-  function clearBudgetUI(){
-    if(budgetInput) budgetInput.value = "";
-    if(budgetProgressBar) budgetProgressBar.style.width = "0%";
-    if(budgetProgressBar) budgetProgressBar.className = "progress-bar";
-    if(budgetStatusText) budgetStatusText.innerText = "No budget set";
-    if(budgetAlerts) budgetAlerts.innerHTML = "";
-    currentBudgetAmount = 0;
-    if(analyticsBadge) analyticsBadge.innerText = "";
-  }
-
-  function updateBudgetUI(budgetAmount, totalSpent){
-    if(!budgetAmount || budgetAmount <= 0){
-      clearBudgetUI();
-      return;
-    }
-    const pct = (totalSpent / budgetAmount) * 100;
-    const pctClamped = Math.min(Math.round(pct), 999);
-    const widthPct = Math.min(pctClamped, 100);
-    budgetProgressBar.style.width = widthPct + "%";
-    budgetProgressBar.innerText = `${pctClamped}%`;
-    budgetProgressBar.className = "progress-bar";
-    if(pct >= 100){
-      budgetProgressBar.classList.add("bg-danger");
-    } else if(pct >= 80){
-      budgetProgressBar.classList.add("bg-warning");
-    } else {
-      budgetProgressBar.classList.add("bg-success");
-    }
-    budgetStatusText.innerText = `Budget: ₹${budgetAmount.toFixed(2)}  —  Spent: ₹${totalSpent.toFixed(2)}`;
-    budgetAlerts.innerHTML = "";
-    analyticsBadge.innerText = "";
-    if(pct >= 100){
-      const over = (totalSpent - budgetAmount);
-      budgetAlerts.innerHTML = `<div class="text-danger" style="font-weight:700;">🚨 Budget exceeded! You spent ₹${over.toFixed(2)} over the limit.</div>`;
-      analyticsBadge.innerHTML = `<span class="badge badge-danger">🚨 Over budget: ₹${over.toFixed(2)}</span>`;
-    } else if(pct >= 80){
-      budgetAlerts.innerHTML = `<div class="text-warning" style="font-weight:700;">⚠️ You're at ${Math.round(pct)}% of your budget. Be careful!</div>`;
-      analyticsBadge.innerHTML = `<span class="badge badge-warning">⚠️ Usage: ${Math.round(pct)}% of budget</span>`;
-    } else {
-      analyticsBadge.innerHTML = `<span class="badge badge-success">✅ Usage: ${Math.round(pct)}% of budget</span>`;
-    }
-  }
-
-  // Save/Reset event listeners
-  saveBudgetBtn && saveBudgetBtn.addEventListener("click", async () => {
-    const val = parseFloat(budgetInput.value);
-    if(!val || val <= 0){ showMessage("Enter valid budget amount"); return; }
-    await saveBudgetToServer(val);
-  });
-  
-  resetBudgetBtn && resetBudgetBtn.addEventListener("click", async () => {
-    if(!currentUserUid) return;
-    if(!confirm("Reset/delete your budget?")) return;
-    try {
-      await db.collection("budgets").doc(currentUserUid).delete();
-      showMessage("✅ Budget reset successfully");
-      clearBudgetUI();
-    } catch(err){ console.error(err); showMessage("❌ Reset failed",2000); }
-  });
-
-  // Load data and render table
-  async function loadData(){
-    if(!currentUserUid) return;
-    try{
-      const users = await getExpenses();
-      
-      if(!Array.isArray(users) || users.length===0){
-        tableContainer.innerHTML = "<p class='text-muted'>No expenses yet. Add your first expense above!</p>";
-        analyticsContainer.style.display="none";
-        await fetchBudget();
-        return;
-      }
-
-      let totalAmount = 0;
-      
-      // Mobile-friendly table design
-      if (window.innerWidth < 768) {
-        // MOBILE VIEW - Card layout
-        let mobileHtml = `<div class="table-container">
-          <h5 class="text-center mb-3" style="color:var(--primary);">Your Expenses</h5>
-          <div class="row g-3">`;
+    // Show message
+    function showMessage(message, type = 'success', duration = 3000) {
+        msgBox.textContent = message;
+        msgBox.style.display = 'block';
+        msgBox.style.background = type === 'error' ? 'var(--danger)' : 'var(--success)';
         
-        users.forEach((u,i)=>{
-          totalAmount += parseFloat(u.amount) || 0;
-          
-          mobileHtml += `
-            <div class="col-12">
-              <div class="card expense-card" style="background:var(--card-bg); border:1px solid var(--border);">
-                <div class="card-body">
-                  <div class="d-flex justify-content-between align-items-start mb-2">
-                    <h6 class="card-title mb-0" style="color:var(--primary);">${u.name}</h6>
-                    <span class="badge badge-info">${u.type}</span>
-                  </div>
-                  
-                  <div class="expense-details">
-                    <div class="row small text-muted mb-2">
-                      <div class="col-6">
-                        <i class="fas fa-rupee-sign"></i> <strong>${parseFloat(u.amount).toFixed(2)}</strong>
-                      </div>
-                      <div class="col-6 text-end">
-                        <i class="fas fa-calendar"></i> ${u.date}
-                      </div>
+        setTimeout(() => {
+            msgBox.style.display = 'none';
+        }, duration);
+    }
+
+    // Toggle login state
+    function toggleLoginState(isLoggedIn) {
+        if (isLoggedIn) {
+            loginView.style.display = 'none';
+            mainHeader.style.display = 'block';
+            mainContent.style.display = 'block';
+            mainHeader.classList.add('visible');
+        } else {
+            loginView.style.display = 'flex';
+            mainHeader.style.display = 'none';
+            mainContent.style.display = 'none';
+            mainHeader.classList.remove('visible');
+            tableContainer.innerHTML = '';
+            analyticsContainer.style.display = 'none';
+        }
+    }
+
+    // Typing animation
+    const typingHeader = document.getElementById('typingHeader');
+    const headerText = "Track Your Expenses Smartly!";
+    let charIndex = 0;
+
+    function typeWriter() {
+        if (charIndex < headerText.length) {
+            typingHeader.textContent += headerText.charAt(charIndex);
+            charIndex++;
+            setTimeout(typeWriter, 100);
+        } else {
+            setTimeout(() => {
+                typingHeader.textContent = '';
+                charIndex = 0;
+                typeWriter();
+            }, 2000);
+        }
+    }
+
+    // Initialize typing animation
+    typeWriter();
+
+    // Auth state listener
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            console.log("✅ User logged in:", user.email);
+            currentUser = user;
+            userNameDisplay.textContent = `Hi, ${user.displayName || user.email}`;
+            toggleLoginState(true);
+            
+            // Load data
+            await loadExpenses();
+            await loadBudget();
+        } else {
+            console.log("✅ User logged out");
+            currentUser = null;
+            userNameDisplay.textContent = '';
+            toggleLoginState(false);
+        }
+    });
+
+    // Google Login
+    googleLoginBtn.addEventListener('click', async () => {
+        try {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            await auth.signInWithPopup(provider);
+            showMessage('Successfully logged in!');
+        } catch (error) {
+            console.error('Login error:', error);
+            showMessage('Login failed: ' + error.message, 'error');
+        }
+    });
+
+    // Google Logout
+    googleLogoutBtn.addEventListener('click', async () => {
+        try {
+            await auth.signOut();
+            showMessage('Successfully logged out!');
+        } catch (error) {
+            console.error('Logout error:', error);
+            showMessage('Logout failed: ' + error.message, 'error');
+        }
+    });
+
+    // Load expenses
+    async function loadExpenses() {
+        if (!currentUser) return;
+        
+        try {
+            console.log("Loading expenses for user:", currentUser.uid);
+            
+            const querySnapshot = await db.collection('expenses')
+                .where('uid', '==', currentUser.uid)
+                .orderBy('createdAt', 'desc')
+                .get();
+            
+            console.log("Found", querySnapshot.size, "expenses");
+            
+            if (querySnapshot.empty) {
+                tableContainer.innerHTML = `
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <p class="text-muted mb-0">No expenses yet. Add your first expense above!</p>
+                        </div>
                     </div>
-                    
-                    <p class="small mb-3" style="color:var(--text-light);">
-                      <i class="fas fa-file-alt"></i> ${u.description}
-                    </p>
-                    
-                    <div class="d-flex justify-content-between">
-                      <button class="btn btn-warning btn-sm" onclick="editExpense('${u.id}')">
-                        <i class="fas fa-edit"></i> Edit
-                      </button>
-                      <button class="btn btn-info btn-sm" onclick="viewHistory('${u.id}')">
-                        <i class="fas fa-history"></i> 
-                      </button>
-                      <button class="btn btn-danger btn-sm" onclick="deleteExpenseHandler('${u.id}','${u.name}')">
-                        <i class="fas fa-trash"></i> 
-                      </button>
-                    </div>
-                  </div>
+                `;
+                analyticsContainer.style.display = 'none';
+                return;
+            }
+            
+            const expenses = [];
+            let totalAmount = 0;
+            
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                expenses.push({
+                    id: doc.id,
+                    ...data
+                });
+                totalAmount += parseFloat(data.amount) || 0;
+            });
+            
+            // Render table
+            renderExpensesTable(expenses, totalAmount);
+            
+            // Show analytics
+            analyticsContainer.style.display = 'block';
+            renderCharts(expenses);
+            
+        } catch (error) {
+            console.error('Error loading expenses:', error);
+            tableContainer.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i> Error loading expenses: ${error.message}
+                    <br><small>Make sure you have set up Firebase Firestore properly.</small>
                 </div>
-              </div>
-            </div>
-          `;
-        });
-
-        mobileHtml += `
-          </div>
-          
-          <!-- Total Summary -->
-          <div class="card mt-3" style="background:var(--primary); color:white;">
-            <div class="card-body text-center">
-              <h6 class="mb-0">Total Expenses: ₹${totalAmount.toFixed(2)}</h6>
-            </div>
-          </div>
-        </div>`;
-        
-        tableContainer.innerHTML = mobileHtml;
-        
-      } else {
-        // DESKTOP VIEW - Table layout
-        let desktopHtml = `<div class="table-container">
-          <div class="table-responsive">
-            <table class="table table-striped table-bordered">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Name</th>
-                  <th>Amount</th>
-                  <th>Type</th>
-                  <th>Description</th>
-                  <th>Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>`;
-
-        users.forEach((u,i)=>{
-          totalAmount += parseFloat(u.amount) || 0;
-          const actionBtn = `
-            <div class="btn-group">
-              <button class="btn btn-warning btn-sm me-1" onclick="editExpense('${u.id}')" title="Edit">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="btn btn-info btn-sm me-1" onclick="viewHistory('${u.id}')" title="History">
-                <i class="fas fa-history"></i>
-              </button>
-              <button class="btn btn-danger btn-sm" onclick="deleteExpenseHandler('${u.id}','${u.name}')" title="Delete">
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
-          `;
-          desktopHtml += `
-            <tr>
-              <td>${i+1}</td>
-              <td>${u.name}</td>
-              <td>₹${parseFloat(u.amount).toFixed(2)}</td>
-              <td><span class="badge badge-info">${u.type}</span></td>
-              <td>${u.description}</td>
-              <td>${u.date}</td>
-              <td>${actionBtn}</td>
-            </tr>
-          `;
-        });
-
-        desktopHtml += `
-              </tbody>
-            </table>
-          </div>
-          
-          <!-- Total Row -->
-          <div class="mt-3 p-3 rounded" style="background:var(--primary); color:white;">
-            <div class="row">
-              <div class="col-6 text-end">
-                <strong>Total Expenses:</strong>
-              </div>
-              <div class="col-6">
-                <strong>₹${totalAmount.toFixed(2)}</strong>
-              </div>
-            </div>
-          </div>
-        </div>`;
-        
-        tableContainer.innerHTML = desktopHtml;
-      }
-
-      analyticsContainer.style.display="block";
-      renderCharts(users);
-      await fetchBudget();
-      
-    } catch(err){ 
-      console.error(err); 
-      tableContainer.innerHTML=`
-        <div class="alert alert-danger text-center">
-          <i class="fas fa-exclamation-triangle"></i> Failed to load expenses. Please try again.
-        </div>
-      `; 
+            `;
+        }
     }
-  }
 
-  // Edit and Delete handlers (global functions)
-  window.editExpense = async function(id){
-    try{
-      const user = await getExpenseById(id);
-      if (!user) throw new Error("Expense not found");
-      
-      document.getElementById("name").value=user.name;
-      document.getElementById("amount").value=user.amount;
-      document.getElementById("type").value=user.type;
-      document.getElementById("description").value=user.description;
-      document.getElementById("date").value=user.date;
-      editId.value=id;
-      showMessage("✏ Edit mode enabled - Make your changes and click Confirm",2000);
-    } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500);}
-  }
-
-  window.deleteExpenseHandler = async function(id, name){
-    if(!confirm(`Are you sure you want to delete expense "${name}"? This action cannot be undone.`)) return;
-    try{
-      await deleteExpense(id);
-      showMessage("✅ Expense deleted successfully");
-      await loadData();
-      await fetchBudget();
-    } catch(err){ console.error(err); showMessage("❌ Failed to delete expense",2000); }
-  }
-
-  // History functions
-  window.viewHistory = async function(expenseId) {
-    try {
-      const expense = await getExpenseById(expenseId);
-      if (!expense) throw new Error("Expense not found");
-      
-      let historyHtml = `
-        <h4>Edit History for: <strong>${expense.name}</strong></h4>
-        <p><strong>Created:</strong> ${new Date(expense.createdAt).toLocaleString()} by You</p>
-      `;
-      
-      if (expense.editHistory && expense.editHistory.length > 0) {
-        historyHtml += `
-          <table class="history-table">
-            <thead>
-              <tr>
-                <th>Editor</th>
-                <th>Date & Time</th>
-                <th>Changes Made</th>
-              </tr>
-            </thead>
-            <tbody>
+    // Render expenses table
+    function renderExpensesTable(expenses, totalAmount) {
+        let html = `
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-list"></i> Expenses</h5>
+                    <span class="badge bg-primary">Total: ₹${totalAmount.toFixed(2)}</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
         `;
         
-        expense.editHistory.forEach(edit => {
-          const changes = [];
-          if (edit.before.name !== edit.after.name) {
-            changes.push(`Name: "${edit.before.name}" → "${edit.after.name}"`);
-          }
-          if (edit.before.amount !== edit.after.amount) {
-            changes.push(`Amount: ₹${edit.before.amount} → ₹${edit.after.amount}`);
-          }
-          if (edit.before.type !== edit.after.type) {
-            changes.push(`Type: ${edit.before.type} → ${edit.after.type}`);
-          }
-          if (edit.before.description !== edit.after.description) {
-            changes.push(`Description: "${edit.before.description}" → "${edit.after.description}"`);
-          }
-          if (edit.before.date !== edit.after.date) {
-            changes.push(`Date: ${edit.before.date} → ${edit.after.date}`);
-          }
-          
-          historyHtml += `
-            <tr>
-              <td><strong>${edit.editorName}</strong></td>
-              <td>${new Date(edit.date).toLocaleString()}</td>
-              <td class="changes-list">
-                ${changes.map(change => `<div>${change}</div>`).join('')}
-              </td>
-            </tr>
-          `;
+        expenses.forEach((expense, index) => {
+            html += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${expense.name}</td>
+                    <td>₹${parseFloat(expense.amount).toFixed(2)}</td>
+                    <td><span class="badge bg-info">${expense.type}</span></td>
+                    <td>${expense.description}</td>
+                    <td>${expense.date}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning me-1" onclick="editExpense('${expense.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteExpense('${expense.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
         });
         
-        historyHtml += `</tbody></table>`;
-      } else {
-        historyHtml += `<p class="text-muted">No edit history available for this expense.</p>`;
-      }
-      
-      historyContent.innerHTML = historyHtml;
-      historyModal.style.display = "block";
-    } catch(err) {
-      console.error(err);
-      historyContent.innerHTML = "<p class='text-danger'>Failed to load history.</p>";
-    }
-  }
-
-  async function showHistory() {
-    try {
-      const expenses = await getExpenses();
-      
-      let historyHtml = `<h4>Complete Edit History</h4>`;
-      
-      const expensesWithHistory = expenses.filter(exp => exp.editHistory && exp.editHistory.length > 0);
-      
-      if (expensesWithHistory.length === 0) {
-        historyHtml += `<p class="text-muted">No edit history available yet.</p>`;
-      } else {
-        expensesWithHistory.forEach(expense => {
-          historyHtml += `
-            <div style="margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.05); border-radius: 8px;">
-              <h5>${expense.name} - ₹${parseFloat(expense.amount).toFixed(2)}</h5>
-              <p><small>Total edits: ${expense.editCount || 0}</small></p>
-              <button class="btn btn-sm btn-info" onclick="viewHistory('${expense.id}')">
-                View Detailed History
-              </button>
+        html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          `;
-        });
-      }
-      
-      historyContent.innerHTML = historyHtml;
-      historyModal.style.display = "block";
-    } catch(err) {
-      console.error(err);
-      historyContent.innerHTML = "<p class='text-danger'>Failed to load history.</p>";
-    }
-  }
-
-  // Charts renderer
-  function renderCharts(users){
-    const dates = {};
-    const types = {};
-
-    let totalAmount = 0;
-    users.forEach(u=>{
-      const date = u.date || "Unknown";
-      const amount = parseFloat(u.amount) || 0;
-      totalAmount += amount;
-      dates[date] = (dates[date]||0)+amount;
-      types[u.type] = (types[u.type]||0)+amount;
-    });
-
-    const overAmount = currentBudgetAmount && totalAmount > currentBudgetAmount ? (totalAmount - currentBudgetAmount) : 0;
-    
-    // Add over budget as separate category if exists
-    if (overAmount > 0) {
-      types['Over Budget'] = overAmount;
+        `;
+        
+        tableContainer.innerHTML = html;
     }
 
-    const lineCtx = document.getElementById('lineChart').getContext('2d');
-    if(window.lineChartInstance) window.lineChartInstance.destroy();
-    window.lineChartInstance = new Chart(lineCtx, {
-      type: 'line',
-      data: {
-        labels: Object.keys(dates),
-        datasets: [{
-          label: 'Daily Expenses',
-          data: Object.values(dates),
-          borderColor: 'var(--primary)',
-          backgroundColor: 'rgba(0,188,212,0.2)',
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: { 
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: { 
-          y: { 
-            beginAtZero:true,
-            ticks: { color: 'var(--text-light)' },
-            grid: { color: 'var(--border)' }
-          },
-          x: {
-            ticks: { color: 'var(--text-light)' },
-            grid: { color: 'var(--border)' }
-          }
-        },
-        plugins: {
-          legend: {
-            labels: { color: 'var(--text-light)' }
-          }
+    // Add/Edit expense
+    expenseForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (!currentUser) {
+            showMessage('Please login first', 'error');
+            return;
         }
-      }
+        
+        const expenseData = {
+            name: nameInput.value.trim(),
+            amount: parseFloat(amountInput.value) || 0,
+            type: typeInput.value,
+            description: descriptionInput.value.trim(),
+            date: dateInput.value,
+            uid: currentUser.uid,
+            updatedAt: new Date()
+        };
+        
+        try {
+            if (editId.value) {
+                // Update existing expense
+                const updateData = {
+                    ...expenseData,
+                    editCount: firebase.firestore.FieldValue.increment(1)
+                };
+                
+                await db.collection('expenses').doc(editId.value).update(updateData);
+                showMessage('Expense updated successfully!');
+                editId.value = '';
+            } else {
+                // Create new expense
+                const newExpense = {
+                    ...expenseData,
+                    createdAt: new Date(),
+                    editCount: 0,
+                    editHistory: []
+                };
+                
+                await db.collection('expenses').add(newExpense);
+                showMessage('Expense added successfully!');
+            }
+            
+            // Reset form
+            expenseForm.reset();
+            dateInput.valueAsDate = new Date();
+            
+            // Reload data
+            await loadExpenses();
+            await loadBudget();
+            
+        } catch (error) {
+            console.error('Error saving expense:', error);
+            showMessage('Error saving expense: ' + error.message, 'error');
+        }
     });
 
-    const pieCtx = document.getElementById('pieChart').getContext('2d');
-    if(window.pieChartInstance) window.pieChartInstance.destroy();
-
-    const labels = Object.keys(types);
-    const values = Object.values(types);
-
-    // Color assignment for each category
-    const categoryColors = {
-      'Card': '#00bcd4',      // Cyan
-      'Cash': '#ff9800',      // Orange
-      'Gpay/Paytm': '#8bc34a', // Green
-      'Other': '#e91e63',     // Pink
-      'Over Budget': '#ff3b30' // Red
+    // Edit expense
+    window.editExpense = async function(expenseId) {
+        try {
+            const doc = await db.collection('expenses').doc(expenseId).get();
+            if (doc.exists) {
+                const data = doc.data();
+                nameInput.value = data.name;
+                amountInput.value = data.amount;
+                typeInput.value = data.type;
+                descriptionInput.value = data.description;
+                dateInput.value = data.date;
+                editId.value = expenseId;
+                
+                showMessage('Editing expense. Make changes and click Confirm.');
+            }
+        } catch (error) {
+            console.error('Error loading expense:', error);
+            showMessage('Error loading expense: ' + error.message, 'error');
+        }
     };
 
-    // Assign colors
-    const bgColors = labels.map(label => {
-      return categoryColors[label] || 
-            `hsl(${Math.random() * 360}, 70%, 60%)`;
-    });
-
-    window.pieChartInstance = new Chart(pieCtx, {
-      type: 'pie',
-      data: {
-        labels,
-        datasets: [{
-          data: values,
-          backgroundColor: bgColors,
-          borderColor: 'var(--card-bg)',
-          borderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: {
-              color: 'var(--text-light)',
-              padding: 15,
-              font: { size: 11 }
-            }
-          },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                const label = context.label || '';
-                const value = context.raw || 0;
-                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                const percentage = Math.round((value / total) * 100);
-                return `${label}: ₹${value.toFixed(2)} (${percentage}%)`;
-              }
-            }
-          }
+    // Delete expense
+    window.deleteExpense = async function(expenseId) {
+        if (!confirm('Are you sure you want to delete this expense?')) {
+            return;
         }
-      }
-    });
+        
+        try {
+            await db.collection('expenses').doc(expenseId).delete();
+            showMessage('Expense deleted successfully!');
+            await loadExpenses();
+            await loadBudget();
+        } catch (error) {
+            console.error('Error deleting expense:', error);
+            showMessage('Error deleting expense: ' + error.message, 'error');
+        }
+    };
 
-    // Update analytics badge
-    if(overAmount > 0){
-      analyticsBadge.innerHTML = `<span class="badge badge-danger">🚨 Over budget: ₹${overAmount.toFixed(2)}</span>`;
-    } else if(currentBudgetAmount > 0) {
-      const usagePercent = Math.round((totalAmount / currentBudgetAmount) * 100);
-      analyticsBadge.innerHTML = `<span class="badge badge-success">✅ Usage: ${usagePercent}% of budget</span>`;
-    } else {
-      analyticsBadge.innerHTML = `<span class="badge badge-info">📊 Total: ₹${totalAmount.toFixed(2)}</span>`;
+    // Budget functions
+    async function loadBudget() {
+        if (!currentUser) return;
+        
+        try {
+            const doc = await db.collection('budgets').doc(currentUser.uid).get();
+            
+            if (doc.exists) {
+                const data = doc.data();
+                currentBudget = parseFloat(data.amount) || 0;
+                budgetInput.value = currentBudget;
+                updateBudgetDisplay();
+            } else {
+                currentBudget = 0;
+                budgetInput.value = '';
+                budgetStatusText.textContent = 'No budget set';
+                budgetProgressBar.style.width = '0%';
+                budgetAlerts.innerHTML = '';
+            }
+        } catch (error) {
+            console.error('Error loading budget:', error);
+            currentBudget = 0;
+        }
     }
-  }
 
-  // Start the typing animation
-  typeWriterHeader();
-  
-  // Service Worker Registration
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/sw.js")
-        .then(() => console.log("Service Worker registered"))
-        .catch(err => console.error("SW failed", err));
+    async function updateBudgetDisplay() {
+        if (!currentUser || currentBudget <= 0) return;
+        
+        try {
+            const querySnapshot = await db.collection('expenses')
+                .where('uid', '==', currentUser.uid)
+                .get();
+            
+            let totalSpent = 0;
+            querySnapshot.forEach(doc => {
+                const data = doc.data();
+                totalSpent += parseFloat(data.amount) || 0;
+            });
+            
+            const percentage = Math.min((totalSpent / currentBudget) * 100, 100);
+            
+            budgetStatusText.textContent = `Budget: ₹${currentBudget.toFixed(2)} | Spent: ₹${totalSpent.toFixed(2)}`;
+            budgetProgressBar.style.width = `${percentage}%`;
+            
+            // Update progress bar color
+            if (percentage >= 100) {
+                budgetProgressBar.style.background = 'var(--danger)';
+                budgetAlerts.innerHTML = `<div class="alert alert-danger mt-2 mb-0 py-2">Budget exceeded by ₹${(totalSpent - currentBudget).toFixed(2)}</div>`;
+            } else if (percentage >= 80) {
+                budgetProgressBar.style.background = 'var(--warning)';
+                budgetAlerts.innerHTML = `<div class="alert alert-warning mt-2 mb-0 py-2">Approaching budget limit (${percentage.toFixed(1)}%)</div>`;
+            } else {
+                budgetProgressBar.style.background = 'var(--success)';
+                budgetAlerts.innerHTML = '';
+            }
+            
+        } catch (error) {
+            console.error('Error calculating budget:', error);
+        }
+    }
+
+    saveBudgetBtn.addEventListener('click', async () => {
+        if (!currentUser) {
+            showMessage('Please login first', 'error');
+            return;
+        }
+        
+        const amount = parseFloat(budgetInput.value);
+        if (!amount || amount <= 0) {
+            showMessage('Please enter a valid budget amount', 'error');
+            return;
+        }
+        
+        try {
+            await db.collection('budgets').doc(currentUser.uid).set({
+                amount: amount,
+                updatedAt: new Date()
+            }, { merge: true });
+            
+            currentBudget = amount;
+            showMessage('Budget saved successfully!');
+            await updateBudgetDisplay();
+            
+        } catch (error) {
+            console.error('Error saving budget:', error);
+            showMessage('Error saving budget: ' + error.message, 'error');
+        }
     });
-  }
+
+    resetBudgetBtn.addEventListener('click', async () => {
+        if (!currentUser) return;
+        
+        if (!confirm('Reset your budget to zero?')) {
+            return;
+        }
+        
+        try {
+            await db.collection('budgets').doc(currentUser.uid).delete();
+            budgetInput.value = '';
+            currentBudget = 0;
+            budgetStatusText.textContent = 'No budget set';
+            budgetProgressBar.style.width = '0%';
+            budgetAlerts.innerHTML = '';
+            showMessage('Budget reset successfully!');
+        } catch (error) {
+            console.error('Error resetting budget:', error);
+            showMessage('Error resetting budget: ' + error.message, 'error');
+        }
+    });
+
+    // Charts
+    function renderCharts(expenses) {
+        // Line chart - Daily expenses
+        const dates = {};
+        expenses.forEach(expense => {
+            dates[expense.date] = (dates[expense.date] || 0) + parseFloat(expense.amount);
+        });
+        
+        const lineCtx = document.getElementById('lineChart').getContext('2d');
+        if (window.lineChart) {
+            window.lineChart.destroy();
+        }
+        
+        window.lineChart = new Chart(lineCtx, {
+            type: 'line',
+            data: {
+                labels: Object.keys(dates),
+                datasets: [{
+                    label: 'Daily Expenses',
+                    data: Object.values(dates),
+                    borderColor: 'var(--primary)',
+                    backgroundColor: 'rgba(0, 188, 212, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'var(--text)'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: 'var(--text)'
+                        },
+                        grid: {
+                            color: 'var(--border)'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: 'var(--text)'
+                        },
+                        grid: {
+                            color: 'var(--border)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Pie chart - Expense types
+        const types = {};
+        expenses.forEach(expense => {
+            types[expense.type] = (types[expense.type] || 0) + parseFloat(expense.amount);
+        });
+        
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        if (window.pieChart) {
+            window.pieChart.destroy();
+        }
+        
+        window.pieChart = new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(types),
+                datasets: [{
+                    data: Object.values(types),
+                    backgroundColor: [
+                        '#00bcd4', // Cyan
+                        '#ff9800', // Orange
+                        '#8bc34a', // Green
+                        '#e91e63', // Pink
+                        '#9c27b0', // Purple
+                        '#3f51b5'  // Blue
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'var(--text)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Initialize
+    initTheme();
+
+    // Check if user is already logged in (persisted session)
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            console.log("User already logged in:", user.email);
+            currentUser = user;
+            userNameDisplay.textContent = `Hi, ${user.displayName || user.email}`;
+            toggleLoginState(true);
+            
+            try {
+                await loadExpenses();
+                await loadBudget();
+            } catch (error) {
+                console.error("Error loading initial data:", error);
+            }
+        }
+    });
+
 </script>
 
 <footer>
-  <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
-    <p style="margin:0;">Email: <a href="mailto:santhoshgowtham777@gmail.com">santhoshgowtham777@gmail.com</a></p>
-    <p style="margin:0;">&copy; 2025 E-Trax. All rights reserved.</p>
-  </div>
+    <div class="container">
+        <p class="mb-0">&copy; 2025 E-TRAX. Developed by Alpha Developers.</p>
+    </div>
 </footer>
+
 </body>
 </html>
