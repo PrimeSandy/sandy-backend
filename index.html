@@ -1450,1269 +1450,346 @@
 
     <script>
     // ==================== ENHANCED LOADING SYSTEM ====================
-    const loadingSteps = [
-      "Connecting to Server...",
-      "Logging in...",
-      "Optimizing Function...",
-      "Checking Authorized User...",
-      "Finalizing Login...",
-      "Almost Done..."
-    ];
-
-    function showLoading(message = "") {
-      const overlay = document.getElementById('loadingOverlay');
-      const stepsElement = document.getElementById('loadingSteps');
-      
-      if (message) {
-        stepsElement.textContent = message;
-      }
-      
-      overlay.classList.add('active');
-    }
-
-    function hideLoading() {
-      const overlay = document.getElementById('loadingOverlay');
-      overlay.classList.remove('active');
-      document.getElementById('loadingSteps').textContent = "";
-    }
-
-    function animateLoadingSteps() {
-      const stepsElement = document.getElementById('loadingSteps');
-      let stepIndex = 0;
-      
-      const interval = setInterval(() => {
-        if (!document.getElementById('loadingOverlay').classList.contains('active')) {
-          clearInterval(interval);
-          return;
-        }
+ 
         
-        stepsElement.innerHTML = `<span class="loading-step">${loadingSteps[stepIndex]}</span>`;
-        stepIndex = (stepIndex + 1) % loadingSteps.length;
-      }, 800);
-      
-      return interval;
-    }
-
-    // ==================== CONFIGURATION ====================
-    const BASE_URL = window.location.hostname.includes("localhost")
-      ? "http://localhost:3000"
-      : "https://sandy-backend2-0.onrender.com";
-
-    let auth = null;
-    let currentUserUid = null;
-    let currentUserName = null;
-
-    // ==================== ENHANCED THEME MANAGEMENT ====================
-    const themes = ['dark', 'light', 'professional'];
-    let currentThemeIndex = 0;
-
-    function initTheme() {
-      const savedTheme = localStorage.getItem('theme') || 'dark';
-      currentThemeIndex = themes.indexOf(savedTheme);
-      applyTheme(savedTheme);
-    }
-
-    function applyTheme(theme) {
-      document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem('theme', theme);
-      
-      // Update theme button text
-      const themeToggle = document.getElementById('themeToggle');
-      if (themeToggle) {
-        themeToggle.innerHTML = `
-          <i class="fas fa-palette"></i>
-          <span>${theme.charAt(0).toUpperCase() + theme.slice(1)}</span>
-        `;
-      }
-    }
-
-    function cycleTheme() {
-      currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-      applyTheme(themes[currentThemeIndex]);
-      showMessage(`Theme changed to ${themes[currentThemeIndex]}`, 2000);
-    }
-
-    // ==================== ENHANCED FIREBASE INITIALIZATION ====================
-    async function initializeFirebase() {
-      try {
-        showLoading("Initializing app...");
-        const response = await fetch(`${BASE_URL}/firebase-config`);
-        const firebaseConfig = await response.json();
-        
-        if (!firebaseConfig.apiKey) {
-          throw new Error('Firebase config not available');
-        }
-        
-        firebase.initializeApp(firebaseConfig);
-        auth = firebase.auth();
-        console.log('Firebase initialized securely');
-        
-        // Initialize auth state listener
-        setupAuthListener();
-        hideLoading();
-        
-      } catch (error) {
-        console.error('Failed to initialize Firebase:', error);
-        hideLoading();
-        showMessage('❌ Failed to initialize app. Please refresh.', 5000);
-      }
-    }
-
-    function setupAuthListener() {
-      auth.onAuthStateChanged(user => {
-        if (user) {
-          currentUserUid = user.uid;
-          currentUserName = user.displayName || "User";
-          toggleLoginState(true);
-          loadData();
-          userNameDisplay.textContent = currentUserName;
-          fetchBudget();
-          
-          // Pre-fill today's date in form
-          const today = new Date().toISOString().split('T')[0];
-          const dateInput = document.getElementById('date');
-          if (dateInput && !dateInput.value) {
-            dateInput.value = today;
-          }
-        } else {
-          currentUserUid = null;
-          currentUserName = null;
-          toggleLoginState(false);
-          clearExpensesUI();
-          analyticsContainer.style.display = "none";
-          userNameDisplay.textContent = "";
-          clearBudgetUI();
-        }
-      });
-    }
-
-    // ==================== ENHANCED ELEMENT SELECTORS ====================
-    const elements = {
-      loginBtn: document.getElementById("googleLoginBtn"),
-      logoutBtn: document.getElementById("googleLogoutBtn"),
-      loginView: document.getElementById("loginView"),
-      mainHeader: document.getElementById("mainHeader"),
-      expenseFormContainer: document.getElementById("expenseFormContainer"),
-      expensesContainer: document.getElementById("expensesContainer"),
-      msgBox: document.getElementById("msgBox"),
-      userNameDisplay: document.getElementById("userNameDisplay"),
-      analyticsContainer: document.getElementById("analyticsContainer"),
-      themeToggle: document.getElementById("themeToggle"),
-      historyLink: document.getElementById("historyLink"),
-      historyModal: document.getElementById("historyModal"),
-      closeHistory: document.getElementById("closeHistory"),
-      historyContent: document.getElementById("historyContent"),
-      aboutLink: document.getElementById("aboutLink"),
-      aboutModal: document.getElementById("aboutModal"),
-      closeAbout: document.getElementById("closeAbout"),
-      budgetCard: document.getElementById("budgetCard"),
-      budgetInput: document.getElementById("budgetInput"),
-      saveBudgetBtn: document.getElementById("saveBudgetBtn"),
-      resetBudgetBtn: document.getElementById("resetBudgetBtn"),
-      budgetProgressBar: document.getElementById("budgetProgressBar"),
-      budgetStatusText: document.getElementById("budgetStatusText"),
-      budgetAlerts: document.getElementById("budgetAlerts"),
-      analyticsBadge: document.getElementById("analyticsBadge"),
-      form: document.getElementById("expenseForm"),
-      editId: document.getElementById("editId"),
-      budgetSpent: document.getElementById("budgetSpent"),
-      budgetRemaining: document.getElementById("budgetRemaining"),
-      budgetPercentage: document.getElementById("budgetPercentage")
-    };
-
-    // ==================== ENHANCED MESSAGE SYSTEM ====================
-    function showMessage(msg, duration = 3000) {
-      elements.msgBox.innerText = msg;
-      elements.msgBox.style.display = "block";
-      
-      // Add appropriate icon based on message type
-      if (msg.includes('✅') || msg.includes('success')) {
-        elements.msgBox.style.background = "linear-gradient(135deg, var(--success) 0%, #059669 100%)";
-      } else if (msg.includes('❌') || msg.includes('failed') || msg.includes('error')) {
-        elements.msgBox.style.background = "linear-gradient(135deg, var(--danger) 0%, #dc2626 100%)";
-      } else if (msg.includes('⚠️') || msg.includes('warning')) {
-        elements.msgBox.style.background = "linear-gradient(135deg, var(--warning) 0%, #d97706 100%)";
-      } else {
-        elements.msgBox.style.background = "var(--gradient)";
-      }
-      
-      setTimeout(() => {
-        elements.msgBox.style.display = "none";
-      }, duration);
-    }
-
-    // ==================== ENHANCED LOGIN/LOGOUT ====================
-    elements.loginBtn?.addEventListener("click", async () => {
-      if (!auth) {
-        showMessage("❌ App not ready. Please wait...", 2000);
-        return;
-      }
-      
-      // Show loading state on button
-      elements.loginBtn.disabled = true;
-      elements.loginBtn.classList.add('loading');
-      
-      const loadingInterval = animateLoadingSteps();
-      showLoading();
-      
-      const provider = new firebase.auth.GoogleAuthProvider();
-      
-      try {
-        const result = await auth.signInWithPopup(provider);
-        currentUserUid = result.user.uid;
-        currentUserName = result.user.displayName || "User";
-        toggleLoginState(true);
-        loadData();
-        elements.userNameDisplay.textContent = currentUserName;
-        showMessage("✅ Logged in successfully", 2000);
-        fetchBudget();
-      } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Login failed. Please try again.", 2000); 
-      } finally {
-        clearInterval(loadingInterval);
-        hideLoading();
-        elements.loginBtn.disabled = false;
-        elements.loginBtn.classList.remove('loading');
-      }
-    });
-
-    elements.logoutBtn?.addEventListener("click", async () => {
-      if (!auth) return;
-      
-      if (!confirm("Are you sure you want to logout?")) return;
-      
-      try {
-        showLoading("Logging out...");
-        await auth.signOut();
-        currentUserUid = null;
-        currentUserName = null;
-        toggleLoginState(false);
-        clearExpensesUI();
-        elements.analyticsContainer.style.display = "none";
-        elements.userNameDisplay.textContent = "";
-        clearBudgetUI();
-        showMessage("✅ Logged out successfully", 2000);
-      } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Logout failed", 2000); 
-      } finally {
-        hideLoading();
-      }
-    });
-
-    // ==================== ENHANCED TOGGLE LOGIN STATE ====================
-    function toggleLoginState(isLoggedIn) {
-      elements.loginView.style.display = isLoggedIn ? "none" : "flex";
-      elements.mainHeader.classList.toggle('visible', isLoggedIn);
-      elements.expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
-      elements.budgetCard.style.display = isLoggedIn ? "block" : "none";
-    }
-
-    // ==================== ENHANCED TYPING ANIMATION ====================
-    const headerText = "Track Your Expenses Smartly!";
-    const typingHeader = document.getElementById("typingHeader");
-    let headerIndex = 0;
-    let typingInterval;
-
-    function typeWriterHeader() {
-      if (headerIndex < headerText.length) {
-        typingHeader.innerHTML += headerText.charAt(headerIndex);
-        headerIndex++;
-        typingInterval = setTimeout(typeWriterHeader, 100);
-      } else {
-        setTimeout(() => { 
-          typingHeader.innerHTML = ""; 
-          headerIndex = 0; 
-          typeWriterHeader(); 
-        }, 3000);
-      }
-    }
-
-    // ==================== ENHANCED EXPENSE FORM ====================
-    elements.form?.addEventListener("submit", async e => {
-      e.preventDefault();
-      if (!currentUserUid) return;
-      
-      const data = {
-        uid: currentUserUid,
-        name: document.getElementById("name").value.trim(),
-        amount: parseFloat(document.getElementById("amount").value).toFixed(2),
-        type: document.getElementById("type").value,
-        description: document.getElementById("description").value.trim(),
-        date: document.getElementById("date").value
-      };
-      
-      // Validate data
-      if (!data.name || !data.amount || !data.type || !data.description || !data.date) {
-        showMessage("❌ Please fill all fields correctly", 2000);
-        return;
-      }
-      
-      if (parseFloat(data.amount) <= 0) {
-        showMessage("❌ Amount must be greater than 0", 2000);
-        return;
-      }
-      
-      try {
-        showLoading(elements.editId.value ? "Updating expense..." : "Adding expense...");
-        
-        const url = elements.editId.value ? `${BASE_URL}/update/${elements.editId.value}` : `${BASE_URL}/submit`;
-        const method = elements.editId.value ? "PUT" : "POST";
-        
-        if (elements.editId.value) {
-          data.editorName = currentUserName;
-        }
-        
-        const res = await fetch(url, { 
-          method, 
-          headers: { "Content-Type": "application/json" }, 
-          body: JSON.stringify(data)
-        });
-        
-        const result = await res.json();
-        
-        if (res.ok) {
-          showMessage(elements.editId.value ? "✅ Expense updated successfully" : "✅ Expense added successfully");
-          elements.editId.value = "";
-          elements.form.reset();
-          
-          // Reset date to today
-          const today = new Date().toISOString().split('T')[0];
-          document.getElementById('date').value = today;
-          
-          await loadData();
-          await fetchBudget();
-        } else {
-          showMessage(result.message || "❌ Operation failed", 2500);
-        }
-      } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Network error. Please try again.", 2500);
-      } finally {
-        hideLoading();
-      }
-    });
-
-    // Add cancel edit button dynamically
-    function setupEditCancelButton() {
-      const formActions = elements.form?.querySelector('.col-12');
-      if (!formActions) return;
-      
-      // Remove existing cancel button if any
-      const existingCancel = formActions.querySelector('#cancelEditBtn');
-      if (existingCancel) existingCancel.remove();
-      
-      if (elements.editId.value) {
-        const cancelBtn = document.createElement('button');
-        cancelBtn.type = 'button';
-        cancelBtn.id = 'cancelEditBtn';
-        cancelBtn.className = 'btn btn-warning';
-        cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancel Edit';
-        cancelBtn.onclick = () => {
-          elements.editId.value = "";
-          elements.form.reset();
-          const today = new Date().toISOString().split('T')[0];
-          document.getElementById('date').value = today;
-          showMessage("✏ Edit cancelled", 2000);
-          cancelBtn.remove();
-        };
-        
-        formActions.insertBefore(cancelBtn, formActions.children[1]);
-      }
-    }
-
-    // ==================== ENHANCED BUDGET FUNCTIONS ====================
-    let currentBudgetAmount = 0;
-
-    async function saveBudgetToServer(amount) {
-      if (!currentUserUid) return;
-      
-      try {
-        showLoading("Saving budget...");
-        const res = await fetch(`${BASE_URL}/setBudget`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            uid: currentUserUid, 
-            amount: parseFloat(amount) || 0 
-          })
-        });
-        
-        const r = await res.json();
-        
-        if (res.ok) {
-          showMessage(r.message || "✅ Budget saved successfully");
-          await fetchBudget();
-        } else {
-          showMessage(r.message || "❌ Failed to save budget");
-        }
-      } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Network error. Please try again.", 2000);
-      } finally {
-        hideLoading();
-      }
-    }
-
-    async function fetchBudget() {
-      if (!currentUserUid) {
-        clearBudgetUI();
-        return;
-      }
-      
-      try {
-        const res = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
-        if (!res.ok) {
-          clearBudgetUI();
-          return;
-        }
-        
-        const r = await res.json();
-        if (!r || typeof r.amount === "undefined" || r.amount === 0) {
-          currentBudgetAmount = 0;
-          clearBudgetUI();
-          return;
-        }
-        
-        currentBudgetAmount = parseFloat(r.amount) || 0;
-        const expensesRes = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
-        const arr = await expensesRes.json();
-        
-        let totalAmount = 0;
-        if (Array.isArray(arr)) {
-          arr.forEach(x => totalAmount += parseFloat(x.amount) || 0);
-        }
-        
-        updateBudgetUI(currentBudgetAmount, totalAmount);
-        if (elements.budgetInput) {
-          elements.budgetInput.value = currentBudgetAmount;
-        }
-      } catch(err) { 
-        console.error(err); 
-        clearBudgetUI();
-      }
-    }
-
-    function clearBudgetUI() {
-      if (elements.budgetInput) elements.budgetInput.value = "";
-      if (elements.budgetProgressBar) {
-        elements.budgetProgressBar.style.width = "0%";
-        elements.budgetProgressBar.textContent = "";
-      }
-      if (elements.budgetStatusText) {
-        elements.budgetStatusText.innerHTML = '<i class="fas fa-info-circle"></i> No budget set';
-      }
-      if (elements.budgetAlerts) elements.budgetAlerts.innerHTML = "";
-      if (elements.budgetSpent) elements.budgetSpent.textContent = "Spent: ₹0.00";
-      if (elements.budgetRemaining) elements.budgetRemaining.textContent = "Remaining: ₹0.00";
-      if (elements.budgetPercentage) elements.budgetPercentage.textContent = "0%";
-      if (elements.analyticsBadge) elements.analyticsBadge.innerHTML = "";
-      
-      currentBudgetAmount = 0;
-    }
-
-    function updateBudgetUI(budgetAmount, totalSpent) {
-      if (!budgetAmount || budgetAmount <= 0) {
-        clearBudgetUI();
-        return;
-      }
-      
-      const pct = (totalSpent / budgetAmount) * 100;
-      const pctClamped = Math.min(Math.round(pct), 999);
-      const widthPct = Math.min(pctClamped, 100);
-      const remaining = Math.max(0, budgetAmount - totalSpent);
-      
-      // Update progress bar
-      elements.budgetProgressBar.style.width = widthPct + "%";
-      elements.budgetProgressBar.textContent = `${pctClamped}%`;
-      elements.budgetProgressBar.className = "progress-bar";
-      
-      // Set color based on percentage
-      if (pct >= 100) {
-        elements.budgetProgressBar.classList.add("bg-danger");
-      } else if (pct >= 80) {
-        elements.budgetProgressBar.classList.add("bg-warning");
-      } else {
-        elements.budgetProgressBar.classList.add("bg-success");
-      }
-      
-      // Update text displays
-      elements.budgetStatusText.innerHTML = `
-        <i class="fas fa-wallet"></i> Budget: ₹${budgetAmount.toFixed(2)}  
-        | <i class="fas fa-money-bill-wave"></i> Spent: ₹${totalSpent.toFixed(2)}
-      `;
-      
-      elements.budgetSpent.textContent = `Spent: ₹${totalSpent.toFixed(2)}`;
-      elements.budgetRemaining.textContent = `Remaining: ₹${remaining.toFixed(2)}`;
-      elements.budgetPercentage.textContent = `${pctClamped}%`;
-      
-      // Update alerts
-      elements.budgetAlerts.innerHTML = "";
-      elements.analyticsBadge.innerHTML = "";
-      
-      if (pct >= 100) {
-        const over = (totalSpent - budgetAmount);
-        elements.budgetAlerts.innerHTML = `
-          <div class="budget-alert" style="background: linear-gradient(135deg, rgba(239,68,68,0.2) 0%, rgba(220,38,38,0.2) 100%); border: 2px solid var(--danger); color: var(--danger);">
-            <i class="fas fa-exclamation-triangle"></i> 
-            <strong>Budget Exceeded!</strong> You spent ₹${over.toFixed(2)} over the limit.
-          </div>
-        `;
-        elements.analyticsBadge.innerHTML = `
-          <span class="badge badge-danger">
-            <i class="fas fa-exclamation-triangle"></i> Over budget: ₹${over.toFixed(2)}
-          </span>
-        `;
-      } else if (pct >= 80) {
-        elements.budgetAlerts.innerHTML = `
-          <div class="budget-alert" style="background: linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(217,119,6,0.2) 100%); border: 2px solid var(--warning); color: var(--warning);">
-            <i class="fas fa-exclamation-circle"></i> 
-            <strong>Warning!</strong> You're at ${Math.round(pct)}% of your budget. Be careful!
-          </div>
-        `;
-        elements.analyticsBadge.innerHTML = `
-          <span class="badge badge-warning">
-            <i class="fas fa-exclamation-circle"></i> Usage: ${Math.round(pct)}% of budget
-          </span>
-        `;
-      } else {
-        elements.analyticsBadge.innerHTML = `
-          <span class="badge badge-success">
-            <i class="fas fa-check-circle"></i> Usage: ${Math.round(pct)}% of budget
-          </span>
-        `;
-      }
-    }
-
-    // Budget event listeners
-    elements.saveBudgetBtn?.addEventListener("click", async () => {
-      const val = parseFloat(elements.budgetInput.value);
-      if (!val || val <= 0) {
-        showMessage("❌ Please enter a valid budget amount", 2000);
-        return;
-      }
-      await saveBudgetToServer(val);
-    });
-
-    elements.resetBudgetBtn?.addEventListener("click", async () => {
-      if (!currentUserUid) return;
-      
-      if (!confirm("Are you sure you want to reset/delete your budget?")) return;
-      
-      try {
-        showLoading("Resetting budget...");
-        const res = await fetch(`${BASE_URL}/setBudget`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            uid: currentUserUid, 
-            amount: 0, 
-            reset: true 
-          })
-        });
-        
-        const r = await res.json();
-        
-        if (res.ok) {
-          showMessage(r.message || "✅ Budget reset successfully");
-          clearBudgetUI();
-        } else {
-          showMessage(r.message || "❌ Reset failed");
-        }
-      } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Network error. Please try again.", 2000);
-      } finally {
-        hideLoading();
-      }
-    });
-
     // ==================== ENHANCED DATA LOADING & RENDERING ====================
-    async function loadData() {
-      if (!currentUserUid) return;
-      
-      try {
-        showLoading("Loading your expenses...");
-        const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
-        
-        if (!res.ok) throw new Error("Failed to fetch users");
-        const users = await res.json();
-        
-        if (!Array.isArray(users) || users.length === 0) {
-          clearExpensesUI();
-          elements.analyticsContainer.style.display = "none";
-          const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
-          
-          if (bRes.ok) {
-            const b = await bRes.json();
-            if (b && b.amount) {
-              updateBudgetUI(parseFloat(b.amount), 0);
-            }
-          }
-          return;
-        }
-
-        renderExpenses(users);
-        renderCharts(users);
-        elements.analyticsContainer.style.display = "block";
-        
-        // Fetch and update budget
-        const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
-        if (bRes.ok) {
-          const b = await bRes.json();
-          if (b && b.amount && parseFloat(b.amount) > 0) {
-            let totalAmount = 0;
-            users.forEach(u => totalAmount += parseFloat(u.amount) || 0);
-            updateBudgetUI(parseFloat(b.amount), totalAmount);
-          } else {
-            clearBudgetUI();
-          }
-        }
-      } catch(err) { 
-        console.error(err); 
-        showErrorUI();
-      } finally {
-        hideLoading();
+async function loadData() {
+  if (!auth.currentUser) return;
+  
+  try {
+    showLoading("Loading your expenses...");
+    
+    // Get fresh token
+    const token = await auth.currentUser.getIdToken();
+    
+    const res = await fetch(`${BASE_URL}/users`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
-    }
-
-    function clearExpensesUI() {
-      elements.expensesContainer.innerHTML = `
-        <div class="card">
-          <div class="card-body text-center py-5">
-            <i class="fas fa-receipt" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 20px;"></i>
-            <h5 style="color: var(--text-light);">No expenses yet</h5>
-            <p class="text-muted">Add your first expense above!</p>
-          </div>
-        </div>
-      `;
-    }
-
-    function showErrorUI() {
-      elements.expensesContainer.innerHTML = `
-        <div class="card">
-          <div class="card-body text-center py-5">
-            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--danger); margin-bottom: 20px;"></i>
-            <h5 style="color: var(--danger);">Failed to load expenses</h5>
-            <p class="text-muted">Please check your connection and try again</p>
-            <button class="btn btn-primary mt-3" onclick="loadData()">
-              <i class="fas fa-redo"></i> Retry
-            </button>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderExpenses(users) {
-      let totalAmount = 0;
-      users.forEach(u => totalAmount += parseFloat(u.amount) || 0);
+    });
+    
+    if (!res.ok) throw new Error("Failed to fetch users");
+    const users = await res.json();
+    
+    if (!Array.isArray(users) || users.length === 0) {
+      clearExpensesUI();
+      elements.analyticsContainer.style.display = "none";
       
-      // Mobile view (cards)
-      if (window.innerWidth < 768) {
-        let mobileHtml = `
-          <div class="card slide-up">
-            <div class="card-header">
-              <h5 class="mb-0"><i class="fas fa-receipt"></i> Your Expenses</h5>
-            </div>
-            <div class="card-body">
-              <div class="row g-3">
-        `;
-        
-        users.forEach((u, i) => {
-          const amount = parseFloat(u.amount).toFixed(2);
-          const date = new Date(u.date).toLocaleDateString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
-          });
-          
-          mobileHtml += `
-            <div class="col-12">
-              <div class="expense-card">
-                <div class="card-body">
-                  <div class="expense-title">${u.name}</div>
-                  
-                  <div class="expense-meta">
-                    <span class="expense-amount">₹${amount}</span>
-                    <span class="expense-type">${u.type}</span>
-                  </div>
-                  
-                  <div class="expense-description">
-                    <i class="fas fa-file-alt"></i> ${u.description}
-                  </div>
-                  
-                  <div class="expense-date">
-                    <i class="fas fa-calendar"></i> ${date}
-                  </div>
-                  
-                  <div class="expense-actions">
-                    <button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">
-                      <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-info btn-sm" onclick="viewHistory('${u._id}')">
-                      <i class="fas fa-history"></i> History
-                    </button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteExpense('${u._id}','${u.name}')">
-                      <i class="fas fa-trash"></i> Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          `;
-        });
-        
-        mobileHtml += `
-              </div>
-              
-              <!-- Total Summary -->
-              <div class="card mt-4" style="background: var(--gradient); color: white; border: none;">
-                <div class="card-body text-center">
-                  <h5 class="mb-1">
-                    <i class="fas fa-calculator"></i> Total Expenses
-                  </h5>
-                  <h3 class="mb-0" style="font-weight: 800;">₹${totalAmount.toFixed(2)}</h3>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-        
-        elements.expensesContainer.innerHTML = mobileHtml;
+      // Fetch budget with token
+      const bRes = await fetch(`${BASE_URL}/getBudget`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (bRes.ok) {
+        const b = await bRes.json();
+        if (b && b.amount) {
+          updateBudgetUI(parseFloat(b.amount), 0);
+        }
+      }
+      return;
+    }
+
+    renderExpenses(users);
+    renderCharts(users);
+    elements.analyticsContainer.style.display = "block";
+    
+    // Fetch and update budget with token
+    const bRes = await fetch(`${BASE_URL}/getBudget`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (bRes.ok) {
+      const b = await bRes.json();
+      if (b && b.amount && parseFloat(b.amount) > 0) {
+        let totalAmount = 0;
+        users.forEach(u => totalAmount += parseFloat(u.amount) || 0);
+        updateBudgetUI(parseFloat(b.amount), totalAmount);
       } else {
-        // Desktop view (table)
-        let desktopHtml = `
-          <div class="card slide-up">
-            <div class="card-header">
-              <h5 class="mb-0"><i class="fas fa-receipt"></i> Expense History</h5>
-            </div>
-            <div class="card-body p-0">
-              <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Name</th>
-                      <th>Amount</th>
-                      <th>Type</th>
-                      <th>Description</th>
-                      <th>Date</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-        `;
-        
-        users.forEach((u, i) => {
-          desktopHtml += `
-            <tr>
-              <td>${i + 1}</td>
-              <td><strong>${u.name}</strong></td>
-              <td><span class="expense-amount">₹${parseFloat(u.amount).toFixed(2)}</span></td>
-              <td><span class="badge badge-info">${u.type}</span></td>
-              <td>${u.description}</td>
-              <td>${u.date}</td>
-              <td>
-                <div class="btn-group">
-                  <button class="btn btn-warning btn-sm me-1" onclick="editExpense('${u._id}')" title="Edit">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button class="btn btn-info btn-sm me-1" onclick="viewHistory('${u._id}')" title="History">
-                    <i class="fas fa-history"></i>
-                  </button>
-                  <button class="btn btn-danger btn-sm" onclick="deleteExpense('${u._id}','${u.name}')" title="Delete">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          `;
-        });
-        
-        desktopHtml += `
-                  </tbody>
-                </table>
-              </div>
-              
-              <!-- Total Row -->
-              <div class="p-4" style="background: var(--gradient); color: white; border-radius: 0 0 16px 16px;">
-                <div class="row align-items-center">
-                  <div class="col-md-8">
-                    <h5 class="mb-0"><i class="fas fa-calculator"></i> Total Expenses</h5>
-                  </div>
-                  <div class="col-md-4 text-end">
-                    <h3 class="mb-0" style="font-weight: 800;">₹${totalAmount.toFixed(2)}</h3>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-        
-        elements.expensesContainer.innerHTML = desktopHtml;
+        clearBudgetUI();
       }
     }
+  } catch(err) { 
+    console.error(err); 
+    showErrorUI();
+  } finally {
+    hideLoading();
+  }
+}
 
-    // ==================== ENHANCED EDIT & DELETE ====================
-    window.editExpense = async function(id) {
-      try {
-        showLoading("Loading expense details...");
-        const res = await fetch(`${BASE_URL}/user/${id}`);
-        
-        if (!res.ok) throw new Error("Failed to fetch user");
-        const user = await res.json();
-        
-        document.getElementById("name").value = user.name;
-        document.getElementById("amount").value = user.amount;
-        document.getElementById("type").value = user.type;
-        document.getElementById("description").value = user.description;
-        document.getElementById("date").value = user.date;
-        elements.editId.value = id;
-        
-        setupEditCancelButton();
-        showMessage("✏ Edit mode enabled. Make your changes and click Confirm.", 3000);
-        
-        // Scroll to form
-        document.getElementById('expenseFormContainer').scrollIntoView({ 
-          behavior: 'smooth' 
-        });
-      } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Failed to load expense for editing.", 2500);
-      } finally {
-        hideLoading();
-      }
+// ==================== ENHANCED EXPENSE FORM ====================
+elements.form?.addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!auth.currentUser) return;
+  
+  const data = {
+    name: document.getElementById("name").value.trim(),
+    amount: parseFloat(document.getElementById("amount").value).toFixed(2),
+    type: document.getElementById("type").value,
+    description: document.getElementById("description").value.trim(),
+    date: document.getElementById("date").value
+  };
+  
+  // Validate data
+  if (!data.name || !data.amount || !data.type || !data.description || !data.date) {
+    showMessage("❌ Please fill all fields correctly", 2000);
+    return;
+  }
+  
+  if (parseFloat(data.amount) <= 0) {
+    showMessage("❌ Amount must be greater than 0", 2000);
+    return;
+  }
+  
+  try {
+    showLoading(elements.editId.value ? "Updating expense..." : "Adding expense...");
+    
+    const url = elements.editId.value ? `${BASE_URL}/update/${elements.editId.value}` : `${BASE_URL}/submit`;
+    const method = elements.editId.value ? "PUT" : "POST";
+    
+    // Get fresh token
+    const token = await auth.currentUser.getIdToken();
+    
+    if (elements.editId.value) {
+      data.editorName = currentUserName;
     }
-
-    window.deleteExpense = async function(id, name) {
-      if (!confirm(`Are you sure you want to delete "${name}"?\nThis action cannot be undone.`)) return;
+    
+    const res = await fetch(url, { 
+      method, 
+      headers: { 
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${token}`
+      }, 
+      body: JSON.stringify(data)
+    });
+    
+    const result = await res.json();
+    
+    if (res.ok) {
+      showMessage(elements.editId.value ? "✅ Expense updated successfully" : "✅ Expense added successfully");
+      elements.editId.value = "";
+      elements.form.reset();
       
-      try {
-        showLoading("Deleting expense...");
-        const res = await fetch(`${BASE_URL}/delete/${id}`, { 
-          method: "DELETE" 
-        });
-        
-        const r = await res.json();
-        
-        if (res.ok) {
-          showMessage("✅ Expense deleted successfully");
-          await loadData();
-          await fetchBudget();
-        } else {
-          showMessage(r.message || "❌ Delete failed", 2000);
-        }
-      } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Network error. Please try again.", 2000);
-      } finally {
-        hideLoading();
-      }
-    }
-
-    // ==================== ENHANCED HISTORY FUNCTIONS ====================
-    window.viewHistory = async function(expenseId) {
-      try {
-        showLoading("Loading history...");
-        const res = await fetch(`${BASE_URL}/user/${expenseId}`);
-        
-        if (!res.ok) throw new Error("Failed to fetch expense");
-        const expense = await res.json();
-        
-        let historyHtml = `
-          <div class="mb-4">
-            <h4><i class="fas fa-file-invoice-dollar"></i> ${expense.name}</h4>
-            <p><strong>Current Amount:</strong> ₹${parseFloat(expense.amount).toFixed(2)}</p>
-            <p><strong>Created:</strong> ${new Date(expense.createdAt).toLocaleString()}</p>
-          </div>
-        `;
-        
-        if (expense.editHistory && expense.editHistory.length > 0) {
-          historyHtml += `
-            <h5><i class="fas fa-history"></i> Edit History</h5>
-            <div class="table-responsive">
-              <table class="history-table">
-                <thead>
-                  <tr>
-                    <th>Editor</th>
-                    <th>Date & Time</th>
-                    <th>Changes Made</th>
-                  </tr>
-                </thead>
-                <tbody>
-          `;
-          
-          expense.editHistory.forEach(edit => {
-            const changes = [];
-            if (edit.before.name !== edit.after.name) {
-              changes.push(`<i class="fas fa-tag"></i> Name: "${edit.before.name}" → "${edit.after.name}"`);
-            }
-            if (edit.before.amount !== edit.after.amount) {
-              changes.push(`<i class="fas fa-rupee-sign"></i> Amount: ₹${edit.before.amount} → ₹${edit.after.amount}`);
-            }
-            if (edit.before.type !== edit.after.type) {
-              changes.push(`<i class="fas fa-credit-card"></i> Type: ${edit.before.type} → ${edit.after.type}`);
-            }
-            if (edit.before.description !== edit.after.description) {
-              changes.push(`<i class="fas fa-file-alt"></i> Description: "${edit.before.description}" → "${edit.after.description}"`);
-            }
-            if (edit.before.date !== edit.after.date) {
-              changes.push(`<i class="fas fa-calendar"></i> Date: ${edit.before.date} → ${edit.after.date}`);
-            }
-            
-            historyHtml += `
-              <tr>
-                <td><strong><i class="fas fa-user"></i> ${edit.editorName}</strong></td>
-                <td>${new Date(edit.date).toLocaleString()}</td>
-                <td class="changes-list">
-                  ${changes.map(change => `<div>${change}</div>`).join('')}
-                </td>
-              </tr>
-            `;
-          });
-          
-          historyHtml += `</tbody></table></div>`;
-        } else {
-          historyHtml += `
-            <div class="text-center py-4">
-              <i class="fas fa-history" style="font-size: 3rem; color: var(--text-muted);"></i>
-              <p class="text-muted mt-3">No edit history available for this expense.</p>
-            </div>
-          `;
-        }
-        
-        elements.historyContent.innerHTML = historyHtml;
-        elements.historyModal.style.display = "block";
-      } catch(err) {
-        console.error(err);
-        elements.historyContent.innerHTML = `
-          <div class="text-center py-4">
-            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--danger);"></i>
-            <p class="text-danger mt-3">Failed to load history. Please try again.</p>
-          </div>
-        `;
-      } finally {
-        hideLoading();
-      }
-    }
-
-    async function showHistory() {
-      try {
-        showLoading("Loading complete history...");
-        const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
-        
-        if (!res.ok) throw new Error("Failed to fetch expenses");
-        const expenses = await res.json();
-        
-        let historyHtml = `<h4><i class="fas fa-history"></i> Complete Edit History</h4>`;
-        
-        const expensesWithHistory = expenses.filter(exp => exp.editHistory && exp.editHistory.length > 0);
-        
-        if (expensesWithHistory.length === 0) {
-          historyHtml += `
-            <div class="text-center py-4">
-              <i class="fas fa-history" style="font-size: 3rem; color: var(--text-muted);"></i>
-              <p class="text-muted mt-3">No edit history available yet.</p>
-            </div>
-          `;
-        } else {
-          historyHtml += `<div class="row g-3">`;
-          
-          expensesWithHistory.forEach(expense => {
-            const lastEdit = expense.editHistory[expense.editHistory.length - 1];
-            const lastEditTime = new Date(lastEdit.date).toLocaleDateString();
-            
-            historyHtml += `
-              <div class="col-md-6">
-                <div class="card" style="background: var(--card-bg); border: 1px solid var(--border);">
-                  <div class="card-body">
-                    <h6>${expense.name}</h6>
-                    <p class="small text-muted">
-                      <i class="fas fa-rupee-sign"></i> ₹${parseFloat(expense.amount).toFixed(2)} 
-                      | <i class="fas fa-edit"></i> ${expense.editCount || 0} edits
-                    </p>
-                    <p class="small text-muted">
-                      <i class="fas fa-calendar"></i> Last edited: ${lastEditTime}
-                    </p>
-                    <button class="btn btn-sm btn-info w-100 mt-2" onclick="viewHistory('${expense._id}')">
-                      <i class="fas fa-eye"></i> View Details
-                    </button>
-                  </div>
-                </div>
-              </div>
-            `;
-          });
-          
-          historyHtml += `</div>`;
-        }
-        
-        elements.historyContent.innerHTML = historyHtml;
-        elements.historyModal.style.display = "block";
-      } catch(err) {
-        console.error(err);
-        elements.historyContent.innerHTML = `
-          <div class="text-center py-4">
-            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--danger);"></i>
-            <p class="text-danger mt-3">Failed to load history. Please try again.</p>
-          </div>
-        `;
-      } finally {
-        hideLoading();
-      }
-    }
-
-    // ==================== ENHANCED CHART RENDERING ====================
-    function renderCharts(users) {
-      const dates = {};
-      const types = {};
-
-      let totalAmount = 0;
-      users.forEach(u => {
-        const date = u.date || "Unknown";
-        const amount = parseFloat(u.amount) || 0;
-        totalAmount += amount;
-        dates[date] = (dates[date] || 0) + amount;
-        types[u.type] = (types[u.type] || 0) + amount;
-      });
-
-      // FIXED: Proper pie chart calculation WITHOUT Over Budget category
-      // We'll show Over Budget as a separate metric, not in pie chart
-      const pieCategories = Object.keys(types);
-      const pieValues = Object.values(types);
-
-      // FIXED: Consistent colors for each category
-      const categoryColors = {
-        'Card': '#00bcd4',      // Cyan
-        'Cash': '#ff9800',      // Orange
-        'Gpay/Paytm': '#8bc34a', // Green
-        'Other': '#e91e63'      // Pink
-      };
-
-      // Line Chart
-      const lineCtx = document.getElementById('lineChart').getContext('2d');
-      if (window.lineChartInstance) window.lineChartInstance.destroy();
-      
-      window.lineChartInstance = new Chart(lineCtx, {
-        type: 'line',
-        data: {
-          labels: Object.keys(dates),
-          datasets: [{
-            label: 'Daily Expenses',
-            data: Object.values(dates),
-            borderColor: 'var(--primary)',
-            backgroundColor: 'rgba(0,188,212,0.2)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.3,
-            pointBackgroundColor: 'var(--primary)',
-            pointBorderColor: 'white',
-            pointBorderWidth: 2
-          }]
-        },
-        options: { 
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              labels: {
-                color: 'var(--text-light)',
-                font: { size: 12 }
-              }
-            },
-            tooltip: {
-              backgroundColor: 'var(--card-bg)',
-              titleColor: 'var(--text)',
-              bodyColor: 'var(--text)',
-              borderColor: 'var(--primary)',
-              borderWidth: 1
-            }
-          },
-          scales: { 
-            y: { 
-              beginAtZero: true,
-              ticks: { 
-                color: 'var(--text-light)',
-                callback: function(value) {
-                  return '₹' + value;
-                }
-              },
-              grid: { 
-                color: 'var(--border)',
-                drawBorder: false
-              }
-            },
-            x: {
-              ticks: { 
-                color: 'var(--text-light)',
-                maxRotation: 45
-              },
-              grid: { 
-                color: 'var(--border)',
-                drawBorder: false
-              }
-            }
-          }
-        }
-      });
-
-      // Pie Chart - FIXED: No Over Budget category
-      const pieCtx = document.getElementById('pieChart').getContext('2d');
-      if (window.pieChartInstance) window.pieChartInstance.destroy();
-
-      const bgColors = pieCategories.map(label => {
-        return categoryColors[label] || `hsl(${Math.random() * 360}, 70%, 60%)`;
-      });
-
-      window.pieChartInstance = new Chart(pieCtx, {
-        type: 'pie',
-        data: {
-          labels: pieCategories,
-          datasets: [{
-            data: pieValues,
-            backgroundColor: bgColors,
-            borderColor: 'var(--card-bg)',
-            borderWidth: 3,
-            hoverOffset: 15
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                color: 'var(--text-light)',
-                padding: 20,
-                font: { 
-                  size: 12,
-                  weight: '600'
-                },
-                usePointStyle: true,
-                pointStyle: 'circle'
-              }
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  const label = context.label || '';
-                  const value = context.raw || 0;
-                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                  const percentage = Math.round((value / total) * 100);
-                  return `${label}: ₹${value.toFixed(2)} (${percentage}%)`;
-                }
-              },
-              backgroundColor: 'var(--card-bg)',
-              titleColor: 'var(--text)',
-              bodyColor: 'var(--text)',
-              borderColor: 'var(--primary)',
-              borderWidth: 1
-            }
-          }
-        }
-      });
-
-      // Update analytics badge with OVER BUDGET info if applicable
-      if (currentBudgetAmount > 0) {
-        const usagePercent = Math.round((totalAmount / currentBudgetAmount) * 100);
-        if (totalAmount > currentBudgetAmount) {
-          const overAmount = totalAmount - currentBudgetAmount;
-          elements.analyticsBadge.innerHTML = `
-            <div class="alert alert-danger" style="background: linear-gradient(135deg, rgba(239,68,68,0.1) 0%, rgba(220,38,38,0.1) 100%); border: 2px solid var(--danger); color: var(--danger);">
-              <i class="fas fa-exclamation-triangle"></i>
-              <strong>Over Budget:</strong> ₹${overAmount.toFixed(2)} (${usagePercent}% used)
-            </div>
-          `;
-        } else {
-          elements.analyticsBadge.innerHTML = `
-            <div class="alert alert-success" style="background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.1) 100%); border: 2px solid var(--success); color: var(--success);">
-              <i class="fas fa-check-circle"></i>
-              <strong>Budget Status:</strong> ${usagePercent}% used (₹${totalAmount.toFixed(2)} of ₹${currentBudgetAmount.toFixed(2)})
-            </div>
-          `;
-        }
-      } else {
-        elements.analyticsBadge.innerHTML = `
-          <div class="alert alert-info" style="background: rgba(0,188,212,0.1); border: 2px solid var(--primary); color: var(--primary);">
-            <i class="fas fa-chart-pie"></i>
-            <strong>Total Expenses:</strong> ₹${totalAmount.toFixed(2)}
-          </div>
-        `;
-      }
-    }
-
-    // ==================== EVENT LISTENERS ====================
-    elements.aboutLink?.addEventListener("click", e => {
-      e.preventDefault();
-      elements.aboutModal.style.display = "block";
-    });
-
-    elements.closeAbout?.addEventListener("click", () => {
-      elements.aboutModal.style.display = "none";
-    });
-
-    elements.historyLink?.addEventListener("click", e => {
-      e.preventDefault();
-      showHistory();
-    });
-
-    elements.closeHistory?.addEventListener("click", () => {
-      elements.historyModal.style.display = "none";
-    });
-
-    elements.themeToggle?.addEventListener("click", cycleTheme);
-
-    window.addEventListener("click", e => {
-      if (e.target == elements.aboutModal) elements.aboutModal.style.display = "none";
-      if (e.target == elements.historyModal) elements.historyModal.style.display = "none";
-    });
-
-    // Handle window resize for responsive layout
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        if (currentUserUid) {
-          loadData();
-        }
-      }, 300);
-    });
-
-    // ==================== INITIALIZATION ====================
-    function initializeApp() {
-      // Start typing animation
-      typeWriterHeader();
-      
-      // Initialize theme
-      initTheme();
-      
-      // Initialize Firebase
-      initializeFirebase();
-      
-      // Set today's date in form
+      // Reset date to today
       const today = new Date().toISOString().split('T')[0];
-      const dateInput = document.getElementById('date');
-      if (dateInput) {
-        dateInput.value = today;
-        dateInput.max = today; // Prevent future dates
-      }
+      document.getElementById('date').value = today;
       
-      // Initialize form cancel button listener
-      elements.editId?.addEventListener('input', setupEditCancelButton);
+      await loadData();
+    } else {
+      showMessage(result.message || "❌ Operation failed", 2500);
     }
+  } catch(err) { 
+    console.error(err); 
+    showMessage("❌ Network error. Please try again.", 2500);
+  } finally {
+    hideLoading();
+  }
+});
 
-    // Start the app
-    initializeApp();
+// ==================== ENHANCED EDIT & DELETE ====================
+window.editExpense = async function(id) {
+  try {
+    showLoading("Loading expense details...");
+    
+    // Get fresh token
+    const token = await auth.currentUser.getIdToken();
+    
+    const res = await fetch(`${BASE_URL}/user/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (!res.ok) throw new Error("Failed to fetch user");
+    const user = await res.json();
+    
+    document.getElementById("name").value = user.name;
+    document.getElementById("amount").value = user.amount;
+    document.getElementById("type").value = user.type;
+    document.getElementById("description").value = user.description;
+    document.getElementById("date").value = user.date;
+    elements.editId.value = id;
+    
+    setupEditCancelButton();
+    showMessage("✏ Edit mode enabled. Make your changes and click Confirm.", 3000);
+    
+    // Scroll to form
+    document.getElementById('expenseFormContainer').scrollIntoView({ 
+      behavior: 'smooth' 
+    });
+  } catch(err) { 
+    console.error(err); 
+    showMessage("❌ Failed to load expense for editing.", 2500);
+  } finally {
+    hideLoading();
+  }
+}
 
-    // Service Worker registration
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/sw.js")
-          .then(() => console.log("Service Worker registered"))
-          .catch(err => console.error("SW failed", err));
-      });
+window.deleteExpense = async function(id, name) {
+  if (!confirm(`Are you sure you want to delete "${name}"?\nThis action cannot be undone.`)) return;
+  
+  try {
+    showLoading("Deleting expense...");
+    
+    // Get fresh token
+    const token = await auth.currentUser.getIdToken();
+    
+    const res = await fetch(`${BASE_URL}/delete/${id}`, { 
+      method: "DELETE",
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    const r = await res.json();
+    
+    if (res.ok) {
+      showMessage("✅ Expense deleted successfully");
+      await loadData();
+    } else {
+      showMessage(r.message || "❌ Delete failed", 2000);
     }
+  } catch(err) { 
+    console.error(err); 
+    showMessage("❌ Network error. Please try again.", 2000);
+  } finally {
+    hideLoading();
+  }
+}
+
+// ==================== ENHANCED BUDGET FUNCTIONS ====================
+async function fetchBudget() {
+  if (!auth.currentUser) {
+    clearBudgetUI();
+    return;
+  }
+  
+  try {
+    // Get fresh token
+    const token = await auth.currentUser.getIdToken();
+    
+    const res = await fetch(`${BASE_URL}/getBudget`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!res.ok) {
+      clearBudgetUI();
+      return;
+    }
+    
+    const r = await res.json();
+    if (!r || typeof r.amount === "undefined" || r.amount === 0) {
+      currentBudgetAmount = 0;
+      clearBudgetUI();
+      return;
+    }
+    
+    currentBudgetAmount = parseFloat(r.amount) || 0;
+    
+    // Load expenses to calculate total
+    const expensesRes = await fetch(`${BASE_URL}/users`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const arr = await expensesRes.json();
+    
+    let totalAmount = 0;
+    if (Array.isArray(arr)) {
+      arr.forEach(x => totalAmount += parseFloat(x.amount) || 0);
+    }
+    
+    updateBudgetUI(currentBudgetAmount, totalAmount);
+    if (elements.budgetInput) {
+      elements.budgetInput.value = currentBudgetAmount;
+    }
+  } catch(err) { 
+    console.error(err); 
+    clearBudgetUI();
+  }
+}
+
+// Budget event listeners
+elements.saveBudgetBtn?.addEventListener("click", async () => {
+  const val = parseFloat(elements.budgetInput.value);
+  if (!val || val <= 0) {
+    showMessage("❌ Please enter a valid budget amount", 2000);
+    return;
+  }
+  
+  try {
+    showLoading("Saving budget...");
+    
+    // Get fresh token
+    const token = await auth.currentUser.getIdToken();
+    
+    const res = await fetch(`${BASE_URL}/setBudget`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ 
+        amount: parseFloat(val) || 0 
+      })
+    });
+    
+    const r = await res.json();
+    
+    if (res.ok) {
+      showMessage(r.message || "✅ Budget saved successfully");
+      await fetchBudget();
+    } else {
+      showMessage(r.message || "❌ Failed to save budget");
+    }
+  } catch(err) { 
+    console.error(err); 
+    showMessage("❌ Network error. Please try again.", 2000);
+  } finally {
+    hideLoading();
+  }
+});
+
+elements.resetBudgetBtn?.addEventListener("click", async () => {
+  if (!auth.currentUser) return;
+  
+  if (!confirm("Are you sure you want to reset/delete your budget?")) return;
+  
+  try {
+    showLoading("Resetting budget...");
+    
+    // Get fresh token
+    const token = await auth.currentUser.getIdToken();
+    
+    const res = await fetch(`${BASE_URL}/setBudget`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ 
+        reset: true 
+      })
+    });
+    
+    const r = await res.json();
+    
+    if (res.ok) {
+      showMessage(r.message || "✅ Budget reset successfully");
+      clearBudgetUI();
+    } else {
+      showMessage(r.message || "❌ Reset failed");
+    }
+  } catch(err) { 
+    console.error(err); 
+    showMessage("❌ Network error. Please try again.", 2000);
+  } finally {
+    hideLoading();
+  }
+});
     </script>
 
     <footer>
