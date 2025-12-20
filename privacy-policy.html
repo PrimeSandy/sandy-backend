@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ================= BASIC SEO ================= -->
+    <title>Privacy Policy - E-TRAX | Smart Expense Tracker by AlphaPrime</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="description" content="Privacy Policy for E-TRAX - Your privacy is important to us. Learn how we handle your data in our secure expense tracking application." />
+    <meta name="keywords" content="privacy policy, data protection, expense tracker privacy, E-TRAX privacy, AlphaPrime privacy, secure expense tracking" />
+
+    <meta name="author" content="AlphaPrime" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- ================= CANONICAL ================= -->
+    <link rel="canonical" href="https://www.alphaprime.co.in/privacy-policy" />
+
+    <!-- ================= OPEN GRAPH ================= -->
+    <meta property="og:title" content="Privacy Policy - E-TRAX Expense Tracker" />
+    <meta property="og:description" content="Your privacy matters. Read our commitment to protecting your data in E-TRAX expense tracker." />
+    <meta property="og:url" content="https://www.alphaprime.co.in/privacy-policy" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://www.alphaprime.co.in/e.png" />
+
+    <!-- ================= FAVICONS ================= -->
+    <link rel="icon" href="EtraxPub.jpg" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <!-- ================= FONTS & CSS ================= -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Dark Theme (Default) - HIGH CONTRAST */
+            --primary: #00bcd4;
+            --primary-dark: #0097a7;
+            --secondary: #ffcc00;
+            --background: #0b0b0b;
+            --card-bg: #1a1a1a;
+            --text: #ffffff;
+            --text-light: #f1f5f9;
+            --text-muted: #cbd5e1;
+            --border: rgba(255,255,255,0.2);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        [data-theme="light"] {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #dc2626;
+            --background: #ffffff;
+            --card-bg: #f8fafc;
+            --text: #000000;
+            --text-light: #1e293b;
+            --text-muted: #475569;
+            --border: rgba(0,0,0,0.15);
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="professional"] {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #f59e0b;
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text: #ffffff;
+            --text-light: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: rgba(255,255,255,0.2);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            line-height: 1.6;
+            font-weight: 500;
+            padding-top: 70px; /* Space for fixed header */
+        }
+
+        /* ================= HEADER ================= */
+        .main-header {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-section h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background: rgba(0,188,212,0.1);
+            transform: translateY(-2px);
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ================= PRIVACY POLICY CONTENT ================= */
+        .privacy-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .privacy-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 0;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .privacy-header h1 {
+            color: var(--primary);
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .privacy-header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .effective-date {
+            background: var(--primary);
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        .policy-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .policy-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .section-number {
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .section-content {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .section-content ul {
+            padding-left: 20px;
+            margin: 20px 0;
+        }
+
+        .section-content li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 10px;
+        }
+
+        .section-content li:before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            position: absolute;
+            left: -10px;
+        }
+
+        .highlight-box {
+            background: rgba(0,188,212,0.1);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .contact-info {
+            text-align: center;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            margin-top: 50px;
+            border: 2px solid var(--primary);
+        }
+
+        .contact-info h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .contact-email {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .contact-email:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,188,212,0.3);
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(0,188,212,0.05);
+            border-radius: 12px;
+            border: 1px solid var(--primary);
+        }
+
+        .trust-badge i {
+            color: var(--primary);
+            font-size: 2.5rem;
+        }
+
+        /* ================= FOOTER ================= */
+        footer {
+            background: var(--card-bg);
+            color: var(--text-muted);
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border);
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        .copyright {
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .blinking-name {
+            color: var(--primary);
+            animation: blink 2s infinite;
+            font-weight: 700;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* ================= RESPONSIVE DESIGN ================= */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .privacy-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .privacy-header p {
+                font-size: 1rem;
+            }
+
+            .policy-section {
+                padding: 25px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .section-content {
+                font-size: 1rem;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .privacy-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .policy-section {
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+
+            .contact-info {
+                padding: 25px;
+            }
+
+            .theme-toggle span {
+                display: none;
+            }
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,188,212,0.3);
+            transition: all 0.3s ease;
+            z-index: 100;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-5px);
+        }
+
+        /* Print styles */
+        @media print {
+            .main-header, .theme-toggle, .back-to-top, footer {
+                display: none;
+            }
+            
+            body {
+                padding-top: 0;
+                background: white;
+                color: black;
+            }
+            
+            .policy-section {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+<!-- ================= HEADER ================= -->
+<header class="main-header">
+    <div class="header-content">
+        <div class="brand-section">
+            <h1>E-TRAX</h1>
+            <span style="color: var(--text-muted);">| Privacy Policy</span>
+        </div>
+        
+        <div class="nav-links">
+            <a href="index.html">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank" rel="noopener">
+                <i class="fas fa-headset"></i> Support
+            </a>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-palette"></i>
+                <span>Theme</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ================= PRIVACY POLICY CONTENT ================= -->
+<div class="privacy-container">
+    <div class="privacy-header">
+        <h1>Privacy Policy</h1>
+        <p>Your privacy and trust are extremely important to us. This Privacy Policy explains how we handle information when you use our application.</p>
+        <div class="effective-date">Effective Date: 2025</div>
+    </div>
+
+    <!-- Section 1: Information Collection -->
+    <div class="policy-section">
+        <div class="section-header">
+            <div class="section-number">1</div>
+            <h2 class="section-title">Information Collection</h2>
+        </div>
+        <div class="section-content">
+            <p><strong>E-TRAX does not collect, view, or store personal user data on our own servers.</strong></p>
+            <p>All authentication and data handling are securely managed through Google Firebase, using your own dedicated Firebase account. Any data entered by users (such as expenses or usage-related information) is:</p>
+            <ul>
+                <li>Transmitted securely to Firebase</li>
+                <li>Accessible only by the respective user</li>
+                <li>Never viewed, accessed, or manually monitored by the admin or any third party</li>
+            </ul>
+            <div class="highlight-box">
+                <i class="fas fa-shield-alt"></i> <strong>Your Data is Yours:</strong> We believe in privacy by design. Your expense data remains under your control at all times.
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Use of Information -->
+    <div class="policy-section">
+        <div class="section-header">
+            <div class="section-number">2</div>
+            <h2 class="section-title">Use of Information</h2>
+        </div>
+        <div class="section-content">
+            <p>User data is used strictly for functional purposes, including:</p>
+            <ul>
+                <li>User authentication via Google Login</li>
+                <li>Storing and displaying user expenses</li>
+                <li>Providing analytics and app features</li>
+                <li>Generating spending insights and budget tracking</li>
+            </ul>
+            <p><strong>We do not sell, rent, or misuse user data in any form.</strong> Your information is used exclusively to provide you with the expense tracking service you expect from E-TRAX.</p>
+        </div>
+    </div>
+
+    <!-- Section 3: Data Security -->
+    <div class="policy-section">
+        <div class="section-header">
+            <div class="section-number">3</div>
+            <h2 class="section-title">Data Security</h2>
+        </div>
+        <div class="section-content">
+            <p>We rely on Firebase's industry‑standard security infrastructure, which includes:</p>
+            <ul>
+                <li>Secure authentication with Google OAuth 2.0</li>
+                <li>Encrypted data transmission (HTTPS/TLS)</li>
+                <li>Access controlled by user identity</li>
+                <li>Automatic security updates and monitoring</li>
+            </ul>
+            <p>While no online service is 100% secure, we take all reasonable steps to ensure your data remains protected. Firebase maintains multiple compliance certifications including SOC 1, SOC 2, ISO 27001, and GDPR compliance.</p>
+        </div>
+    </div>
+
+    <!-- Section 4: Third‑Party Services -->
+    <div class="policy-section">
+        <div class="section-header">
+            <div class="section-number">4</div>
+            <h2 class="section-title">Third‑Party Services</h2>
+        </div>
+        <div class="section-content">
+            <p>E‑TRAX uses trusted third‑party services, including:</p>
+            <ul>
+                <li><strong>Google Firebase</strong> – Authentication & database services</li>
+                <li><strong>Google Services</strong> – Login and infrastructure</li>
+                <li><strong>Hosting Platforms</strong> – For application deployment</li>
+            </ul>
+            <p>These services operate under their own privacy policies and comply with global security standards. We only use services that maintain high privacy standards and data protection practices.</p>
+        </div>
+    </div>
+
+    <!-- Section 5: Ads & Monetization -->
+    <div class="policy-section">
+        <div class="section-header">
+            <div class="section-number">5</div>
+            <h2 class="section-title">Ads & Monetization (Future)</h2>
+        </div>
+        <div class="section-content">
+            <p>In the future, we may introduce:</p>
+            <ul>
+                <li>Google AdSense advertisements (non-intrusive)</li>
+                <li>Optional paid features or subscriptions</li>
+                <li>Voluntary donations from users</li>
+            </ul>
+            <p>These will always be user‑choice based and will never compromise data privacy. Any future monetization will be clearly communicated and will provide opt-out options where possible.</p>
+            <div class="highlight-box">
+                <i class="fas fa-bell"></i> <strong>Notice:</strong> As of 2025, E-TRAX does not display any advertisements. We will notify users before implementing any changes to monetization.
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 6: Age Eligibility -->
+    <div class="policy-section">
+        <div class="section-header">
+            <div class="section-number">6</div>
+            <h2 class="section-title">Age Eligibility</h2>
+        </div>
+        <div class="section-content">
+            <p>E‑TRAX is suitable for all age groups. Users must have a valid Google account to sign in. We do not knowingly collect personal information from children under 13. If we become aware that a child under 13 has provided us with personal information, we will take steps to delete such information.</p>
+        </div>
+    </div>
+
+    <!-- Section 7: Your Rights -->
+    <div class="policy-section">
+        <div class="section-header">
+            <div class="section-number">7</div>
+            <h2 class="section-title">Your Rights</h2>
+        </div>
+        <div class="section-content">
+            <p>You always retain full control over your data. Since data is stored in Firebase under your account, you can:</p>
+            <ul>
+                <li>View all your stored expense data at any time</li>
+                <li>Edit or delete individual expense entries</li>
+                <li>Export your data for personal records</li>
+                <li>Remove access or delete your data entirely through Firebase</li>
+                <li>Request data deletion by contacting us directly</li>
+            </ul>
+            <p><strong>Data Portability:</strong> You can export your expense data in common formats for use in other applications.</p>
+        </div>
+    </div>
+
+    <!-- Section 8: Contact Information -->
+    <div class="policy-section">
+        <div class="section-header">
+            <div class="section-number">8</div>
+            <h2 class="section-title">Contact Information</h2>
+        </div>
+        <div class="section-content">
+            <p>If you have any questions or concerns about this Privacy Policy, data handling, or your privacy rights, feel free to contact us:</p>
+            <div class="contact-info">
+                <h3><i class="fas fa-envelope"></i> Contact AlphaPrime</h3>
+                <p>We're committed to transparency and will respond to all privacy-related inquiries promptly.</p>
+                <a href="mailto:admin@alphaprime.co.in" class="contact-email">
+                    <i class="fas fa-paper-plane"></i> admin@alphaprime.co.in
+                </a>
+                <p style="margin-top: 20px; font-size: 0.9rem; color: var(--text-muted);">
+                    Typical response time: 24-48 hours
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trust Badge -->
+    <div class="trust-badge">
+        <i class="fas fa-lock"></i>
+        <div>
+            <h4 style="color: var(--primary); margin: 0;">Privacy by Design</h4>
+            <p style="margin: 5px 0 0 0; color: var(--text-muted);">
+                AlphaPrime believes in transparency, simplicity, and trust. We build products that respect your privacy by design.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Back to Top Button -->
+<a href="#" class="back-to-top" id="backToTop">
+    <i class="fas fa-chevron-up"></i>
+</a>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="#" id="termsLink">Terms & Conditions</a>
+            <a href="privacy-policy.html" style="color: var(--secondary);">Privacy Policy</a>
+            <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Support Channel</a>
+        </div>
+        
+        <p>Email: <a href="mailto:alphaprime.co.in@gmail.com">alphaprime.co.in@gmail.com</a></p>
+        
+        <div class="copyright">
+            <p>&copy; 2025 <span class="blinking-name">E-TRAX</span> by AlphaPrime. All rights reserved.</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">Version 1.0 • Last Updated: January 2025</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Theme Management
+    const themes = ['dark', 'light', 'professional'];
+    let currentThemeIndex = 0;
+
+    function initTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        currentThemeIndex = themes.indexOf(savedTheme);
+        applyTheme(savedTheme);
+    }
+
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        
+        // Update button text
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            const icon = themeToggle.querySelector('i');
+            if (theme === 'light') {
+                icon.className = 'fas fa-sun';
+                themeToggle.querySelector('span').textContent = 'Light';
+            } else if (theme === 'professional') {
+                icon.className = 'fas fa-briefcase';
+                themeToggle.querySelector('span').textContent = 'Pro';
+            } else {
+                icon.className = 'fas fa-moon';
+                themeToggle.querySelector('span').textContent = 'Dark';
+            }
+        }
+    }
+
+    function cycleTheme() {
+        currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+        applyTheme(themes[currentThemeIndex]);
+    }
+
+    // Back to Top Button
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+            backToTop.style.display = 'flex';
+        } else {
+            backToTop.style.display = 'none';
+        }
+    });
+
+    backToTop.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        initTheme();
+        
+        // Theme toggle button
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', cycleTheme);
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Print button functionality (optional)
+        const printButton = document.createElement('button');
+        printButton.innerHTML = '<i class="fas fa-print"></i> Print Policy';
+        printButton.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        `;
+        printButton.addEventListener('click', () => window.print());
+        document.body.appendChild(printButton);
+    });
+
+    // Update year automatically
+    document.addEventListener('DOMContentLoaded', () => {
+        const yearElements = document.querySelectorAll('.copyright');
+        yearElements.forEach(element => {
+            element.innerHTML = element.innerHTML.replace('2025', new Date().getFullYear());
+        });
+    });
+</script>
+</body>
+</html>
