@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ================= BASIC SEO ================= -->
+    <title>Terms & Conditions - E-TRAX | Smart Expense Tracker by AlphaPrime</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="description" content="Terms & Conditions for E-TRAX - Understand the terms of service for our smart expense tracking application." />
+    <meta name="keywords" content="terms and conditions, E-TRAX terms, AlphaPrime terms, expense tracker terms, service agreement" />
+
+    <meta name="author" content="AlphaPrime" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- ================= CANONICAL ================= -->
+    <link rel="canonical" href="https://www.alphaprime.co.in/terms-conditions" />
+
+    <!-- ================= OPEN GRAPH ================= -->
+    <meta property="og:title" content="Terms & Conditions - E-TRAX Expense Tracker" />
+    <meta property="og:description" content="Read our Terms & Conditions for using E-TRAX, the smart expense tracking application." />
+    <meta property="og:url" content="https://www.alphaprime.co.in/terms-conditions" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://www.alphaprime.co.in/e.png" />
+
+    <!-- ================= FAVICONS ================= -->
+    <link rel="icon" href="EtraxPub.jpg" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <!-- ================= FONTS & CSS ================= -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Dark Theme (Default) - HIGH CONTRAST */
+            --primary: #00bcd4;
+            --primary-dark: #0097a7;
+            --secondary: #ffcc00;
+            --background: #0b0b0b;
+            --card-bg: #1a1a1a;
+            --text: #ffffff;
+            --text-light: #f1f5f9;
+            --text-muted: #cbd5e1;
+            --border: rgba(255,255,255,0.2);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        [data-theme="light"] {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #dc2626;
+            --background: #ffffff;
+            --card-bg: #f8fafc;
+            --text: #000000;
+            --text-light: #1e293b;
+            --text-muted: #475569;
+            --border: rgba(0,0,0,0.15);
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="professional"] {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #f59e0b;
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text: #ffffff;
+            --text-light: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: rgba(255,255,255,0.2);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            line-height: 1.6;
+            font-weight: 500;
+            padding-top: 70px; /* Space for fixed header */
+        }
+
+        /* ================= HEADER ================= */
+        .main-header {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-section h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background: rgba(0,188,212,0.1);
+            transform: translateY(-2px);
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ================= TERMS CONTENT ================= */
+        .terms-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .terms-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 0;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .terms-header h1 {
+            color: var(--primary);
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .terms-header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .effective-date {
+            background: var(--primary);
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        .terms-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 35px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terms-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .terms-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-number {
+            background: var(--primary);
+            color: white;
+            min-width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            color: var(--primary);
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .section-content {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            padding-left: 60px; /* Align with section number */
+        }
+
+        .section-content p {
+            margin-bottom: 15px;
+        }
+
+        .section-content ul {
+            padding-left: 20px;
+            margin: 20px 0;
+        }
+
+        .section-content li {
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 10px;
+        }
+
+        .section-content li:before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            position: absolute;
+            left: -10px;
+        }
+
+        .important-note {
+            background: rgba(255,204,0,0.1);
+            border-left: 4px solid var(--secondary);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .important-note i {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            margin-top: 3px;
+        }
+
+        .warning-box {
+            background: rgba(239,68,68,0.1);
+            border-left: 4px solid var(--danger);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .warning-box i {
+            color: var(--danger);
+            font-size: 1.5rem;
+            margin-top: 3px;
+        }
+
+        .contact-info {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 16px;
+            margin-top: 50px;
+            color: white;
+        }
+
+        .contact-info h3 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .contact-email {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            color: var(--primary-dark);
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            font-size: 1.1rem;
+        }
+
+        .contact-email:hover {
+            background: var(--secondary);
+            color: black;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255,204,0,0.3);
+        }
+
+        .acceptance-box {
+            background: rgba(16,185,129,0.1);
+            border: 2px solid var(--success);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .acceptance-box h4 {
+            color: var(--success);
+            margin-bottom: 15px;
+        }
+
+        /* ================= FOOTER ================= */
+        footer {
+            background: var(--card-bg);
+            color: var(--text-muted);
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border);
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        .copyright {
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .blinking-name {
+            color: var(--primary);
+            animation: blink 2s infinite;
+            font-weight: 700;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* ================= RESPONSIVE DESIGN ================= */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .terms-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .terms-header p {
+                font-size: 1rem;
+            }
+
+            .terms-section {
+                padding: 25px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .section-title {
+                font-size: 1.4rem;
+            }
+
+            .section-content {
+                font-size: 1rem;
+                padding-left: 20px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .terms-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .terms-section {
+                padding: 20px 15px;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+
+            .section-number {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .contact-info {
+                padding: 25px;
+            }
+
+            .theme-toggle span {
+                display: none;
+            }
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,188,212,0.3);
+            transition: all 0.3s ease;
+            z-index: 100;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-5px);
+        }
+
+        /* Print styles */
+        @media print {
+            .main-header, .theme-toggle, .back-to-top, footer {
+                display: none;
+            }
+            
+            body {
+                padding-top: 0;
+                background: white;
+                color: black;
+            }
+            
+            .terms-section {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Table of Contents */
+        .toc-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border);
+        }
+
+        .toc-container h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toc-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .toc-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .toc-item:hover {
+            background: rgba(0,188,212,0.1);
+        }
+
+        .toc-item a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .toc-item a:hover {
+            color: var(--primary);
+        }
+
+        .toc-number {
+            background: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .toc-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+<!-- ================= HEADER ================= -->
+<header class="main-header">
+    <div class="header-content">
+        <div class="brand-section">
+            <h1>E-TRAX</h1>
+            <span style="color: var(--text-muted);">| Terms & Conditions</span>
+        </div>
+        
+        <div class="nav-links">
+            <a href="index.html">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="privacy-policy.html">
+                <i class="fas fa-shield-alt"></i> Privacy Policy
+            </a>
+            <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank" rel="noopener">
+                <i class="fas fa-headset"></i> Support
+            </a>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-palette"></i>
+                <span>Theme</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ================= TERMS & CONDITIONS CONTENT ================= -->
+<div class="terms-container">
+    <div class="terms-header">
+        <h1>Terms & Conditions</h1>
+        <p>Welcome to E-TRAX, developed and maintained by AlphaPrime. By accessing or using this application, you agree to the following Terms & Conditions.</p>
+        <div class="effective-date">Effective Date: 2025</div>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="toc-container">
+        <h3><i class="fas fa-list-ol"></i> Table of Contents</h3>
+        <div class="toc-list">
+            <div class="toc-item">
+                <span class="toc-number">1</span>
+                <a href="#section1">Acceptance of Terms</a>
+            </div>
+            <div class="toc-item">
+                <span class="toc-number">2</span>
+                <a href="#section2">Nature of the Service</a>
+            </div>
+            <div class="toc-item">
+                <span class="toc-number">3</span>
+                <a href="#section3">User Responsibilities</a>
+            </div>
+            <div class="toc-item">
+                <span class="toc-number">4</span>
+                <a href="#section4">Authentication</a>
+            </div>
+            <div class="toc-item">
+                <span class="toc-number">5</span>
+                <a href="#section5">Data Ownership</a>
+            </div>
+            <div class="toc-item">
+                <span class="toc-number">6</span>
+                <a href="#section6">Ads, Payments & Donations</a>
+            </div>
+            <div class="toc-item">
+                <span class="toc-number">7</span>
+                <a href="#section7">Service Availability</a>
+            </div>
+            <div class="toc-item">
+                <span class="toc-number">8</span>
+                <a href="#section8">Limitation of Liability</a>
+            </div>
+            <div class="toc-item">
+                <span class="toc-number">9</span>
+                <a href="#section9">Modifications</a>
+            </div>
+            <div class="toc-item">
+                <span class="toc-number">10</span>
+                <a href="#section10">Governing Law</a>
+            </div>
+            <div class="toc-item">
+                <span class="toc-number">11</span>
+                <a href="#section11">Contact Information</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 1: Acceptance of Terms -->
+    <div class="terms-section" id="section1">
+        <div class="section-header">
+            <div class="section-number">1</div>
+            <h2 class="section-title">Acceptance of Terms</h2>
+        </div>
+        <div class="section-content">
+            <p>By using E-TRAX, you acknowledge that you have read, understood, and agreed to these terms. If you do not agree with any part of these terms, please discontinue use of the application immediately.</p>
+            <div class="important-note">
+                <i class="fas fa-exclamation-circle"></i>
+                <div>
+                    <strong>Important:</strong> Your continued use of E-TRAX constitutes your acceptance of these Terms & Conditions and any future modifications.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Nature of the Service -->
+    <div class="terms-section" id="section2">
+        <div class="section-header">
+            <div class="section-number">2</div>
+            <h2 class="section-title">Nature of the Service</h2>
+        </div>
+        <div class="section-content">
+            <p>E-TRAX is a personal expense tracking application designed to help users manage and analyze their finances efficiently.</p>
+            <p><strong>The service is provided on an "as‑is" and "as‑available" basis.</strong> We do not warrant that the service will be uninterrupted, timely, secure, or error-free.</p>
+            <ul>
+                <li>E-TRAX is a tool for personal financial management</li>
+                <li>Not a substitute for professional financial advice</li>
+                <li>Not responsible for financial decisions made based on app data</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Section 3: User Responsibilities -->
+    <div class="terms-section" id="section3">
+        <div class="section-header">
+            <div class="section-number">3</div>
+            <h2 class="section-title">User Responsibilities</h2>
+        </div>
+        <div class="section-content">
+            <p>Users agree to:</p>
+            <ul>
+                <li>Provide accurate and complete information while using the app</li>
+                <li>Use the application only for lawful purposes</li>
+                <li>Avoid misuse, abuse, or attempts to harm the system</li>
+                <li>Not engage in any fraudulent activities</li>
+                <li>Not attempt to gain unauthorized access to the service</li>
+                <li>Comply with all applicable laws and regulations</li>
+            </ul>
+            <div class="warning-box">
+                <i class="fas fa-ban"></i>
+                <div>
+                    <strong>Prohibited Activities:</strong> Any violation of these terms may result in termination of your access to E-TRAX.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: Authentication -->
+    <div class="terms-section" id="section4">
+        <div class="section-header">
+            <div class="section-number">4</div>
+            <h2 class="section-title">Authentication</h2>
+        </div>
+        <div class="section-content">
+            <p>Access to E-TRAX requires authentication via a valid Google account. Users are responsible for:</p>
+            <ul>
+                <li>Maintaining the security of their Google credentials</li>
+                <li>Not sharing login information with others</li>
+                <li>Immediately reporting any unauthorized access</li>
+                <li>Ensuring proper logout from shared devices</li>
+            </ul>
+            <p><strong>Account Security:</strong> AlphaPrime is not responsible for any loss or damage arising from your failure to protect your login information.</p>
+        </div>
+    </div>
+
+    <!-- Section 5: Data Ownership -->
+    <div class="terms-section" id="section5">
+        <div class="section-header">
+            <div class="section-number">5</div>
+            <h2 class="section-title">Data Ownership</h2>
+        </div>
+        <div class="section-content">
+            <p><strong>All data entered by users belongs solely to the respective user.</strong></p>
+            <p>AlphaPrime does not claim ownership over user data and does not access it manually. Your expense data remains your property.</p>
+            <ul>
+                <li>You retain full rights to your data</li>
+                <li>You can export your data at any time</li>
+                <li>You can delete your data permanently</li>
+                <li>We do not sell or share your data with third parties</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Section 6: Ads, Payments & Donations -->
+    <div class="terms-section" id="section6">
+        <div class="section-header">
+            <div class="section-number">6</div>
+            <h2 class="section-title">Ads, Payments & Donations</h2>
+        </div>
+        <div class="section-content">
+            <p>E-TRAX may introduce in the future:</p>
+            <ul>
+                <li><strong>Advertisements</strong> (such as Google AdSense) - Non-intrusive, relevant ads</li>
+                <li><strong>Optional paid features or subscriptions</strong> - Enhanced functionality for premium users</li>
+                <li><strong>Voluntary donations</strong> - Support development through contributions</li>
+            </ul>
+            <p>Any such features will be:</p>
+            <ul>
+                <li>Clearly communicated to users</li>
+                <li>Completely optional</li>
+                <li>Transparent about pricing and features</li>
+                <li>Implemented without compromising user experience</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Section 7: Service Availability -->
+    <div class="terms-section" id="section7">
+        <div class="section-header">
+            <div class="section-number">7</div>
+            <h2 class="section-title">Service Availability</h2>
+        </div>
+        <div class="section-content">
+            <p>We strive to keep the service reliable, but we do not guarantee uninterrupted availability. Temporary downtime may occur due to:</p>
+            <ul>
+                <li>Scheduled maintenance and updates</li>
+                <li>Technical issues or server problems</li>
+                <li>Third-party service outages</li>
+                <li>Force majeure events</li>
+            </ul>
+            <p>We will make reasonable efforts to notify users of significant downtime whenever possible.</p>
+        </div>
+    </div>
+
+    <!-- Section 8: Limitation of Liability -->
+    <div class="terms-section" id="section8">
+        <div class="section-header">
+            <div class="section-number">8</div>
+            <h2 class="section-title">Limitation of Liability</h2>
+        </div>
+        <div class="section-content">
+            <p>AlphaPrime shall not be held liable for:</p>
+            <ul>
+                <li>Any indirect or incidental damages</li>
+                <li>Data loss caused by external services (Firebase, Google, etc.)</li>
+                <li>User decisions based on analytics or app insights</li>
+                <li>Financial losses resulting from app usage</li>
+                <li>Service interruptions or discontinuation</li>
+            </ul>
+            <div class="important-note">
+                <i class="fas fa-user-shield"></i>
+                <div>
+                    <strong>User Responsibility:</strong> Users are encouraged to use the app responsibly and maintain backups of important financial data.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 9: Modifications -->
+    <div class="terms-section" id="section9">
+        <div class="section-header">
+            <div class="section-number">9</div>
+            <h2 class="section-title">Modifications</h2>
+        </div>
+        <div class="section-content">
+            <p>We reserve the right to update or modify these Terms & Conditions at any time. Changes will be effective immediately upon posting.</p>
+            <p>Continued use of the service after modifications indicates acceptance of updated terms. We will make reasonable efforts to notify users of significant changes.</p>
+            <ul>
+                <li>Check this page periodically for updates</li>
+                <li>Significant changes will be communicated via app notifications</li>
+                <li>The "Effective Date" at the top indicates when terms were last updated</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Section 10: Governing Law -->
+    <div class="terms-section" id="section10">
+        <div class="section-header">
+            <div class="section-number">10</div>
+            <h2 class="section-title">Governing Law</h2>
+        </div>
+        <div class="section-content">
+            <p>These terms are governed by and construed in accordance with the laws of India, without regard to its conflict of law provisions.</p>
+            <p>Any disputes arising from these terms shall be subject to the exclusive jurisdiction of the courts located in India.</p>
+        </div>
+    </div>
+
+    <!-- Section 11: Contact Information -->
+    <div class="terms-section" id="section11">
+        <div class="section-header">
+            <div class="section-number">11</div>
+            <h2 class="section-title">Contact Information</h2>
+        </div>
+        <div class="section-content">
+            <p>For any questions regarding these Terms:</p>
+            <div class="contact-info">
+                <h3><i class="fas fa-envelope"></i> Contact AlphaPrime</h3>
+                <p>We're committed to building trustworthy, transparent, and user‑centric applications.</p>
+                <a href="mailto:alphaprime.co.in@gmail.com" class="contact-email">
+                    <i class="fas fa-paper-plane"></i> alphaprime.co.in@gmail.com
+                </a>
+                <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.9;">
+                    Thank you for choosing E‑TRAX
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acceptance Box -->
+    <div class="acceptance-box">
+        <h4><i class="fas fa-check-circle"></i> Acceptance Acknowledgement</h4>
+        <p>By using E-TRAX, you confirm that you have read, understood, and agree to be bound by these Terms & Conditions.</p>
+        <p style="font-size: 0.9rem; margin-top: 10px; color: var(--text-muted);">
+            If you do not agree to these terms, please discontinue use of the application.
+        </p>
+    </div>
+</div>
+
+<!-- Back to Top Button -->
+<a href="#" class="back-to-top" id="backToTop">
+    <i class="fas fa-chevron-up"></i>
+</a>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="terms-conditions.html" style="color: var(--secondary);">Terms & Conditions</a>
+            <a href="privacy-policy.html">Privacy Policy</a>
+            <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Support Channel</a>
+        </div>
+        
+        <p>Email: <a href="mailto:alphaprime.co.in@gmail.com">alphaprime.co.in@gmail.com</a></p>
+        
+        <div class="copyright">
+            <p>&copy; 2025 <span class="blinking-name">E-TRAX</span> by AlphaPrime. All rights reserved.</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">Version 1.0 • Last Updated: January 2025</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Theme Management
+    const themes = ['dark', 'light', 'professional'];
+    let currentThemeIndex = 0;
+
+    function initTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        currentThemeIndex = themes.indexOf(savedTheme);
+        applyTheme(savedTheme);
+    }
+
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        
+        // Update button text
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            const icon = themeToggle.querySelector('i');
+            if (theme === 'light') {
+                icon.className = 'fas fa-sun';
+                themeToggle.querySelector('span').textContent = 'Light';
+            } else if (theme === 'professional') {
+                icon.className = 'fas fa-briefcase';
+                themeToggle.querySelector('span').textContent = 'Pro';
+            } else {
+                icon.className = 'fas fa-moon';
+                themeToggle.querySelector('span').textContent = 'Dark';
+            }
+        }
+    }
+
+    function cycleTheme() {
+        currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+        applyTheme(themes[currentThemeIndex]);
+    }
+
+    // Back to Top Button
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+            backToTop.style.display = 'flex';
+        } else {
+            backToTop.style.display = 'none';
+        }
+    });
+
+    backToTop.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            // Don't prevent default for # only (back to top)
+            if (href === '#') return;
+            
+            e.preventDefault();
+            
+            const targetId = href;
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+                
+                // Add active class to current section in TOC
+                document.querySelectorAll('.toc-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.parentElement.classList.add('active');
+            }
+        });
+    });
+
+    // Highlight current section in TOC on scroll
+    const sections = document.querySelectorAll('.terms-section');
+    const tocLinks = document.querySelectorAll('.toc-item a');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 150;
+            const sectionHeight = section.clientHeight;
+            if (scrollY >= sectionTop) {
+                current = '#' + section.getAttribute('id');
+            }
+        });
+
+        tocLinks.forEach(link => {
+            link.parentElement.classList.remove('active');
+            if (link.getAttribute('href') === current) {
+                link.parentElement.classList.add('active');
+            }
+        });
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        initTheme();
+        
+        // Theme toggle button
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', cycleTheme);
+        }
+
+        // Print button functionality
+        const printButton = document.createElement('button');
+        printButton.innerHTML = '<i class="fas fa-print"></i> Print Terms';
+        printButton.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        `;
+        printButton.addEventListener('click', () => window.print());
+        document.body.appendChild(printButton);
+
+        // Update year automatically
+        const yearElements = document.querySelectorAll('.copyright');
+        yearElements.forEach(element => {
+            element.innerHTML = element.innerHTML.replace('2025', new Date().getFullYear());
+        });
+    });
+</script>
+</body>
+</html>
