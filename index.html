@@ -4,6 +4,72 @@
   <head>
     <!-- seo optimize  -->
     <title>E-TRAX | Smart Expense Tracker</title>
+      <!-- ================= BASIC SEO ================= -->
+  <title>E-TRAX | Smart Expense Tracker for Daily Budget Management</title>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta name="description" content="E-TRAX is a smart expense tracker to manage daily income and expenses with analytics, Firebase login, secure cloud storage, and budget tracking." />
+
+  <meta name="keywords" content="expense tracker, budget app, money manager, finance tracker, daily expenses, E-TRAX, AlphaPrime" />
+
+  <meta name="author" content="AlphaPrime" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- ================= CANONICAL (VERY IMPORTANT) ================= -->
+  <link rel="canonical" href="https://www.alphaprime.co.in/" />
+
+  <!-- ================= OPEN GRAPH (WhatsApp, FB, LinkedIn) ================= -->
+  <meta property="og:title" content="E-TRAX | Smart Expense Tracker" />
+  <meta property="og:description" content="Track your daily expenses, set budgets, and analyze spending with E-TRAX – a secure smart expense tracker." />
+  <meta property="og:url" content="https://www.alphaprime.co.in/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.alphaprime.co.in/e.png" />
+
+  <!-- ================= TWITTER CARD ================= -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="E-TRAX | Smart Expense Tracker" />
+  <meta name="twitter:description" content="Manage daily expenses and budgets easily with E-TRAX." />
+  <meta name="twitter:image" content="https://www.alphaprime.co.in/e.png" />
+
+  <!-- ================= FAVICONS ================= -->
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+  <!-- ================= PWA ================= -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#00bcd4" />
+
+  <!-- ================= GOOGLE FONTS & CSS ================= -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- ================= FIREBASE & CHART ================= -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- ================= STRUCTURED DATA (SEO BOOST) ================= -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "E-TRAX",
+    "operatingSystem": "Web",
+    "applicationCategory": "FinanceApplication",
+    "description": "E-TRAX is a smart expense tracker web app for managing daily expenses and budgets.",
+    "url": "https://www.alphaprime.co.in/",
+    "publisher": {
+      "@type": "Organization",
+      "name": "AlphaPrime"
+    }
+  }
+  </script>
+
+
     <meta charset="UTF-8" />
 
 <meta name="description" content="E-TRAX is a smart expense tracker to manage daily income and expenses with analytics, Firebase login, and secure cloud storage." />
@@ -1063,7 +1129,7 @@ function cycleTheme() {
 
 // Initialize Firebase securely
 async function initializeFirebase() {
-  try {
+  try { 
     const response = await fetch(`${BASE_URL}/firebase-config`);
     const firebaseConfig = await response.json();
     
