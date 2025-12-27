@@ -197,7 +197,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Animated gradient background */
+/* Animated gradient background - 90% dark blue, 10% white effect */
 body::before {
   content: '';
   position: fixed;
@@ -212,7 +212,7 @@ body::before {
   opacity: 0.9;
 }
 
-/* Subtle particle effect */
+/* Subtle particle effect - white 10% effect */
 body::after {
   content: '';
   position: fixed;
@@ -222,7 +222,7 @@ body::after {
   height: 100%;
   background-image: 
     radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
   z-index: -1;
   animation: float 20s ease-in-out infinite;
@@ -545,6 +545,104 @@ header.visible {
   padding: 24px;
 }
 
+/* ========== BUTTON STYLES ========== */
+.btn {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  border-radius: 10px;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: 1px solid var(--primary-dark);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-dark), #1d4ed8);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+}
+
+.btn-outline-danger {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.btn-outline-danger:hover {
+  background: var(--danger);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--success), #059669);
+  color: white;
+  border: 1px solid #059669;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, var(--warning), #d97706);
+  color: white;
+  border: 1px solid #d97706;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--danger), #dc2626);
+  color: white;
+  border: 1px solid #dc2626;
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  color: white;
+  border: 1px solid #0284c7;
+}
+
+/* Button hover effects */
+.btn-success:hover,
+.btn-warning:hover,
+.btn-danger:hover,
+.btn-info:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  border-radius: 8px;
+}
+
+/* Form controls */
+.form-control,
+.form-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  outline: none;
+}
+
 /* ========== RESPONSIVE DESIGN ========== */
 /* Tablet */
 @media (max-width: 992px) {
@@ -636,6 +734,17 @@ header.visible {
     padding: 14px 20px;
     font-size: 0.95rem;
   }
+  
+  .btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .form-control,
+  .form-select {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
 }
 
 /* Small Mobile */
@@ -666,12 +775,12 @@ header.visible {
   .form-control,
   .form-select {
     padding: 10px 12px;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
   }
   
   .btn {
-    padding: 10px 16px;
-    font-size: 0.95rem;
+    padding: 8px 14px;
+    font-size: 0.85rem;
   }
 }
 
@@ -804,6 +913,39 @@ select:focus {
   .modal-content h2 {
     font-size: 1.5rem;
   }
+}
+
+/* Badge styles */
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge-info {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--primary);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.badge-success {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--warning);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-danger {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 </style>
 
