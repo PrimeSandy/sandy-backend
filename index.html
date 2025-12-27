@@ -1,1126 +1,1506 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <!-- ================= BASIC SEO ================= -->
-    <title>E-TRAX | Smart Expense Tracker for Daily Budget Management</title>
-
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <meta name="description" content="E-TRAX is a smart expense tracker to manage daily income and expenses with analytics, Firebase login, secure cloud storage, and budget tracking." />
-    <meta name="keywords" content="expense tracker, expense tracker app, expense tracker web app, daily expense tracker, budget tracker, budget management app, money manager, personal finance tracker, finance management app, income and expense tracker, expense tracker for students, expense tracker for professionals, smart expense tracker, E-TRAX expense tracker, AlphaPrime expense tracker, alphaprime.co.in" />
-
-    <meta name="author" content="AlphaPrime" />
-    <meta name="robots" content="index, follow" />
-
-    <!-- ================= CANONICAL ================= -->
-    <link rel="canonical" href="https://www.alphaprime.co.in/" />
-
-    <!-- ================= OPEN GRAPH ================= -->
-    <meta property="og:title" content="E-TRAX | Smart Expense Tracker" />
-    <meta property="og:description" content="Track your daily expenses, set budgets, and analyze spending with E-TRAX – a secure smart expense tracker." />
-    <meta property="og:url" content="https://www.alphaprime.co.in/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://www.alphaprime.co.in/e.png" />
-
-    <!-- ================= TWITTER CARD ================= -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="E-TRAX | Smart Expense Tracker" />
-    <meta name="twitter:description" content="Manage daily expenses and budgets easily with E-TRAX." />
-    <meta name="twitter:image" content="https://www.alphaprime.co.in/e.png" />
-
-    <!-- ================= FAVICONS ================= -->
-    <link rel="icon" href="EtraxPub.jpg" type="image/png">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-    <!-- ================= PWA ================= -->
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#2563eb" />
-
-    <!-- ================= FONTS & CSS ================= -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- ================= JS LIBS ================= -->
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- ================= STRUCTURED DATA ================= -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "E-TRAX",
-        "url": "https://www.alphaprime.co.in/",
-        "logo": "https://www.alphaprime.co.in/logo.png"
-    }
-    </script>
-
-    <style>
-        :root {
-            /* Professional Dark Blue Theme - 90% dark blue, 10% white */
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --primary-light: #3b82f6;
-            --secondary: #f59e0b;
-            --accent: #8b5cf6;
-            --background: #0f172a; /* Dark blue 90% */
-            --card-bg: #1e293b;
-            --surface: #334155;
-            --text: #ffffff; /* White 10% */
-            --text-light: #e2e8f0;
-            --text-muted: #94a3b8;
-            --border: rgba(255, 255, 255, 0.1);
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            --radius: 12px;
-        }
-
-        [data-theme="light"] {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --primary-light: #3b82f6;
-            --secondary: #dc2626;
-            --background: #ffffff; /* White 10% */
-            --card-bg: #f8fafc;
-            --surface: #e2e8f0;
-            --text: #0f172a; /* Dark blue 90% */
-            --text-light: #334155;
-            --text-muted: #64748b;
-            --border: rgba(15, 23, 42, 0.1);
-            --success: #059669;
-            --warning: #d97706;
-            --danger: #dc2626;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        }
-
-        [data-theme="professional"] {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --primary-light: #60a5fa;
-            --secondary: #f59e0b;
-            --background: #0f172a;
-            --card-bg: #1e293b;
-            --surface: #334155;
-            --text: #ffffff;
-            --text-light: #e2e8f0;
-            --text-muted: #94a3b8;
-            --border: rgba(255, 255, 255, 0.15);
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-
-        /* ========== TYPOGRAPHY ========== */
-        body {
-            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-            font-weight: 400;
-            line-height: 1.6;
-            background-color: var(--background);
-            color: var(--text);
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-family: "Space Grotesk", sans-serif;
-            font-weight: 600;
-            line-height: 1.2;
-            letter-spacing: -0.01em;
-        }
-
-        /* Desktop font sizes */
-        h1 { font-size: 2.25rem; }  /* 36px */
-        h2 { font-size: 1.875rem; } /* 30px */
-        h3 { font-size: 1.5rem; }   /* 24px */
-        h4 { font-size: 1.25rem; }  /* 20px */
-        h5 { font-size: 1.125rem; } /* 18px */
-        h6 { font-size: 1rem; }     /* 16px */
-        body { font-size: 0.9375rem; } /* 15px */
-
-        /* Mobile font sizes */
-        @media (max-width: 768px) {
-            h1 { font-size: 1.875rem; }  /* 30px */
-            h2 { font-size: 1.5rem; }    /* 24px */
-            h3 { font-size: 1.25rem; }   /* 20px */
-            h4 { font-size: 1.125rem; }  /* 18px */
-            h5 { font-size: 1rem; }      /* 16px */
-            h6 { font-size: 0.9375rem; } /* 15px */
-            body { font-size: 0.875rem; } /* 14px */
-        }
-
-        /* ========== BACKGROUND ANIMATION ========== */
-        .background-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        .gradient-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--background) 0%, rgba(15, 23, 42, 0.95) 100%);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* ========== LOGIN VIEW ========== */
-        .login-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 24px;
-            position: relative;
-        }
-
-        .login-card {
-            width: 100%;
-            max-width: 440px;
-            background: rgba(30, 41, 59, 0.9);
-            backdrop-filter: blur(20px);
-            border-radius: var(--radius);
-            padding: 48px 32px;
-            text-align: center;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            position: relative;
-            z-index: 1;
-        }
-
-        .login-card h1 {
-            font-size: 2.25rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
-        }
-
-        .login-card p {
-            color: var(--text-light);
-            margin-bottom: 32px;
-            font-size: 1rem;
-            font-weight: 400;
-        }
-
-        .google-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            background: white;
-            color: #1a1a1a;
-            border-radius: 10px;
-            padding: 14px 20px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s ease;
-            font-size: 0.9375rem;
-            margin-bottom: 20px;
-        }
-
-        .google-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .google-btn img {
-            width: 20px;
-            height: 20px;
-        }
-
-        .note {
-            color: var(--text-muted);
-            font-size: 0.8125rem;
-            margin-top: 16px;
-            font-weight: 400;
-        }
-
-        .developer {
-            margin-top: 20px;
-            font-size: 0.8125rem;
-            color: var(--text-muted);
-        }
-
-        .developer strong {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        /* ========== HEADER ========== */
-        .main-header {
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .brand-section {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .brand-section h1 {
-            font-size: 1.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 0;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-        }
-
-        .typing {
-            font-size: 0.875rem;
-            color: var(--secondary);
-            font-weight: 500;
-            min-height: 1.2rem;
-        }
-
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        #userNameDisplay {
-            color: var(--text-light);
-            font-weight: 500;
-            font-size: 0.9375rem;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .nav-links a {
-            color: var(--text-light);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary);
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        .theme-toggle {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px 16px;
-            color: var(--text-light);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            font-size: 0.875rem;
-        }
-
-        .theme-toggle:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        #googleLogoutBtn {
-            background: transparent;
-            border: 1px solid var(--danger);
-            color: var(--danger);
-            font-weight: 500;
-            border-radius: 8px;
-            padding: 8px 16px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        #googleLogoutBtn:hover {
-            background: var(--danger);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        /* ========== MAIN CONTAINER ========== */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 24px 20px;
-        }
-
-        /* ========== CARDS ========== */
-        .card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            margin-bottom: 24px;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        }
-
-        .card-header {
-            background: rgba(0, 0, 0, 0.1);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 24px;
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 1.125rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .card-body {
-            padding: 24px;
-        }
-
-        /* ========== BUDGET CARD ========== */
-        #budgetCard {
-            display: none;
-        }
-
-        #budgetBar {
-            height: 22px;
-            border-radius: 11px;
-            overflow: hidden;
-            background: var(--surface);
-            margin-top: 12px;
-        }
-
-        #budgetBar .progress {
-            height: 22px;
-            line-height: 22px;
-            font-weight: 600;
-            transition: width 0.5s ease;
-            font-size: 0.75rem;
-        }
-
-        #budgetStatusText {
-            font-weight: 600;
-            color: var(--text) !important;
-        }
-
-        /* ========== FORMS ========== */
-        .form-control, .form-select {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            color: var(--text);
-            border-radius: 8px;
-            padding: 10px 14px;
-            transition: all 0.3s ease;
-            font-size: 0.9375rem;
-        }
-
-        .form-control:focus, .form-select:focus {
-            background: var(--card-bg);
-            border-color: var(--primary);
-            color: var(--text);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .form-label {
-            color: var(--text-light);
-            font-weight: 500;
-            margin-bottom: 6px;
-            font-size: 0.875rem;
-        }
-
-        /* ========== BUTTONS ========== */
-        .btn {
-            border-radius: 8px;
-            font-weight: 500;
-            padding: 10px 20px;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9375rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            border: 1px solid var(--primary-dark);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            color: white;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: black;
-            font-weight: 500;
-        }
-
-        .btn-outline-danger {
-            border-color: var(--danger);
-            color: var(--danger);
-            background: transparent;
-        }
-
-        .btn-outline-danger:hover {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-info {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.8125rem;
-        }
-
-        /* ========== TABLES ========== */
-        .table-container {
-            margin-top: 24px;
-            padding: 20px;
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        table {
-            color: var(--text) !important;
-            font-size: 0.875rem;
-            margin-bottom: 0;
-            width: 100%;
-        }
-
-        table thead {
-            background: var(--primary);
-            color: white;
-            font-weight: 600;
-        }
-
-        table tbody tr {
-            transition: all 0.3s ease;
-            color: var(--text) !important;
-        }
-
-        table tbody tr:hover {
-            background-color: rgba(37, 99, 235, 0.05);
-        }
-
-        /* Mobile card view for expenses */
-        .expense-card {
-            transition: all 0.3s ease;
-            border-radius: var(--radius);
-            color: var(--text);
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-        }
-
-        .expense-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .expense-details {
-            font-size: 0.875rem;
-            color: var(--text-light);
-            font-weight: 400;
-        }
-
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: white;
-            background: var(--primary);
-        }
-
-        /* ========== ANALYTICS ========== */
-        #analyticsContainer {
-            display: none;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin-bottom: 24px;
-        }
-
-        /* ========== MODALS ========== */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            color: var(--text);
-            z-index: 9999;
-            overflow: auto;
-            padding: 50px 20px;
-            box-sizing: border-box;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            max-width: 800px;
-            margin: auto;
-            background: var(--card-bg);
-            padding: 32px;
-            border-radius: var(--radius);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            animation: modalFadeIn 0.3s ease;
-            border: 1px solid var(--border);
-        }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ========== MESSAGE BOX ========== */
-        #msgBox {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: var(--success);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            display: none;
-            z-index: 9999;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            animation: slideInRight 0.3s ease;
-            font-weight: 500;
-            max-width: 400px;
-        }
-
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* ========== FOOTER ========== */
-        footer {
-            background: var(--card-bg);
-            color: var(--text-muted);
-            text-align: center;
-            padding: 32px 20px;
-            border-top: 1px solid var(--border);
-            margin-top: 48px;
-            font-size: 0.8125rem;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin: 16px 0;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            font-size: 0.8125rem;
-        }
-
-        .footer-links a:hover {
-            color: var(--secondary);
-        }
-
-        .blinking-name {
-            color: var(--primary);
-            animation: blink 2s infinite;
-            font-weight: 600;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* ========== RESPONSIVE DESIGN ========== */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 12px;
-            }
-
-            .header-controls {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .login-card {
-                padding: 32px 24px;
-            }
-
-            .login-card h1 {
-                font-size: 1.875rem;
-            }
-
-            .card-header, .card-body {
-                padding: 16px;
-            }
-
-            .btn {
-                padding: 8px 16px;
-                font-size: 0.875rem;
-            }
-
-            .table-responsive {
-                font-size: 0.8125rem;
-            }
-
-            .modal-content {
-                padding: 24px 16px;
-                margin: 20px;
-            }
-
-            .footer-links {
-                flex-direction: column;
-                gap: 12px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .theme-toggle span {
-                display: none;
-            }
-
-            .nav-links a span {
-                display: none;
-            }
-
-            .nav-links a {
-                padding: 8px 12px;
-            }
-
-            .google-btn span {
-                font-size: 0.875rem;
-            }
-
-            h1 {
-                font-size: 1.75rem;
-            }
-
-            .container {
-                padding: 16px;
-            }
-        }
-
-        /* Loading animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Grid system */
-        .row {
-            display: flex;
-            flex-wrap: wrap;
-            margin: -8px;
-        }
-
-        .col {
-            flex: 1;
-            padding: 8px;
-        }
-
-        .col-12 {
-            flex: 0 0 100%;
-            max-width: 100%;
-            padding: 8px;
-        }
-
-        .g-3 {
-            gap: 12px;
-        }
-
-        /* Table responsive fix */
-        @media (max-width: 768px) {
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .table {
-                min-width: 600px;
-            }
-
-            .d-flex {
-                flex-wrap: wrap;
-            }
-        }
-
-        /* Budget alerts */
-        #budgetAlerts {
-            min-height: 22px;
-            margin-top: 12px;
-        }
-
-        .text-danger {
-            color: var(--danger) !important;
-        }
-
-        .text-warning {
-            color: var(--warning) !important;
-        }
-
-        .text-success {
-            color: var(--success) !important;
-        }
-
-        .text-muted {
-            color: var(--text-muted) !important;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .d-flex {
-            display: flex;
-        }
-
-        .justify-content-between {
-            justify-content: space-between;
-        }
-
-        .align-items-center {
-            align-items: center;
-        }
-
-        .w-100 {
-            width: 100%;
-        }
-
-        .mt-3 {
-            margin-top: 12px;
-        }
-
-        .mb-3 {
-            margin-bottom: 12px;
-        }
-
-        .me-1 {
-            margin-right: 4px;
-        }
-    </style>
+  <title>E-TRAX | Smart Expense Tracker for Daily Budget Management</title>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta name="description" content="E-TRAX is a smart expense tracker to manage daily income and expenses with analytics, Firebase login, secure cloud storage, and budget tracking." />
+<meta name="keywords" content="expense tracker, expense tracker app, expense tracker web app, daily expense tracker, budget tracker, budget management app, money manager, personal finance tracker, finance management app, income and expense tracker, expense tracker for students, expense tracker for professionals, smart expense tracker, E-TRAX expense tracker, AlphaPrime expense tracker, alphaprime.co.in">
+
+
+  <meta name="author" content="AlphaPrime" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- ================= CANONICAL ================= -->
+  <link rel="canonical" href="https://www.alphaprime.co.in/" />
+
+  <!-- ================= OPEN GRAPH ================= -->
+  <meta property="og:title" content="E-TRAX | Smart Expense Tracker" />
+  <meta property="og:description" content="Track your daily expenses, set budgets, and analyze spending with E-TRAX – a secure smart expense tracker." />
+  <meta property="og:url" content="https://www.alphaprime.co.in/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.alphaprime.co.in/e.png" />
+
+  <!-- ================= TWITTER CARD ================= -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="E-TRAX | Smart Expense Tracker" />
+  <meta name="twitter:description" content="Manage daily expenses and budgets easily with E-TRAX." />
+  <meta name="twitter:image" content="https://www.alphaprime.co.in/e.png" />
+
+  <!-- ================= FAVICONS ================= ------------------------------------------------------------------------------>
+  <link rel="icon" href="EtraxPub.jpg" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- /public/favicon.png          (512x512)
+/public/apple-touch-icon.png (180x180) -->
+
+  <!-- ================= PWA ================= -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#00bcd4" />
+
+  <!-- ================= FONTS & CSS ================= -->
+  <!-- <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"> -->
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- ================= JS LIBS ================= -->
+   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- ================= STRUCTURED DATA ================= -->
+ <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "E-TRAX",
+  "url": "https://www.alphaprime.co.in/",
+  "logo": "https://www.alphaprime.co.in/logo.png"
+}
+</script>
+
+  
+<style>
+/* Updated CSS variables with cyan/teal fintech theme */
+:root {
+  /* Dark Theme (Default) - Fintech Premium */
+  --primary: #06b6d4;
+  --primary-dark: #0891b2;
+  --primary-light: #22d3ee;
+  --secondary: #0ea5e9;
+  --accent: #14b8a6;
+  --background: #0a0f1e;
+  --card-bg: #1a1f35;
+  --text: #ffffff;
+  --text-light: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border: rgba(6,182,212,0.15);
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --shadow: 0 8px 32px rgba(6,182,212,0.1);
+  --glow: 0 0 20px rgba(6,182,212,0.3);
+}
+
+[data-theme="light"] {
+  --primary: #0891b2;
+  --primary-dark: #0e7490;
+  --primary-light: #06b6d4;
+  --secondary: #0284c7;
+  --accent: #14b8a6;
+  --background: #f8fafc;
+  --card-bg: #ffffff;
+  --text: #0f172a;
+  --text-light: #334155;
+  --text-muted: #64748b;
+  --border: rgba(14,116,144,0.15);
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --shadow: 0 8px 32px rgba(14,116,144,0.08);
+  --glow: 0 0 20px rgba(14,116,144,0.15);
+}
+
+[data-theme="professional"] {
+  --primary: #06b6d4;
+  --primary-dark: #0891b2;
+  --primary-light: #22d3ee;
+  --secondary: #0ea5e9;
+  --accent: #14b8a6;
+  --background: #0f1419;
+  --card-bg: #1e2633;
+  --text: #ffffff;
+  --text-light: #e2e8f0;
+  --text-muted: #94a3b8;
+  --border: rgba(6,182,212,0.2);
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --shadow: 0 8px 32px rgba(6,182,212,0.12);
+  --glow: 0 0 24px rgba(6,182,212,0.25);
+}
+
+/* Updated global styles with modern fintech aesthetics */
+* {
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  min-height: 100vh;
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Updated typography with Space Grotesk for headings */
+h1, h2, h3, h4, h5, h6,
+.project-name,
+.login-card h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+button,
+.btn,
+.nav-links a {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+}
+
+/* Enhanced login wrapper with gradient background */
+.login-wrapper {
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: linear-gradient(135deg, #0a0f1e 0%, #1a1f35 50%, #0a0f1e 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Updated pulse animation with cyan glow */
+.login-wrapper::before {
+  content: '';
+  position: absolute;
+  width: 400%;
+  height: 400%;
+  background: radial-gradient(circle, rgba(6,182,212,0.15) 0%, transparent 60%);
+  animation: pulse 20s infinite linear;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}
+
+/* Modern login card with glassmorphism effect */
+.login-card {
+  width: 100%;
+  max-width: 460px;
+  background: rgba(26, 31, 53, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  box-shadow: var(--shadow), var(--glow);
+  padding: 48px 40px;
+  text-align: center;
+  border: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 48px rgba(6,182,212,0.2), var(--glow);
+}
+
+/* Enhanced login card typography */
+.login-card h1 { 
+  color: var(--primary); 
+  margin-bottom: 12px; 
+  font-size: 2.5rem; 
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 40px rgba(6,182,212,0.3);
+}
+
+.login-card p { 
+  color: var(--text-light); 
+  margin-bottom: 32px; 
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Modern Google button with better styling */
+.google-btn {
+  display:flex; 
+  align-items:center; 
+  gap:12px; 
+  justify-content:center;
+  width:100%; 
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border-radius:12px; 
+  padding:16px 24px;
+  font-weight:600; 
+  cursor:pointer; 
+  border:none;
+  box-shadow: 0 4px 16px rgba(6,182,212,0.3);
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.google-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.google-btn:hover::before {
+  left: 100%;
+}
+
+.google-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(6,182,212,0.4);
+}
+
+.google-btn:active {
+  transform: translateY(0);
+}
+
+.google-btn img { 
+  width:24px; 
+  height:24px; 
+  background: white;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.small-note { 
+  color: var(--text-muted); 
+  font-size:0.9rem; 
+  margin-top:20px; 
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Modern sticky header with glassmorphism */
+header { 
+  display: none;
+  background: rgba(26, 31, 53, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+}
+
+header.visible {
+  display: block;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Enhanced brand styling with gradient */
+.brand-section h1 {
+  font-size: 1.75rem; 
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700; 
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.typing { 
+  font-size: 0.95rem; 
+  color: var(--primary-light); 
+  font-weight: 500;
+  min-height: 1.2rem;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Enhanced user display with badge style */
+#userNameDisplay {
+  background: linear-gradient(135deg, rgba(6,182,212,0.15), rgba(20,184,166,0.1));
+  color: var(--primary-light);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+/* Modern theme toggle button */
+.theme-toggle {
+  background: rgba(6,182,212,0.1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.theme-toggle:hover {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--glow);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Enhanced navigation links */
+.nav-links a { 
+  color: var(--text-light); 
+  text-decoration:none; 
+  font-weight:500; 
+  transition:all 0.3s ease; 
+  position: relative;
+  padding: 10px 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-links a:hover { 
+  color: var(--primary-light);
+  background: rgba(6,182,212,0.1);
+  transform: translateY(-2px);
+}
+
+/* Modern logout button */
+#googleLogoutBtn {
+  background: transparent; 
+  border: 2px solid var(--danger); 
+  color: var(--danger);
+  font-weight:600; 
+  border-radius:10px; 
+  padding:10px 20px; 
+  transition:all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#googleLogoutBtn:hover { 
+  background:var(--danger); 
+  color:white; 
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+}
+
+/* Enhanced container spacing */
+.container {
+  padding-top: 32px;
+  padding-bottom: 32px;
+  max-width: 1400px;
+}
+
+/* Modern card design with subtle animations */
+.card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  margin-bottom: 24px;
+  color: var(--text);
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: 0 12px 48px rgba(6,182,212,0.15);
+  transform: translateY(-4px);
+  border-color: var(--primary);
+}
+
+/* Enhanced card header */
+.card-header {
+  background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(20,184,166,0.05));
+  border-bottom: 1px solid var(--border);
+  padding: 20px 24px;
+  border-radius: 16px 16px 0 0 !important;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.card-body {
+  padding: 24px;
+  color: var(--text);
+}
+
+.card h5, .card h6 {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Modern table container */
+.table-container { 
+  margin-top: 24px; 
+  padding: 0; 
+  background: transparent; 
+  border-radius: 16px; 
+  overflow: hidden;
+  color: var(--text);
+}
+
+/* Enhanced table styling */
+table { 
+  color: var(--text) !important; 
+  font-size:0.95rem; 
+  margin-bottom: 0;
+  background: var(--card-bg);
+}
+
+table thead { 
+  background: linear-gradient(135deg, var(--primary), var(--accent)); 
+  color: white; 
+  font-weight:600; 
+}
+
+table thead th {
+  padding: 16px 12px;
+  border: none;
+}
+
+table tbody tr { 
+  transition: all 0.2s ease;
+  color: var(--text) !important;
+  border-bottom: 1px solid var(--border);
+}
+
+table tbody td {
+  padding: 14px 12px;
+  vertical-align: middle;
+}
+
+table tbody tr:hover { 
+  background: rgba(6,182,212,0.08);
+  transform: scale(1.01);
+}
+
+/* Budget card visibility */
+#budgetCard { 
+  display:none; 
+}
+
+/* Modern budget progress bar */
+#budgetBar { 
+  height: 32px; 
+  border-radius:16px; 
+  overflow:hidden; 
+  background: rgba(6,182,212,0.1);
+  margin-top: 16px;
+  border: 1px solid var(--border);
+}
+
+#budgetBar .progress { 
+  height:32px; 
+  line-height:32px; 
+  font-weight:700; 
+  transition: width 0.6s ease;
+  font-size: 0.9rem;
+}
+
+/* Enhanced button styles */
+.btn {
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 12px 24px;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  box-shadow: 0 4px 16px rgba(6,182,212,0.3);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-dark), var(--accent));
+  color: white;
+  box-shadow: 0 6px 24px rgba(6,182,212,0.4);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--danger), #dc2626);
+  color: white;
+  box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+}
+
+.btn-danger:hover {
+  box-shadow: 0 6px 24px rgba(239,68,68,0.4);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, var(--warning), #d97706);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(245,158,11,0.3);
+}
+
+.btn-warning:hover {
+  box-shadow: 0 6px 24px rgba(245,158,11,0.4);
+}
+
+.btn-outline-danger {
+  border: 2px solid var(--danger);
+  color: var(--danger);
+  background: transparent;
+}
+
+.btn-outline-danger:hover {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-info {
+  background: linear-gradient(135deg, var(--secondary), var(--accent));
+  color: white;
+  box-shadow: 0 4px 16px rgba(14,165,233,0.3);
+}
+
+.btn-info:hover {
+  box-shadow: 0 6px 24px rgba(14,165,233,0.4);
+}
+
+/* Enhanced form controls */
+.form-control, .form-select {
+  background: rgba(6,182,212,0.05);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 12px 16px;
+  transition: all 0.3s ease;
+  font-weight: 400;
+  font-size: 0.95rem;
+}
+
+.form-control:focus, .form-select:focus {
+  background: rgba(6,182,212,0.08);
+  border-color: var(--primary);
+  color: var(--text);
+  box-shadow: 0 0 0 3px rgba(6,182,212,0.15);
+  outline: none;
+}
+
+.form-label {
+  color: var(--text-light);
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
+/* Modern modal styling */
+.modal-overlay {
+  display:none; 
+  position:fixed; 
+  top:0; 
+  left:0; 
+  width:100%; 
+  height:100%;
+  background: rgba(0,0,0,0.85); 
+  color: var(--text); 
+  z-index:9999; 
+  overflow:auto;
+  padding:50px 20px; 
+  box-sizing:border-box;
+  backdrop-filter: blur(10px);
+}
+
+/* Enhanced modal content */
+.modal-content {
+  max-width:900px; 
+  margin:auto; 
+  background: var(--card-bg); 
+  padding:40px; 
+  border-radius:24px; 
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), var(--glow);
+  animation: modalFadeIn 0.4s ease;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-40px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-content h2 { 
+  color: var(--primary); 
+  text-align:center; 
+  margin-bottom:24px; 
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+.modal-content h4 { 
+  color: var(--primary-light); 
+  margin-top: 24px; 
+  font-weight: 600;
+}
+
+.modal-content p, .modal-content li {
+  color: var(--text);
+  font-weight: 400;
+  line-height: 1.8;
+}
+
+/* HISTORY TABLE */
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  color: var(--text);
+}
+
+.history-table th,
+.history-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.history-table th {
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+}
+
+.history-table tr:hover {
+  background: rgba(0,188,212,0.05);
+}
+
+.changes-list {
+  font-size: 0.85rem;
+}
+
+.changes-list div {
+  margin: 2px 0;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: rgba(0,188,212,0.1);
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Enhanced history table */
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  color: var(--text);
+}
+
+.history-table th,
+.history-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 400;
+}
+
+.history-table th {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+.history-table tr:hover {
+  background: rgba(6,182,212,0.08);
+}
+
+.changes-list {
+  font-size: 0.85rem;
+}
+
+.changes-list div {
+  margin: 4px 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(6,182,212,0.1);
+  color: var(--text);
+  font-weight: 400;
+  border-left: 3px solid var(--primary);
+}
+
+
+/* MESSAGE BOX */
+#msgBox {
+  position: fixed; 
+  top: 20px; 
+  right: 20px;
+  background-color: var(--success); 
+  color: white; 
+  padding: 12px 24px;
+  border-radius: 10px; 
+  display: none; 
+  z-index: 9999;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  animation: slideInRight 0.3s ease;
+  font-weight: 600;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Modern message box */
+#msgBox {
+  position: fixed; 
+  top: 24px; 
+  right: 24px;
+  background: linear-gradient(135deg, var(--success), #059669); 
+  color: white; 
+  padding: 16px 24px;
+  border-radius: 12px; 
+  display: none; 
+  z-index: 9999;
+  box-shadow: 0 8px 24px rgba(16,185,129,0.3);
+  animation: slideInRight 0.4s ease;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(400px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* FOOTER */
+footer {
+  background: var(--card-bg);
+  color: var(--text-muted);
+  text-align:center; 
+  padding:20px; 
+  border-top:1px solid var(--border);
+  margin-top:40px; 
+  font-size:0.7rem;
+  font-weight: 500;
+}
+
+/* Modern footer */
+footer {
+  background: rgba(26, 31, 53, 0.95);
+  backdrop-filter: blur(20px);
+  color: var(--text-muted);
+  text-align:center; 
+  padding:32px 20px; 
+  border-top:1px solid var(--border);
+  margin-top:64px; 
+  font-size:0.9rem;
+  font-weight: 400;
+}
+
+.blinking-name { 
+  color: var(--primary); 
+  animation: blink 2s infinite;
+  font-weight: 700;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+footer a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+footer a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .login-card {
+    padding: 30px 20px;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .brand-section {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .header-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .nav-links {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .table-responsive {
+    font-size: 0.85rem;
+  }
+  
+  .btn-sm {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .modal-content {
+    padding: 20px;
+    margin: 20px;
+  }
+  
+  .card-body {
+    padding: 15px;
+  }
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .login-card {
+    padding: 40px 28px;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .brand-section {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .header-controls {
+    flex-direction: row;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .nav-links {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .table-responsive {
+    font-size: 0.85rem;
+  }
+  
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .modal-content {
+    padding: 28px 20px;
+    margin: 20px;
+  }
+  
+  .card-body {
+    padding: 20px;
+  }
+
+  #userNameDisplay {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .header-controls {
+    flex-direction: column;
+  }
+  
+  .theme-toggle span {
+    display: none;
+  }
+}
+
+/* Enhanced chart containers */
+.chart-container {
+  position: relative;
+  height: 300px;
+  margin-bottom: 20px;
+}
+
+/* Enhanced chart containers */
+.chart-container {
+  position: relative;
+  height: 320px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: rgba(6,182,212,0.03);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+
+/* LOADING */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: var(--primary);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* BADGES */
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: white;
+}
+
+.badge-success {
+  background: var(--success);
+  color: white;
+}
+
+.badge-warning {
+  background: var(--warning);
+  color: black;
+}
+
+.badge-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.badge-info {
+  background: var(--primary);
+  color: white;
+}
+
+/* Enhanced badges */
+.badge {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-success {
+  background: linear-gradient(135deg, var(--success), #059669);
+  box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+}
+
+.badge-warning {
+  background: linear-gradient(135deg, var(--warning), #d97706);
+  color: white;
+  box-shadow: 0 4px 12px rgba(245,158,11,0.3);
+}
+
+.badge-danger {
+  background: linear-gradient(135deg, var(--danger), #dc2626);
+  box-shadow: 0 4px 12px rgba(239,68,68,0.3);
+}
+
+.badge-info {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  box-shadow: 0 4px 12px rgba(6,182,212,0.3);
+}
+
+/* Mobile Expense Cards */
+.expense-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  color: var(--text);
+}
+
+.expense-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.expense-details {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.expense-card .card-title {
+  color: var(--primary) !important;
+  font-weight: 700;
+}
+
+/* Enhanced mobile expense cards */
+.expense-card {
+  transition: all 0.3s ease;
+  border-radius: 16px;
+  color: var(--text);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.expense-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(6,182,212,0.15);
+  border-color: var(--primary);
+}
+
+.expense-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--primary), var(--accent));
+}
+
+.expense-details {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  font-weight: 400;
+}
+
+.expense-card .card-title {
+  color: var(--primary) !important;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.expense-card .card-body {
+  position: relative;
+  padding-left: 24px;
+}
+
+
+/* Mobile responsive buttons */
+@media (max-width: 576px) {
+  .btn-sm {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+  
+  .expense-card .card-body {
+    padding: 15px;
+  }
+  
+  .expense-details {
+    font-size: 0.85rem;
+  }
+}
+
+/* Better table responsiveness */
+.table-responsive {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Better mobile responsiveness for tables */
+@media (max-width: 768px) {
+  .table-responsive {
+    font-size: 0.8rem;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  
+  .btn-sm {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    margin: 2px;
+  }
+  
+  .table td, .table th {
+    padding: 10px 8px;
+  }
+  
+  /* Force horizontal scroll */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .table {
+    min-width: 600px;
+  }
+
+  .expense-card {
+    margin-bottom: 16px;
+  }
+}
+
+/* Action buttons styling */
+.btn-group .btn {
+  border-radius: 6px;
+  margin: 2px;
+}
+
+/* Enhanced action buttons in table */
+.btn-group .btn {
+  border-radius: 8px;
+  margin: 0 2px;
+}
+
+/* Mobile Table Fix */
+@media (max-width: 768px) {
+  .table-responsive {
+    font-size: 0.8rem;
+  }
+  
+  .btn-sm {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    margin: 1px;
+  }
+  
+  .table td, .table th {
+    padding: 8px 4px;
+  }
+  
+  /* Force horizontal scroll */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .table {
+    min-width: 600px;
+  }
+}
+
+/* Budget status text */
+#budgetStatusText {
+  color: var(--text) !important;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+/* Enhanced budget status text */
+#budgetStatusText {
+  color: var(--text) !important;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+/* Text muted with better contrast */
+.text-muted {
+  color: var(--text-muted) !important;
+  font-weight: 500;
+}
+
+/* Better focus states for accessibility */
+.btn:focus, 
+.form-control:focus, 
+.form-select:focus,
+button:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Ensure all critical text is bright */
+.high-contrast-text {
+  color: var(--text) !important;
+  font-weight: 600 !important;
+}
+
+/* Subtle page transitions */
+body {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+</style>
+
 </head>
-<body data-theme="dark">
 
-<!-- Background Animation -->
-<div class="background-animation">
-    <lottie-player
-        src="https://lottie.host/fef0dd87-b7ca-430b-b7ff-f306c934d368/WKpgmIC1iO.lottie"
-        background="transparent"
-        speed="1"
-        loop
-        autoplay>
-    </lottie-player>
-</div>
-<div class="gradient-overlay"></div>
+<body>
 
-<!-- ========== LOGIN VIEW ========== -->
+<!-- LOGIN VIEW -->
 <div id="loginView" class="login-wrapper">
-    <div class="login-card">
-        <h1>E-TRAX</h1>
-        <p>Track expenses smarter. Sign in with Google to continue.</p>
+  <!-- LOTTIE ANIMATED BACKGROUND (LOGIN ONLY) -->
+<lottie-player
+  src="https://lottie.host/fef0dd87-b7ca-430b-b7ff-f306c934d368/WKpgmIC1iO.lottie"
+  background="transparent"
+  speed="1"
+  loop
+  autoplay
+  style="
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.6;
+  ">
+</lottie-player>
 
-        <button id="googleLoginBtn" class="google-btn" aria-label="Login with Google">
-            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
-            <span>Sign in with Google</span>
-        </button>
+  <div class="login-card">
+    <h1>E-TRAX</h1>
+    <p>Track expenses — smarter. Sign in with Google to continue.</p>
 
-        <div class="note">We only use Google to authenticate you — no payment info required.</div>
-        <div class="developer">
-            <small>Developed by <strong>ALPHA DEVELOPERS</strong></small>
-        </div>
+    <button id="googleLoginBtn" class="google-btn" aria-label="Login with Google">
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
+      <span>Sign in with Google</span>
+    </button>
+
+    <div class="small-note">We only use Google to authenticate you — no payment info required.</div>
+    <div style="margin-top:14px;">
+      <small style="color:var(--text-muted)">Developed by <strong style="color:var(--primary)">ALPHA DEVELOPERS </strong></small>
     </div>
+  </div>
 </div>
 
-<!-- ========== HEADER ========== -->
-<header id="mainHeader" class="main-header" style="display: none;">
-    <div class="header-content">
-        <div class="brand-section">
-            <h1>E-TRAX</h1>
-            <div class="typing" id="typingHeader"></div>
-        </div>
-        
-        <div class="header-controls">
-            <div id="userNameDisplay"></div>
-            
-            <button class="theme-toggle" id="themeToggle">
-                <i class="fas fa-palette"></i>
-                <span>Theme</span>
-            </button>
-            
-            <nav class="nav-links">
-                <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank" rel="noopener">
-                    <i class="fas fa-headset"></i>
-                    <span>Support</span>
-                </a>
-                <a href="about.html">
-                    <i class="fas fa-info-circle"></i>
-                    <span>About</span>
-                </a>
-                <a href="#" id="historyLink">
-                    <i class="fas fa-history"></i>
-                    <span>History</span>
-                </a>
-                <button id="googleLogoutBtn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </button>
-            </nav>
-        </div>
+<!-- HEADER -->
+<header id="mainHeader">
+  <div class="header-content">
+    <div class="brand-section">
+      <h1 class="project-name">E-TRAX</h1>
+      <div class="typing" id="typingHeader"></div>
     </div>
+    
+    <div class="header-controls">
+      <div id="userNameDisplay"></div>
+      
+      <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-palette"></i>
+        <span>Theme</span>
+      </button>
+      
+      <nav class="nav-links">
+        <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank" rel="noopener">
+          <i class="fas fa-phone"></i> Contact
+        </a>
+       <a href="about.html">
+  <i class="fas fa-info-circle"></i> About
+</a>
+        <a href="#" id="historyLink">
+          <i class="fas fa-history"></i> History
+        </a>
+        <button id="googleLogoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </nav>
+    </div>
+  </div>
 </header>
 
-<!-- ========== MAIN CONTAINER ========== -->
-<div class="container">
-    <!-- Budget Card -->
-    <div id="budgetCard" class="card">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <h5 style="margin:0;color:var(--warning);">Budget Limit</h5>
-                    <small class="text-muted">Set a monthly/total budget for your expenses</small>
-                </div>
-                <div>
-                    <button id="resetBudgetBtn" class="btn btn-outline-danger btn-sm">Reset Budget</button>
-                </div>
-            </div>
-
-            <div class="row g-3 mb-3">
-                <div class="col-12 col-md-5">
-                    <input type="number" id="budgetInput" class="form-control" placeholder="Enter budget amount (e.g. 5000)">
-                </div>
-                <div class="col-12 col-md-3">
-                    <button id="saveBudgetBtn" class="btn btn-primary w-100">Save Budget</button>
-                </div>
-                <div class="col-12 col-md-4 text-center text-md-end">
-                    <div id="budgetStatusText" style="font-weight:600;">No budget set</div>
-                </div>
-            </div>
-
-            <div id="budgetBar" class="mb-2">
-                <div id="budgetProgress" class="progress" style="width:100%">
-                    <div id="budgetProgressBar" class="progress-bar" role="progressbar" style="width:0%"></div>
-                </div>
-            </div>
-
-            <div id="budgetAlerts"></div>
+<!-- MAIN CONTAINER -->
+<div class="container my-3">
+  <!-- BUDGET CARD -->
+  <div id="budgetCard" class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h5 style="margin:0;color:var(--warning);">Budget Limit</h5>
+          <small class="text-muted">Set a monthly/total budget for your expenses</small>
         </div>
-    </div>
-
-    <!-- Expense Form -->
-    <div id="expenseFormContainer" style="display:none;">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-plus-circle"></i> Add New Expense</h5>
-            </div>
-            <div class="card-body">
-                <form id="expenseForm" class="row g-3">
-                    <input type="hidden" id="editId">
-                    <div class="col-12 col-md-6">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" id="name" class="form-control" required>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label for="amount" class="form-label">Amount</label>
-                        <input type="number" id="amount" class="form-control" required>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label for="type" class="form-label">Type</label>
-                        <select id="type" class="form-select" required>
-                            <option value="">Choose one...</option>
-                            <option value="Card">Card</option>
-                            <option value="Cash">Cash</option>
-                            <option value="Gpay/Paytm">Gpay/Paytm</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label for="description" class="form-label">Description</label>
-                        <input type="text" id="description" class="form-control" required>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label for="date" class="form-label">Date</label>
-                        <input type="date" id="date" class="form-control" required>
-                    </div>
-                    <div class="col-12 d-flex justify-content-between mt-3">
-                        <button type="reset" class="btn btn-danger">
-                            <i class="fas fa-times"></i> Clear
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-check"></i> Confirm
-                        </button>
-                    </div>
-                </form>
-            </div>
+        <div>
+          <button id="resetBudgetBtn" class="btn btn-outline-danger btn-sm">Reset Budget</button>
         </div>
-    </div>
+      </div>
 
-    <!-- Table Container -->
-    <div id="tableContainer" class="table-responsive"></div>
-
-    <!-- Analytics -->
-    <div id="analyticsContainer" style="display:none;">
-        <div class="table-container">
-            <h4 class="text-center" style="color:var(--primary);">📊 Expense Analytics</h4>
-            <div class="row">
-                <div class="col-12 col-md-6">
-                    <div class="chart-container">
-                        <canvas id="lineChart"></canvas>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <div class="chart-container">
-                        <canvas id="pieChart"></canvas>
-                    </div>
-                    <div id="analyticsBadge" class="text-center mt-3"></div>
-                </div>
-            </div>
+      <div class="row g-2 mb-3">
+        <div class="col-md-5">
+          <input type="number" id="budgetInput" class="form-control" placeholder="Enter budget amount (e.g. 5000)">
         </div>
+        <div class="col-md-3">
+          <button id="saveBudgetBtn" class="btn btn-primary w-100">Save Budget</button>
+        </div>
+        <div class="col-md-4 text-end">
+          <div id="budgetStatusText" style="font-weight:600;color:var(--text);">No budget set</div>
+        </div>
+      </div>
+
+      <div id="budgetBar" class="mb-2">
+        <div id="budgetProgress" class="progress" style="width:100%">
+          <div id="budgetProgressBar" class="progress-bar" role="progressbar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div id="budgetAlerts" style="min-height:22px;"></div>
     </div>
+  </div>
+
+  <!-- EXPENSE FORM -->
+  <div id="expenseFormContainer" style="display:none;">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-plus-circle"></i> Add New Expense</h5>
+      </div>
+      <div class="card-body">
+        <form id="expenseForm" class="row g-3">
+          <input type="hidden" id="editId">
+          <div class="col-md-6">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" id="name" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="number" id="amount" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label for="type" class="form-label">Type</label>
+            <select id="type" class="form-select" required>
+              <option value="">Choose one...</option>
+              <option value="Card">Card</option>
+              <option value="Cash">Cash</option>
+              <option value="Gpay/Paytm">Gpay/Paytm</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" id="description" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" id="date" class="form-control" required>
+          </div>
+          <div class="col-12 d-flex justify-content-between mt-3">
+            <button type="reset" class="btn btn-danger">
+              <i class="fas fa-times"></i> Clear
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-check"></i> Confirm
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div id="tableContainer" class="table-responsive"></div>
+
+  <!-- ANALYTICS -->
+  <div id="analyticsContainer" class="my-4" style="display:none;">
+    <div class="table-container">
+      <h4 class="text-center" style="color:var(--primary);">📊 Expense Analytics</h4>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="chart-container">
+            <canvas id="lineChart"></canvas>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="chart-container">
+            <canvas id="pieChart"></canvas>
+          </div>
+          <div id="analyticsBadge" class="text-center mt-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- ========== MODALS ========== -->
-<!-- History Modal -->
+
+<!-- HISTORY MODAL -->
 <div id="historyModal" class="modal-overlay">
-    <div class="modal-content">
-        <h2>📝 Edit History</h2>
-        <div id="historyContent">
-            <p>Loading history...</p>
-        </div>
-        <div class="text-center mt-3">
-            <button id="closeHistory" class="btn btn-primary">Close</button>
-        </div>
+  <div class="modal-content">
+    <h2>📝 Edit History</h2>
+    <div id="historyContent">
+      <p>Loading history...</p>
     </div>
+    <div style="text-align:center; margin-top: 20px;">
+      <button id="closeHistory" class="btn btn-primary">Close</button>
+    </div>
+  </div>
 </div>
 
-<!-- ========== MESSAGE BOX ========== -->
+<!-- MESSAGE BOX -->
 <div id="msgBox"></div>
 
-<!-- ========== FOOTER ========== -->
-<footer>
-    <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
-        <div class="footer-links">
-            <a href="terms-conditions.html">Terms & Conditions</a>
-            <a href="privacy-policy.html">Privacy Policy</a>
-        </div>
-        
-        <p style="margin:0;">
-            Email: <a href="mailto:alphaprime.co.in@gmail.com">alphaprime.co.in@gmail.com</a>
-        </p>
-        
-        <p style="margin:0;">&copy; 2025 <span class="blinking-name">E-TRAX</span>. All rights reserved.</p>
-    </div>
-</footer>
-
 <script>
-// All JavaScript code remains exactly the same as in your original index.html
-// Only the CSS has been updated for professional design
-
 // BASE URL
 const BASE_URL = window.location.hostname.includes("localhost")
   ? "http://localhost:3000"
@@ -1255,7 +1635,7 @@ function showMessage(msg, duration=2000) {
 // Toggle login state
 function toggleLoginState(isLoggedIn) {
   loginView.style.display = isLoggedIn ? "none" : "flex";
-  mainHeader.style.display = isLoggedIn ? "block" : "none";
+  mainHeader.classList.toggle('visible', isLoggedIn);
   expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
   budgetCard.style.display = isLoggedIn ? "block" : "none";
 }
@@ -1416,7 +1796,7 @@ function updateBudgetUI(budgetAmount, totalSpent){
   }
   budgetStatusText.innerText = `Budget: ₹${budgetAmount.toFixed(2)}  —  Spent: ₹${totalSpent.toFixed(2)}`;
   budgetAlerts.innerHTML = "";
-  analyticsBadge.innerText = "";
+  analyticsBadge.innerHTML = "";
   if(pct >= 100){
     const over = (totalSpent - budgetAmount);
     budgetAlerts.innerHTML = `<div class="text-danger" style="font-weight:700;">🚨 Budget exceeded! You spent ₹${over.toFixed(2)} over the limit.</div>`;
@@ -1483,11 +1863,11 @@ async function loadData(){
         
         mobileHtml += `
           <div class="col-12">
-            <div class="card expense-card">
+            <div class="card expense-card" style="background:var(--card-bg); border:1px solid var(--border);">
               <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start mb-2">
                   <h6 class="card-title mb-0" style="color:var(--primary);">${u.name}</h6>
-                  <span class="badge">${u.type}</span>
+                  <span class="badge badge-info">${u.type}</span>
                 </div>
                 
                 <div class="expense-details">
@@ -1573,7 +1953,7 @@ async function loadData(){
             <td>${i+1}</td>
             <td>${u.name}</td>
             <td>₹${parseFloat(u.amount).toFixed(2)}</td>
-            <td><span class="badge">${u.type}</span></td>
+            <td><span class="badge badge-info">${u.type}</span></td>
             <td>${u.description}</td>
             <td>${u.date}</td>
             <td>${actionBtn}</td>
@@ -1667,7 +2047,7 @@ window.viewHistory = async function(expenseId) {
     
     if (expense.editHistory && expense.editHistory.length > 0) {
       historyHtml += `
-        <table class="table">
+        <table class="history-table">
           <thead>
             <tr>
               <th>Editor</th>
@@ -1700,7 +2080,7 @@ window.viewHistory = async function(expenseId) {
           <tr>
             <td><strong>${edit.editorName}</strong></td>
             <td>${new Date(edit.date).toLocaleString()}</td>
-            <td>
+            <td class="changes-list">
               ${changes.map(change => `<div>${change}</div>`).join('')}
             </td>
           </tr>
@@ -1754,7 +2134,7 @@ async function showHistory() {
   }
 }
 
-// Charts renderer
+// FIXED Charts renderer - Proper colors for each category
 function renderCharts(users){
   const dates = {};
   const types = {};
@@ -1785,7 +2165,7 @@ function renderCharts(users){
         label: 'Daily Expenses',
         data: Object.values(dates),
         borderColor: 'var(--primary)',
-        backgroundColor: 'rgba(37, 99, 235, 0.2)',
+        backgroundColor: 'rgba(0,188,212,0.2)',
         fill: true,
         tension: 0.3
       }]
@@ -1818,19 +2198,19 @@ function renderCharts(users){
   const labels = Object.keys(types);
   const values = Object.values(types);
 
-  // Color assignment for categories
+  // FIXED: Proper color assignment for each category
   const categoryColors = {
-    'Card': '#2563eb',      // Blue
-    'Cash': '#f59e0b',      // Orange
-    'Gpay/Paytm': '#10b981', // Green
-    'Other': '#8b5cf6',     // Purple
-    'Over Budget': '#ef4444' // Red
+    'Card': '#00bcd4',      // Cyan
+    'Cash': '#ff9800',      // Orange
+    'Gpay/Paytm': '#8bc34a', // Green
+    'Other': '#e91e63',     // Pink
+    'Over Budget': '#ff3b30' // Red
   };
 
-  // Assign colors
+  // Assign colors - use predefined or generate unique ones
   const bgColors = labels.map(label => {
     return categoryColors[label] || 
-           `hsl(${Math.random() * 360}, 70%, 60%)`;
+           `hsl(${Math.random() * 360}, 70%, 60%)`; // Random color for unknown categories
   });
 
   window.pieChartInstance = new Chart(pieCtx, {
@@ -1873,19 +2253,17 @@ function renderCharts(users){
 
   // Update analytics badge
   if(overAmount > 0){
-    analyticsBadge.innerHTML = `<span class="badge" style="background:var(--danger);">🚨 Over budget: ₹${overAmount.toFixed(2)}</span>`;
+    analyticsBadge.innerHTML = `<span class="badge badge-danger">🚨 Over budget: ₹${overAmount.toFixed(2)}</span>`;
   } else if(currentBudgetAmount > 0) {
     const usagePercent = Math.round((totalAmount / currentBudgetAmount) * 100);
-    analyticsBadge.innerHTML = `<span class="badge" style="background:var(--success);">✅ Usage: ${usagePercent}% of budget</span>`;
+    analyticsBadge.innerHTML = `<span class="badge badge-success">✅ Usage: ${usagePercent}% of budget</span>`;
   } else {
-    analyticsBadge.innerHTML = `<span class="badge">📊 Total: ₹${totalAmount.toFixed(2)}</span>`;
+    analyticsBadge.innerHTML = `<span class="badge badge-info">📊 Total: ₹${totalAmount.toFixed(2)}</span>`;
   }
 }
 
 // Start the typing animation
 typeWriterHeader();
-
-// Service Worker Registration
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/sw.js")
@@ -1894,5 +2272,21 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
+<footer>
+  <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+
+    <div style="display:flex; gap:15px; font-size:0.75rem;">
+      <a href="terms-conditions.html" id="termsLink">Terms & Conditions</a>
+      <a href="privacy-policy.html" id="privacyLink">Privacy Policy</a>
+    </div>
+
+    <p style="margin:0;">
+      Email: <a href="mailto:alphaprime.co.in@gmail.com">alphaprime.co.in@gmail.com</a>
+    </p>
+
+    <p style="margin:0;">&copy; 2025 E-TRAX. All rights reserved.</p>
+  </div>
+</footer>
+
 </body>
 </html>
