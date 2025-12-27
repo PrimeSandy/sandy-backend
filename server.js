@@ -249,7 +249,7 @@ app.get("/getBudget", async (req, res) => {
   }
 });
 
-// Error handling
+// Error handling 
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Promise Rejection:', err);
 });
