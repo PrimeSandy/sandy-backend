@@ -1,4 +1,4 @@
-// server.js
+// server.js - COMPLETE FIXED VERSION
 require("dotenv").config();
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
@@ -28,7 +28,6 @@ async function connectDB() {
 
 // Secure Firebase Config Endpoint
 app.get("/firebase-config", (req, res) => {
-  // Validate required environment variables
   const requiredVars = [
     "FIREBASE_API_KEY",
     "FIREBASE_AUTH_DOMAIN",
@@ -57,7 +56,6 @@ app.get("/firebase-config", (req, res) => {
     measurementId: process.env.FIREBASE_MEASUREMENT_ID
   };
   
-  console.log("🔐 Serving Firebase config for project:", firebaseConfig.projectId);
   res.json(firebaseConfig);
 });
 
@@ -91,7 +89,7 @@ app.post("/submit", async (req, res) => {
       amount: parseFloat(amount),
       type: type || "Other",
       description: description || "",
-      date: date || new Date().toISOString().split('T')[0],
+      date: date || now.toISOString().split('T')[0],
       category: category || "Uncategorized",
       createdAt: now,
       updatedAt: now,
@@ -118,7 +116,7 @@ app.post("/submit", async (req, res) => {
   }
 });
 
-// Get User Expenses
+// Get User Expenses - FIXED FOR OLD DATA
 app.get("/users", async (req, res) => {
   try {
     await connectDB();
@@ -131,18 +129,80 @@ app.get("/users", async (req, res) => {
       });
     }
     
+    console.log(`🔍 Fetching expenses for user: ${uid}`);
+    
+    // Get ALL expenses for this user
     const allExpenses = await expenses
       .find({ uid })
       .sort({ createdAt: -1 })
       .toArray();
     
-    res.json(allExpenses);
+    console.log(`📊 Total documents found: ${allExpenses.length}`);
+    
+    if (allExpenses.length > 0) {
+      console.log("📝 First expense sample:", {
+        id: allExpenses[0]._id,
+        name: allExpenses[0].name,
+        amount: allExpenses[0].amount,
+        ALL_FIELDS: Object.keys(allExpenses[0])
+      });
+    }
+    
+    // NORMALIZE ALL EXPENSES TO COMMON FORMAT
+    const normalizedExpenses = allExpenses.map(exp => {
+      // Check what fields exist
+      const hasName = exp.name || exp.itemName || exp.title;
+      const hasAmount = exp.amount !== undefined || exp.price !== undefined || exp.cost !== undefined;
+      
+      // Create normalized object
+      const normalized = {
+        _id: exp._id,
+        uid: exp.uid,
+        // Handle name field
+        name: exp.name || exp.itemName || exp.title || 
+              (exp.description && exp.description.length > 30 ? 
+               exp.description.substring(0, 30) + "..." : 
+               "Expense") || "Expense",
+        
+        // Handle amount field
+        amount: exp.amount || exp.price || exp.cost || exp.value || 0,
+        
+        // Handle category field
+        category: exp.category || exp.type || "Other",
+        
+        // Handle type/payment field
+        type: exp.type || exp.paymentType || exp.paymentMethod || "Cash",
+        
+        // Handle description
+        description: exp.description || exp.note || "",
+        
+        // Handle date
+        date: exp.date || exp.createdDate || 
+              (exp.createdAt ? exp.createdAt.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
+        
+        // Preserve timestamps
+        createdAt: exp.createdAt || new Date(),
+        updatedAt: exp.updatedAt || new Date(),
+        editCount: exp.editCount || 0,
+        editHistory: exp.editHistory || [],
+        
+        // Flag for debugging
+        _wasNormalized: !exp.name || !exp.amount
+      };
+      
+      return normalized;
+    });
+    
+    console.log(`✅ Returning ${normalizedExpenses.length} normalized expenses`);
+    
+    res.json(normalizedExpenses);
     
   } catch (err) {
     console.error("❌ Fetch error:", err);
     res.status(500).json({ 
       status: "error", 
-      message: "Failed to load expenses" 
+      message: "Failed to load expenses",
+      error: err.message 
     });
   }
 });
@@ -211,21 +271,21 @@ app.put("/update/:id", async (req, res) => {
     }
     
     const before = {
-      name: expense.name,
-      amount: expense.amount,
-      type: expense.type,
-      description: expense.description,
-      date: expense.date,
-      category: expense.category
+      name: expense.name || expense.itemName || expense.title,
+      amount: expense.amount || expense.price || expense.cost,
+      type: expense.type || expense.paymentType,
+      description: expense.description || expense.note,
+      date: expense.date || expense.createdDate,
+      category: expense.category || expense.type
     };
     
     const after = {
-      name: name || expense.name,
-      amount: parseFloat(amount) || expense.amount,
-      type: type || expense.type,
-      description: description || expense.description,
-      date: date || expense.date,
-      category: category || expense.category
+      name: name || before.name,
+      amount: parseFloat(amount) || before.amount,
+      type: type || before.type,
+      description: description || before.description,
+      date: date || before.date,
+      category: category || before.category
     };
     
     // Track changes
@@ -237,11 +297,12 @@ app.put("/update/:id", async (req, res) => {
     if (before.date !== after.date) changes.push(`Date: ${before.date} → ${after.date}`);
     if (before.category !== after.category) changes.push(`Category: ${before.category} → ${after.category}`);
     
-    // Update expense
+    // Update expense with normalized fields
     const updateResult = await expenses.updateOne(
       { _id: new ObjectId(id) },
       {
         $set: {
+          // Standardize to new format
           name: after.name,
           amount: after.amount,
           type: after.type,
@@ -416,17 +477,16 @@ app.get("/analytics/:uid", async (req, res) => {
     let totalSpent = 0;
     
     userExpenses.forEach(expense => {
-      const month = expense.date.substring(0, 7); // YYYY-MM
-      const category = expense.category || "Uncategorized";
+      const amount = expense.amount || expense.price || expense.cost || 0;
+      const month = (expense.date || expense.createdDate || "").substring(0, 7); // YYYY-MM
+      const category = expense.category || expense.type || "Uncategorized";
       
-      // Monthly totals
-      monthlyData[month] = (monthlyData[month] || 0) + expense.amount;
+      if (month) {
+        monthlyData[month] = (monthlyData[month] || 0) + amount;
+      }
       
-      // Category totals
-      categoryData[category] = (categoryData[category] || 0) + expense.amount;
-      
-      // Total spent
-      totalSpent += expense.amount;
+      categoryData[category] = (categoryData[category] || 0) + amount;
+      totalSpent += amount;
     });
     
     res.json({
@@ -446,6 +506,139 @@ app.get("/analytics/:uid", async (req, res) => {
   }
 });
 
+// ================= DEBUG & MIGRATION ENDPOINTS =================
+app.get("/debug/expenses", async (req, res) => {
+  try {
+    await connectDB();
+    const { uid } = req.query;
+    
+    if (!uid) {
+      return res.status(400).json({ 
+        status: "error", 
+        message: "User ID required" 
+      });
+    }
+    
+    const allExpenses = await expenses
+      .find({ uid })
+      .sort({ createdAt: -1 })
+      .toArray();
+    
+    const fieldAnalysis = {
+      total: allExpenses.length,
+      sampleOld: null,
+      sampleNew: null,
+      fieldNames: new Set(),
+      fieldComparison: {}
+    };
+    
+    allExpenses.forEach((exp, index) => {
+      Object.keys(exp).forEach(key => fieldAnalysis.fieldNames.add(key));
+      
+      if (index === 0) fieldAnalysis.sampleNew = exp;
+      if (!exp.name && !fieldAnalysis.sampleOld) fieldAnalysis.sampleOld = exp;
+    });
+    
+    fieldAnalysis.fieldNames.forEach(field => {
+      fieldAnalysis.fieldComparison[field] = {
+        inOld: fieldAnalysis.sampleOld?.[field] !== undefined,
+        inNew: fieldAnalysis.sampleNew?.[field] !== undefined
+      };
+    });
+    
+    res.json({
+      status: "success",
+      analysis: fieldAnalysis,
+      allExpenses: allExpenses.map(exp => ({
+        id: exp._id,
+        name: exp.name,
+        amount: exp.amount,
+        category: exp.category,
+        type: exp.type,
+        date: exp.date,
+        description: exp.description,
+        _allFields: exp
+      }))
+    });
+    
+  } catch (err) {
+    console.error("❌ Debug error:", err);
+    res.status(500).json({ 
+      status: "error", 
+      message: "Debug failed",
+      error: err.message 
+    });
+  }
+});
+
+app.post("/migrate/old-data", async (req, res) => {
+  try {
+    await connectDB();
+    const { uid } = req.body;
+    
+    if (!uid) {
+      return res.status(400).json({ 
+        status: "error", 
+        message: "User ID required" 
+      });
+    }
+    
+    console.log(`🔄 Starting migration for user: ${uid}`);
+    
+    const allExpenses = await expenses
+      .find({ uid })
+      .toArray();
+    
+    let migratedCount = 0;
+    let skippedCount = 0;
+    
+    for (const exp of allExpenses) {
+      if (!exp.name || !exp.amount) {
+        console.log(`🔄 Migrating old expense: ${exp._id}`);
+        
+        const updateDoc = {
+          $set: {
+            name: exp.itemName || exp.title || "Migrated Expense",
+            amount: exp.price || exp.cost || exp.value || 0,
+            category: exp.category || exp.type || "Other",
+            type: exp.paymentType || exp.paymentMethod || "Cash",
+            description: exp.description || exp.note || "",
+            date: exp.date || exp.createdDate || 
+                  (exp.createdAt ? exp.createdAt.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
+            updatedAt: new Date()
+          }
+        };
+        
+        await expenses.updateOne(
+          { _id: exp._id },
+          updateDoc
+        );
+        
+        migratedCount++;
+      } else {
+        skippedCount++;
+      }
+    }
+    
+    console.log(`✅ Migration complete: ${migratedCount} migrated, ${skippedCount} skipped`);
+    
+    res.json({
+      status: "success",
+      message: `Migration complete`,
+      migrated: migratedCount,
+      skipped: skippedCount
+    });
+    
+  } catch (err) {
+    console.error("❌ Migration error:", err);
+    res.status(500).json({ 
+      status: "error", 
+      message: "Migration failed",
+      error: err.message 
+    });
+  }
+});
+
 // Serve Frontend
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
@@ -461,16 +654,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Global error handlers
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("🚨 Unhandled Rejection at:", promise, "reason:", reason);
-});
-
-process.on("uncaughtException", (err) => {
-  console.error("🚨 Uncaught Exception:", err);
-  process.exit(1);
-});
-
 // Start server
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || "0.0.0.0";
@@ -479,9 +662,6 @@ app.listen(PORT, HOST, () => {
   console.log(`🚀 E-TRAX Server running`);
   console.log(`📡 Port: ${PORT}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`🔐 Firebase Project: ${process.env.FIREBASE_PROJECT_ID || "Not configured"}`);
-  console.log(`🗄️ MongoDB: ${process.env.MONGODB_URI ? "Connected" : "Not configured"}`);
 });
 
-// Export for Vercel
 module.exports = app;
