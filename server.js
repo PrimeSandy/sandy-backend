@@ -107,25 +107,20 @@ app.get("/users", async (req, res) => {
   }
 });
 
-// ✅ Get Single Expense with populated history (ONE VERSION ONLY)
+// ✅ Get Single Expense
 app.get("/user/:id", async (req, res) => {
   try {
     await connectDB();
     const user = await expenses.findOne({ _id: new ObjectId(req.params.id) });
     if (!user) return res.status(404).json({ status: "error", message: "Expense not found" });
-    
-    // Ensure editHistory is an array
-    if (!user.editHistory) user.editHistory = [];
-    if (!user.editCount) user.editCount = user.editHistory.length;
-    
     res.json(user);
   } catch (err) {
-    console.error("Get user error:", err);
+    console.error(err);
     res.status(500).json({ status: "error", message: "❌ Invalid expense ID" });
   }
 });
 
-// ✅ Update Expense with proper history tracking (ONE VERSION ONLY)
+// ✅ Update Expense
 app.put("/update/:id", async (req, res) => {
   try {
     await connectDB();
@@ -136,58 +131,51 @@ app.put("/update/:id", async (req, res) => {
     if (!exp) return res.status(404).json({ status: "error", message: "Expense not found" });
     if (exp.uid !== uid) return res.status(403).json({ status: "error", message: "Not authorized to edit this expense" });
 
-    // Prepare before and after states
     const before = { 
       name: exp.name, 
-      amount: parseFloat(exp.amount), 
+      amount: exp.amount, 
       type: exp.type, 
       description: exp.description, 
       date: exp.date 
     };
     
     const after = { 
-      name: name || exp.name, 
-      amount: parseFloat(amount || exp.amount), 
-      type: type || exp.type, 
-      description: description || exp.description, 
-      date: date || exp.date 
+      name, 
+      amount: parseFloat(amount), 
+      type, 
+      description, 
+      date 
     };
 
     // Track changes
     const changes = [];
     if (before.name !== after.name) changes.push(`Name changed from "${before.name}" to "${after.name}"`);
-    if (before.amount !== after.amount) changes.push(`Amount changed from ₹${before.amount.toFixed(2)} to ₹${after.amount.toFixed(2)}`);
+    if (before.amount !== after.amount) changes.push(`Amount changed from ₹${before.amount} to ₹${after.amount}`);
     if (before.type !== after.type) changes.push(`Type changed from ${before.type} to ${after.type}`);
     if (before.description !== after.description) changes.push(`Description changed from "${before.description}" to "${after.description}"`);
     if (before.date !== after.date) changes.push(`Date changed from ${before.date} to ${after.date}`);
-
-    // Create history entry
-    const historyEntry = {
-      editorUid: uid,
-      editorName: editorName || "Unknown User",
-      date: new Date(),
-      before,
-      after,
-      changes: changes.length > 0 ? changes : ["No significant changes detected"]
-    };
 
     const updateResult = await expenses.updateOne(
       { _id: new ObjectId(id) },
       {
         $set: { 
-          name: after.name, 
-          amount: after.amount, 
-          type: after.type, 
-          description: after.description, 
-          date: after.date, 
+          name, 
+          amount: parseFloat(amount), 
+          type, 
+          description, 
+          date, 
           updatedAt: new Date() 
         },
         $inc: { editCount: 1 },
         $push: {
           editHistory: {
-            $each: [historyEntry],
-            $slice: -50 // Keep only last 50 edits to prevent bloating
-          }
+            editorUid: uid,
+            editorName: editorName || "Unknown User",
+            date: new Date(),
+            before,
+            after,
+            changes: changes.length > 0 ? changes : ["No significant changes detected"]
+          },
         },
       }
     );
@@ -199,11 +187,10 @@ app.put("/update/:id", async (req, res) => {
     res.json({ 
       status: "success", 
       message: "✅ Expense updated successfully!",
-      changes: changes,
-      historyEntry: historyEntry
+      changes: changes
     });
   } catch (err) {
-    console.error("Update error:", err);
+    console.error(err);
     res.status(500).json({ status: "error", message: "❌ Failed to update expense" });
   }
 });
