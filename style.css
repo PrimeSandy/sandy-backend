@@ -216,10 +216,32 @@ header.visible {
     gap: 15px;
 }
 
+/* User Profile Container - NEW */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-radius: 20px;
+    background: rgba(0, 188, 212, 0.1);
+}
+
+.profile-pic {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+}
+
 #userNameDisplay {
-    color: var(--secondary);
-    font-weight: 700;
-    font-size: 1rem;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .theme-toggle {
@@ -284,13 +306,6 @@ header.visible {
 .container {
     padding-top: 20px;
     padding-bottom: 20px;
-}
-
-/* Add padding for fixed header on mobile */
-@media (max-width: 768px) {
-    .container {
-        padding-top: 70px; /* Space for fixed header */
-    }
 }
 
 /* CARDS */
@@ -740,9 +755,9 @@ footer a:hover {
     .brand-section {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         flex-shrink: 0;
-        max-width: 40%;
+        min-width: 0;
     }
     
     .project-name {
@@ -753,42 +768,53 @@ footer a:hover {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        max-width: 120px;
     }
     
     .typing {
-        display: none !important; /* Hide typing animation on mobile */
+        display: none !important;
     }
     
-    /* Header controls - proper layout */
+    /* User Profile - mobile version */
+    .user-profile {
+        display: none !important; /* Hide on mobile - not enough space */
+    }
+    
+    /* Header controls */
     .header-controls {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         margin-left: auto;
         flex-shrink: 0;
     }
     
-    /* Username display - compact */
+    /* Username only (no profile pic on mobile) */
     #userNameDisplay {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        font-weight: 500;
-        padding: 4px 8px;
-        background: rgba(0, 188, 212, 0.1);
-        border-radius: 12px;
-        white-space: nowrap;
-        max-width: 100px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: none; /* Hide on very small screens */
+        display: none; /* Hide on mobile - use initials instead */
+    }
+    
+    /* User Initials Badge - mobile alternative */
+    .user-initials {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.8rem;
+        border: 2px solid var(--primary);
     }
     
     /* Theme toggle - icon only */
     .theme-toggle {
         padding: 6px !important;
-        width: 36px;
-        height: 36px;
-        min-width: 36px;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -803,57 +829,57 @@ footer a:hover {
     
     .theme-toggle i {
         margin: 0 !important;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
     
     /* Navigation links - compact icon buttons */
     .nav-links {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
         margin: 0;
         padding: 0;
     }
     
     .nav-links a {
         padding: 6px !important;
-        width: 36px;
-        height: 36px;
-        min-width: 36px;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0; /* Hide text on mobile */
+        font-size: 0;
         background: var(--card-bg);
         border: 1px solid var(--border);
         text-decoration: none;
-        position: static !important; /* Remove any absolute positioning */
+        position: static !important;
     }
     
     .nav-links a i {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         margin: 0;
     }
     
     /* Logout button - compact icon button */
     #googleLogoutBtn {
         padding: 6px !important;
-        width: 36px;
-        height: 36px;
-        min-width: 36px;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         border: 1px solid var(--danger) !important;
         background: var(--card-bg);
-        font-size: 0; /* Hide text on mobile */
-        position: static !important; /* Remove any absolute positioning */
+        font-size: 0;
+        position: static !important;
     }
     
     #googleLogoutBtn i {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         color: var(--danger);
         margin: 0;
     }
@@ -862,13 +888,23 @@ footer a:hover {
         color: white;
     }
     
-    /* Add main content padding to avoid header overlap */
+    /* ========== ADD PADDING FOR FIXED HEADER ========== */
     .container {
-        padding-top: 70px !important; /* Space for fixed header */
+        padding-top: 70px !important;
         padding-bottom: 20px;
+        padding-left: 12px;
+        padding-right: 12px;
     }
     
-    /* ========== BUDGET CARD MOBILE FIX ========== */
+    /* ========== REMOVE DUPLICATE BUDGET BAR ========== */
+    /* Hide any fixed/top budget summary */
+    .budget-summary-fixed,
+    .budget-top-bar,
+    .budget-header-strip {
+        display: none !important;
+    }
+    
+    /* ========== BUDGET CARD OPTIMIZATION ========== */
     #budgetCard {
         margin-top: 0;
         position: relative;
@@ -879,32 +915,57 @@ footer a:hover {
         padding: 16px;
     }
     
+    /* Stack budget input row vertically */
     #budgetCard .row.g-2 {
         flex-direction: column;
-        gap: 10px;
+        gap: 12px !important;
+        margin-bottom: 16px !important;
     }
     
-    #budgetCard .col-md-5,
-    #budgetCard .col-md-3,
-    #budgetCard .col-md-4 {
-        width: 100%;
-        max-width: 100%;
+    #budgetCard .row.g-2 > [class*="col-"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 0;
     }
     
     #budgetInput {
         width: 100%;
         font-size: 16px;
-        padding: 10px 12px;
+        padding: 12px 14px;
     }
     
     #saveBudgetBtn {
         width: 100%;
-        padding: 10px 16px;
+        padding: 12px 16px;
+        font-size: 16px;
+        font-weight: 600;
     }
     
-    /* ========== EXPENSE FORM MOBILE FIX ========== */
+    #budgetStatusText {
+        text-align: center;
+        padding: 8px 0;
+        font-size: 0.9rem;
+    }
+    
+    #resetBudgetBtn {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+    }
+    
+    #budgetBar {
+        margin-top: 12px;
+        height: 24px;
+        border-radius: 12px;
+    }
+    
+    /* ========== EXPENSE FORM MOBILE OPTIMIZATION ========== */
     #expenseFormContainer .card-body {
         padding: 16px;
+    }
+    
+    #expenseForm .row.g-3 {
+        margin-left: 0;
+        margin-right: 0;
     }
     
     #expenseForm .col-md-6 {
@@ -919,6 +980,7 @@ footer a:hover {
     
     #expenseForm .col-12 button {
         width: 100%;
+        padding: 12px 16px;
     }
     
     /* ========== TABLE CONTAINER ========== */
@@ -953,7 +1015,7 @@ footer a:hover {
     
     /* ========== MODALS ========== */
     .modal-overlay {
-        padding: 60px 12px 20px; /* Account for fixed header */
+        padding: 60px 12px 20px;
     }
     
     .modal-content {
@@ -968,15 +1030,20 @@ footer a:hover {
         font-size: 0.7rem;
     }
     
-    /* ========== TABLE RESPONSIVE FIX ========== */
-    .table-responsive {
-        font-size: 0.8rem;
+    /* ========== PREVENT HORIZONTAL SCROLL ========== */
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
     }
     
-    .btn-sm {
-        padding: 4px 8px;
-        font-size: 0.7rem;
-        margin: 1px;
+    body {
+        position: relative;
+    }
+    
+    /* Ensure no content overlaps */
+    .card, .table-container, #budgetCard, #expenseFormContainer {
+        position: relative;
+        z-index: 1;
     }
 }
 
@@ -989,31 +1056,32 @@ footer a:hover {
     
     .project-name {
         font-size: 1.1rem !important;
+        max-width: 100px;
     }
     
     .theme-toggle,
     .nav-links a,
     #googleLogoutBtn {
-        width: 32px;
-        height: 32px;
-        min-width: 32px;
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
     }
     
     .theme-toggle i,
     .nav-links a i,
     #googleLogoutBtn i {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
     }
     
     .container {
         padding-top: 66px !important;
     }
     
-    /* Show username on slightly larger phones */
-    @media (min-width: 380px) {
-        #userNameDisplay {
-            display: inline-block;
-        }
+    /* Show user initials on very small screens */
+    .user-initials {
+        width: 30px;
+        height: 30px;
+        font-size: 0.75rem;
     }
 }
 
@@ -1021,11 +1089,24 @@ footer a:hover {
 @media (min-width: 769px) and (max-width: 992px) {
     /* Ensure desktop styles apply correctly on tablets */
     header {
-        position: sticky !important; /* Not fixed on tablet */
+        position: sticky !important;
     }
     
     .container {
-        padding-top: 20px !important; /* Reset for tablet */
+        padding-top: 20px !important;
+    }
+    
+    /* Show user profile on tablet */
+    .user-profile {
+        display: flex !important;
+    }
+    
+    .user-initials {
+        display: none !important;
+    }
+    
+    #userNameDisplay {
+        display: inline-block !important;
     }
     
     .nav-links a span {
@@ -1041,26 +1122,5 @@ footer a:hover {
     .theme-toggle span {
         display: inline;
         font-size: 0.8rem;
-    }
-}
-
-/* ================= PREVENT HORIZONTAL OVERFLOW ================= */
-@media (max-width: 768px) {
-    html, body {
-        overflow-x: hidden;
-        width: 100%;
-    }
-    
-    .container {
-        width: 100%;
-        max-width: 100%;
-        padding-left: 12px;
-        padding-right: 12px;
-    }
-    
-    /* Ensure no content overlaps */
-    .card, .table-container, #budgetCard, #expenseFormContainer {
-        position: relative;
-        z-index: 1;
     }
 }
