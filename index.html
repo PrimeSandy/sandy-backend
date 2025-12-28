@@ -106,6 +106,10 @@
         <div class="brand-section">
             <h1 class="project-name">E-TRAX</h1>
             <div class="typing" id="typingHeader"></div>
+            <!-- Add mobile-only logo/icon -->
+            <div class="mobile-logo d-none-mobile">
+                <i class="fas fa-chart-line" style="color: var(--primary); font-size: 1rem;"></i>
+            </div>
         </div>
         
         <div class="header-controls">
@@ -120,13 +124,13 @@
                 <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank" rel="noopener">
                     <i class="fas fa-phone"></i> Contact
                 </a>
-                <a href="#" id="aboutLink">
+                <a href="#" id="aboutLink" aria-label="About">
                     <i class="fas fa-info-circle"></i> About
                 </a>
-                <a href="#" id="historyLink">
+                <a href="#" id="historyLink" aria-label="History">
                     <i class="fas fa-history"></i> History
                 </a>
-                <button id="googleLogoutBtn">
+                <button id="googleLogoutBtn" aria-label="Logout">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </nav>
@@ -277,24 +281,7 @@
         </div>
     </div>
 </div>
-<!-- In the brand-section div in header -->
-<div class="brand-section">
-    <h1 class="project-name">E-TRAX</h1>
-    <div class="typing" id="typingHeader"></div>
-    <!-- Add mobile-only logo/icon -->
-    <div class="mobile-logo d-none-mobile">
-        <i class="fas fa-chart-line" style="color: var(--primary); font-size: 1rem;"></i>
-    </div>
-</div>
-    <!-- Update navigation links for better accessibility -->
-<a href="#" id="aboutLink" aria-label="About">
-    <i class="fas fa-info-circle"></i>
-</a>
 
-<!-- Update logout button -->
-<button id="googleLogoutBtn" aria-label="Logout">
-    <i class="fas fa-sign-out-alt"></i>
-</button>
 <!-- MESSAGE BOX -->
 <div id="msgBox"></div>
 
