@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -114,19 +115,21 @@
     </div>
 </div>
 <!-- HEADER -->
+<!-- HEADER -->
 <header id="mainHeader">
     <div class="header-content">
         <div class="brand-section">
             <h1 class="project-name">E-TRAX</h1>
             <div class="typing" id="typingHeader"></div>
-            <!-- Add mobile-only logo/icon -->
-            <div class="mobile-logo d-none-mobile">
-                <i class="fas fa-chart-line" style="color: var(--primary); font-size: 1rem;"></i>
-            </div>
         </div>
         
         <div class="header-controls">
-            <div id="userNameDisplay"></div>
+            <!-- User Profile Container -->
+            <div class="user-profile" id="userProfileContainer">
+                <img src="" alt="Profile" class="profile-pic" id="userProfilePic" style="display: none;">
+                <div class="user-initials" id="userInitials"></div>
+                <div id="userNameDisplay"></div>
+            </div>
             
             <button class="theme-toggle" id="themeToggle">
                 <i class="fas fa-palette"></i>
@@ -134,17 +137,21 @@
             </button>
             
             <nav class="nav-links">
-                <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank" rel="noopener">
-                    <i class="fas fa-phone"></i> Contact
+                <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank" rel="noopener" title="Contact">
+                    <i class="fas fa-phone"></i>
+                    <span>Contact</span>
                 </a>
-                <a href="#" id="aboutLink" aria-label="About">
-                    <i class="fas fa-info-circle"></i> About
+                <a href="#" id="aboutLink" title="About">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
                 </a>
-                <a href="#" id="historyLink" aria-label="History">
-                    <i class="fas fa-history"></i> History
+                <a href="#" id="historyLink" title="History">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
                 </a>
-                <button id="googleLogoutBtn" aria-label="Logout">
-                    <i class="fas fa-sign-out-alt"></i> Logout
+                <button id="googleLogoutBtn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
                 </button>
             </nav>
         </div>
