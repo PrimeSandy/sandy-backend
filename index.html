@@ -1,2241 +1,866 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-    <!-- ================= BASIC SEO ================= -->
-    <title>E-TRAX | Smart Expense Tracker for Daily Budget Management</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="E-TRAX is a smart expense tracker to manage daily income and expenses with analytics, Firebase login, secure cloud storage, and budget tracking." />
-    <meta name="keywords" content="expense tracker, budget tracker, money manager, personal finance, E-TRAX" />
-    <meta name="author" content="AlphaPrime" />
-    <meta name="robots" content="index, follow" />
-
-    <!-- ================= CANONICAL ================= -->
-    <link rel="canonical" href="https://www.alphaprime.co.in/" />
-
-    <!-- ================= OPEN GRAPH & TWITTER ================= -->
-    <meta property="og:title" content="E-TRAX | Smart Expense Tracker" />
-    <meta property="og:description" content="Track your daily expenses, set budgets, and analyze spending with E-TRAX – a secure smart expense tracker." />
-    <meta property="og:url" content="https://www.alphaprime.co.in/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://www.alphaprime.co.in/e.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="E-TRAX | Smart Expense Tracker" />
-    <meta name="twitter:description" content="Manage daily expenses and budgets easily with E-TRAX." />
-    <meta name="twitter:image" content="https://www.alphaprime.co.in/e.png" />
-
-    <!-- ================= FAVICONS ================= -->
-    <link rel="icon" href="EtraxPub.jpg" type="image/png">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-    <!-- ================= PWA ================= -->
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#2C097F" />
-
-    <!-- ================= FONTS & ICONS ================= -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-TRAX Analytics</title>
     
-    <!-- ================= CSS LIBRARIES ================= -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- ================= JS LIBS ================= -->
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- ================= STRUCTURED DATA ================= -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "E-TRAX",
-        "url": "https://www.alphaprime.co.in/",
-        "logo": "https://www.alphaprime.co.in/logo.png"
-    }
-    </script>
-
-    <!-- ================= CUSTOM CSS ================= -->
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
     <style>
-    :root {
-        /* NEW COLOR THEME BASED ON YOUR UI */
-        --primary: #2C097F;
-        --primary-light: #3d2b99;
-        --primary-dark: #1e0755;
-        --secondary: #607AFB;
-        --accent: #00bcd4;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        
-        /* Dark Theme */
-        --background: #151022;
-        --card-bg: #1e1b2e;
-        --text: #ffffff;
-        --text-light: #e2e8f0;
-        --text-muted: #94a3b8;
-        --border: rgba(255,255,255,0.1);
-        --shadow: 0 10px 30px rgba(0,0,0,0.4);
-    }
-
-    [data-theme="light"] {
-        --primary: #2C097F;
-        --primary-light: #3d2b99;
-        --primary-dark: #1e0755;
-        --secondary: #607AFB;
-        --accent: #00bcd4;
-        --success: #059669;
-        --warning: #d97706;
-        --danger: #dc2626;
-        
-        --background: #f6f6f8;
-        --card-bg: #ffffff;
-        --text: #111827;
-        --text-light: #374151;
-        --text-muted: #6b7280;
-        --border: rgba(0,0,0,0.1);
-        --shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-
-    * {
-        box-sizing: border-box;
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    }
-
-    body {
-        background-color: var(--background);
-        color: var(--text);
-        min-height: 100vh;
-        margin: 0;
-        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-        line-height: 1.6;
-        font-weight: 400;
-        overflow-x: hidden;
-    }
-
-    .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    }
-
-    /* ================= LOGIN SCREEN (YOUR UI) ================= */
-    #loginView {
-        display: flex;
-        min-height: 100vh;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        background: var(--background);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .login-background {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-        opacity: 0.1;
-        z-index: 0;
-    }
-
-    .login-container {
-        width: 100%;
-        max-width: 440px;
-        background: var(--card-bg);
-        border-radius: 20px;
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow);
-        overflow: hidden;
-        z-index: 1;
-        position: relative;
-    }
-
-    .login-header {
-        padding: 40px 40px 20px;
-        text-align: center;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-        color: white;
-    }
-
-    .login-logo {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        margin-bottom: 20px;
-    }
-
-    .login-logo-icon {
-        width: 40px;
-        height: 40px;
-        background: white;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary);
-        font-weight: bold;
-        font-size: 20px;
-    }
-
-    .login-logo h1 {
-        font-size: 28px;
-        font-weight: 800;
-        margin: 0;
-        color: white;
-    }
-
-    .login-header h2 {
-        font-size: 24px;
-        font-weight: 700;
-        margin: 0 0 10px 0;
-        color: white;
-    }
-
-    .login-header p {
-        color: rgba(255,255,255,0.8);
-        font-size: 14px;
-        margin: 0;
-    }
-
-    .login-content {
-        padding: 40px;
-    }
-
-    .google-login-btn {
-        width: 100%;
-        padding: 16px;
-        background: white;
-        color: #333;
-        border: 1px solid #ddd;
-        border-radius: 12px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        transition: all 0.3s ease;
-        margin-bottom: 24px;
-    }
-
-    .google-login-btn:hover {
-        background: #f8f9fa;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-
-    .google-login-btn img {
-        width: 20px;
-        height: 20px;
-    }
-
-    .login-note {
-        text-align: center;
-        color: var(--text-muted);
-        font-size: 13px;
-        margin-top: 24px;
-        padding-top: 20px;
-        border-top: 1px solid var(--border);
-    }
-
-    .developer-credit {
-        text-align: center;
-        margin-top: 20px;
-        color: var(--text-muted);
-        font-size: 12px;
-    }
-
-    .developer-credit strong {
-        color: var(--primary);
-    }
-
-    /* ================= MAIN APP LAYOUT ================= */
-    .app-container {
-        display: none;
-        min-height: 100vh;
-    }
-
-    .app-container.active {
-        display: block;
-    }
-
-    /* Sidebar */
-    .sidebar {
-        width: 260px;
-        background: var(--card-bg);
-        border-right: 1px solid var(--border);
-        position: fixed;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        z-index: 100;
-        display: flex;
-        flex-direction: column;
-        padding: 24px 0;
-        transition: transform 0.3s ease;
-    }
-
-    .sidebar-header {
-        padding: 0 24px 24px;
-        border-bottom: 1px solid var(--border);
-        margin-bottom: 24px;
-    }
-
-    .sidebar-logo {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .sidebar-logo-icon {
-        width: 40px;
-        height: 40px;
-        background: var(--primary);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        font-size: 18px;
-    }
-
-    .sidebar-logo h2 {
-        font-size: 20px;
-        font-weight: 800;
-        margin: 0;
-        color: var(--text);
-    }
-
-    .nav-menu {
-        flex: 1;
-        padding: 0 16px;
-    }
-
-    .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 16px;
-        color: var(--text-light);
-        text-decoration: none;
-        border-radius: 10px;
-        margin-bottom: 4px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .nav-item:hover {
-        background: rgba(96, 122, 251, 0.1);
-        color: var(--primary);
-    }
-
-    .nav-item.active {
-        background: var(--primary);
-        color: white;
-    }
-
-    .nav-item .material-symbols-outlined {
-        font-size: 22px;
-    }
-
-    .nav-item span:last-child {
-        font-size: 14px;
-        font-weight: 500;
-    }
-
-    .sidebar-footer {
-        padding: 24px;
-        border-top: 1px solid var(--border);
-    }
-
-    .user-profile {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .user-avatar {
-        width: 40px;
-        height: 40px;
-        background: var(--primary);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        font-size: 16px;
-    }
-
-    .user-info h4 {
-        font-size: 14px;
-        font-weight: 600;
-        margin: 0;
-        color: var(--text);
-    }
-
-    .user-info p {
-        font-size: 12px;
-        color: var(--text-muted);
-        margin: 2px 0 0 0;
-    }
-
-    /* Main Content */
-    .main-content {
-        margin-left: 260px;
-        min-height: 100vh;
-        background: var(--background);
-    }
-
-    .top-nav {
-        height: 70px;
-        background: var(--card-bg);
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 32px;
-        position: sticky;
-        top: 0;
-        z-index: 99;
-    }
-
-    .page-title h1 {
-        font-size: 24px;
-        font-weight: 700;
-        margin: 0;
-        color: var(--text);
-    }
-
-    .nav-actions {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-    }
-
-    .theme-toggle {
-        background: none;
-        border: none;
-        color: var(--text);
-        cursor: pointer;
-        padding: 8px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    .theme-toggle:hover {
-        background: rgba(96, 122, 251, 0.1);
-    }
-
-    .logout-btn {
-        background: var(--danger);
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s ease;
-    }
-
-    .logout-btn:hover {
-        background: #dc2626;
-        transform: translateY(-2px);
-    }
-
-    .content-area {
-        padding: 32px;
-    }
-
-    /* ================= DASHBOARD CARDS ================= */
-    .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 24px;
-        margin-bottom: 32px;
-    }
-
-    .dashboard-card {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: var(--shadow);
-    }
-
-    .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .card-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: var(--text);
-        margin: 0;
-    }
-
-    .card-value {
-        font-size: 32px;
-        font-weight: 800;
-        color: var(--text);
-        margin: 8px 0;
-    }
-
-    .card-subtext {
-        font-size: 14px;
-        color: var(--text-muted);
-        margin: 4px 0;
-    }
-
-    .progress-bar {
-        width: 100%;
-        height: 8px;
-        background: var(--border);
-        border-radius: 4px;
-        margin: 16px 0;
-        overflow: hidden;
-    }
-
-    .progress-fill {
-        height: 100%;
-        border-radius: 4px;
-        transition: width 0.5s ease;
-    }
-
-    .budget-progress {
-        background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
-    }
-
-    .warning-progress {
-        background: var(--warning);
-    }
-
-    .danger-progress {
-        background: var(--danger);
-    }
-
-    /* ================= EXPENSE FORM ================= */
-    .form-card {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 32px;
-        margin-bottom: 32px;
-        box-shadow: var(--shadow);
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        margin-bottom: 24px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-label {
-        display: block;
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--text);
-        margin-bottom: 8px;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 14px 16px;
-        background: var(--background);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        color: var(--text);
-        font-size: 15px;
-        transition: all 0.3s ease;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(44, 9, 127, 0.1);
-    }
-
-    .form-actions {
-        display: flex;
-        gap: 16px;
-        justify-content: flex-end;
-        margin-top: 24px;
-    }
-
-    .btn {
-        padding: 12px 28px;
-        border-radius: 10px;
-        font-size: 15px;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .btn-primary {
-        background: var(--primary);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: var(--primary-dark);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(44, 9, 127, 0.3);
-    }
-
-    .btn-secondary {
-        background: var(--background);
-        color: var(--text);
-        border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-        background: var(--card-bg);
-    }
-
-    .btn-danger {
-        background: var(--danger);
-        color: white;
-    }
-
-    .btn-danger:hover {
-        background: #dc2626;
-    }
-
-    /* ================= TABLE ================= */
-    .table-container {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: var(--shadow);
-    }
-
-    .table-header {
-        padding: 24px;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .table-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: var(--text);
-        margin: 0;
-    }
-
-    .table-responsive {
-        overflow-x: auto;
-    }
-
-    .data-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .data-table th {
-        padding: 16px 24px;
-        text-align: left;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        background: var(--background);
-        border-bottom: 1px solid var(--border);
-    }
-
-    .data-table td {
-        padding: 20px 24px;
-        border-bottom: 1px solid var(--border);
-        color: var(--text);
-        font-size: 14px;
-    }
-
-    .data-table tr:hover {
-        background: rgba(96, 122, 251, 0.05);
-    }
-
-    .category-badge {
-        display: inline-block;
-        padding: 6px 12px;
-        background: rgba(96, 122, 251, 0.1);
-        color: var(--secondary);
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-
-    .action-buttons {
-        display: flex;
-        gap: 8px;
-    }
-
-    .action-btn {
-        padding: 8px;
-        border-radius: 8px;
-        border: none;
-        background: none;
-        color: var(--text-muted);
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .action-btn:hover {
-        background: var(--background);
-        color: var(--text);
-    }
-
-    .edit-btn:hover {
-        color: var(--primary);
-    }
-
-    .delete-btn:hover {
-        color: var(--danger);
-    }
-
-    /* ================= CHARTS ================= */
-    .chart-container {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 24px;
-        margin-bottom: 32px;
-        box-shadow: var(--shadow);
-    }
-
-    .chart-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: var(--text);
-        margin: 0 0 20px 0;
-    }
-
-    .chart-wrapper {
-        position: relative;
-        height: 300px;
-        width: 100%;
-    }
-
-    /* ================= MODALS ================= */
-    .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.7);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        backdrop-filter: blur(5px);
-    }
-
-    .modal-content {
-        background: var(--card-bg);
-        border-radius: 20px;
-        max-width: 600px;
-        width: 100%;
-        max-height: 90vh;
-        overflow-y: auto;
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow);
-    }
-
-    .modal-header {
-        padding: 24px;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .modal-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--text);
-        margin: 0;
-    }
-
-    .close-modal {
-        background: none;
-        border: none;
-        color: var(--text-muted);
-        cursor: pointer;
-        padding: 8px;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-    }
-
-    .close-modal:hover {
-        background: var(--background);
-        color: var(--text);
-    }
-
-    .modal-body {
-        padding: 24px;
-    }
-
-    /* ================= FOOTER ================= */
-    .app-footer {
-        margin-left: 260px;
-        padding: 24px 32px;
-        background: var(--card-bg);
-        border-top: 1px solid var(--border);
-        text-align: center;
-    }
-
-    .footer-content {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .footer-links {
-        display: flex;
-        justify-content: center;
-        gap: 24px;
-        margin-bottom: 16px;
-        flex-wrap: wrap;
-    }
-
-    .footer-links a {
-        color: var(--text-muted);
-        text-decoration: none;
-        font-size: 14px;
-        transition: color 0.3s ease;
-    }
-
-    .footer-links a:hover {
-        color: var(--primary);
-    }
-
-    .copyright {
-        color: var(--text-muted);
-        font-size: 13px;
-        margin: 8px 0 0 0;
-    }
-
-    .copyright a {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-    /* ================= RESPONSIVE DESIGN ================= */
-    @media (max-width: 1024px) {
-        .sidebar {
-            transform: translateX(-100%);
+        :root {
+            --primary: #2b8cee;
+            --primary-dark: #1a6dc9;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --purple: #8b5cf6;
+            --teal: #14b8a6;
         }
-        
-        .sidebar.active {
+
+        .dark-mode {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+        }
+
+        .mobile-hidden {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .mobile-hidden {
+                display: flex;
+            }
+            
+            .desktop-hidden {
+                display: none;
+            }
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 250px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border);
+            z-index: 50;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.open {
             transform: translateX(0);
         }
-        
-        .main-content,
-        .app-footer {
-            margin-left: 0;
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
         }
-        
-        .mobile-menu-btn {
-            display: flex;
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
-    }
 
-    @media (max-width: 768px) {
-        .content-area {
-            padding: 20px;
+        .progress-ring {
+            transform: rotate(-90deg);
         }
-        
-        .dashboard-grid {
-            grid-template-columns: 1fr;
+
+        .progress-ring-circle {
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.35s;
         }
-        
-        .top-nav {
-            padding: 0 20px;
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
-        .form-grid {
-            grid-template-columns: 1fr;
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
         }
-        
-        .form-actions {
-            flex-direction: column;
+
+        /* Loading states */
+        .skeleton {
+            background: linear-gradient(90deg, var(--border) 25%, #e2e8f0 50%, var(--border) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
         }
-        
-        .btn {
-            width: 100%;
-            justify-content: center;
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
-    }
 
-    @media (max-width: 480px) {
-        .login-container {
-            margin: 10px;
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-        
-        .login-header,
-        .login-content {
-            padding: 30px 20px;
+
+        ::-webkit-scrollbar-track {
+            background: var(--border);
+            border-radius: 3px;
         }
-        
-        .content-area {
-            padding: 16px;
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
         }
-        
-        .table-header {
-            flex-direction: column;
-            gap: 16px;
-            align-items: stretch;
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
         }
-    }
-
-    /* ================= UTILITIES ================= */
-    .hidden {
-        display: none !important;
-    }
-
-    .flex {
-        display: flex;
-    }
-
-    .items-center {
-        align-items: center;
-    }
-
-    .justify-between {
-        justify-content: space-between;
-    }
-
-    .gap-2 { gap: 8px; }
-    .gap-3 { gap: 12px; }
-    .gap-4 { gap: 16px; }
-    .gap-6 { gap: 24px; }
-
-    .mb-2 { margin-bottom: 8px; }
-    .mb-3 { margin-bottom: 12px; }
-    .mb-4 { margin-bottom: 16px; }
-    .mb-6 { margin-bottom: 24px; }
-    .mb-8 { margin-bottom: 32px; }
-
-    .mt-2 { margin-top: 8px; }
-    .mt-3 { margin-top: 12px; }
-    .mt-4 { margin-top: 16px; }
-    .mt-6 { margin-top: 24px; }
-
-    .text-center { text-align: center; }
-    .text-right { text-align: right; }
-
-    .w-full { width: 100%; }
-    .h-full { height: 100%; }
-
-    /* Animation */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .fade-in {
-        animation: fadeIn 0.3s ease forwards;
-    }
-
-    /* Loading */
-    .loading {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 3px solid rgba(255,255,255,.3);
-        border-radius: 50%;
-        border-top-color: var(--primary);
-        animation: spin 1s ease-in-out infinite;
-    }
-
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-
-    /* Message Box */
-    .message-box {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 16px 24px;
-        border-radius: 12px;
-        color: white;
-        font-weight: 600;
-        z-index: 1000;
-        animation: slideInRight 0.3s ease;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-    @keyframes slideInRight {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-
-    .message-success { background: var(--success); }
-    .message-error { background: var(--danger); }
-    .message-warning { background: var(--warning); }
-    .message-info { background: var(--primary); }
     </style>
 </head>
 <body>
+    <!-- Dark Mode Toggle -->
+    <button id="themeToggle" class="fixed top-4 right-4 z-50 p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg">
+        <span class="material-icons-round text-gray-800 dark:text-white">
+            dark_mode
+        </span>
+    </button>
 
-<!-- ================= LOGIN VIEW ================= -->
-<div id="loginView" class="login-wrapper">
-    <div class="login-background"></div>
-    
-    <div class="login-container">
-        <div class="login-header">
-            <div class="login-logo">
-                <div class="login-logo-icon">
-                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
-                </div>
-                <h1>E-TRAX</h1>
-            </div>
-            <h2>Sign in to E-TRAX</h2>
-            <p>Enter your details below to access your account.</p>
-        </div>
-        
-        <div class="login-content">
-            <button id="googleLoginBtn" class="google-login-btn">
-                <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
-                <span>Sign in with Google</span>
-            </button>
-            
-            <p class="login-note">
-                We only use Google to authenticate you — no payment info required.
-            </p>
-            
-            <div class="developer-credit">
-                <small>Developed by <strong>ALPHA DEVELOPERS</strong></small>
-            </div>
-        </div>
-    </div>
-</div>
+    <!-- Mobile Menu Button -->
+    <button id="menuToggle" class="md:hidden fixed top-4 left-4 z-50 p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg">
+        <span class="material-icons-round text-gray-800 dark:text-white">
+            menu
+        </span>
+    </button>
 
-<!-- ================= MAIN APP ================= -->
-<div id="appView" class="app-container">
+    <!-- Overlay -->
+    <div id="overlay" class="overlay"></div>
+
     <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-logo">
-                <div class="sidebar-logo-icon">
-                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+    <aside id="sidebar" class="sidebar md:translate-x-0">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <span class="material-icons-round text-white">trending_up</span>
                 </div>
-                <h2>E-TRAX</h2>
+                <div>
+                    <h1 class="font-bold text-xl text-gray-900 dark:text-white">E-TRAX</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Expense Tracker</p>
+                </div>
             </div>
         </div>
-        
-        <nav class="nav-menu">
-            <a href="#" class="nav-item active" data-page="dashboard">
-                <span class="material-symbols-outlined">dashboard</span>
+
+        <nav class="p-4 space-y-2">
+            <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                <span class="material-icons-round">dashboard</span>
                 <span>Dashboard</span>
             </a>
-            <a href="#" class="nav-item" data-page="expenses">
-                <span class="material-symbols-outlined">receipt_long</span>
-                <span>Transactions</span>
+            <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                <span class="material-icons-round">receipt_long</span>
+                <span>Expenses</span>
             </a>
-            <a href="#" class="nav-item" data-page="analytics">
-                <span class="material-symbols-outlined">bar_chart</span>
+            <a href="#" class="flex items-center gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400">
+                <span class="material-icons-round">analytics</span>
                 <span>Analytics</span>
             </a>
-            <a href="#" class="nav-item" data-page="budget">
-                <span class="material-symbols-outlined">savings</span>
-                <span>Budget</span>
+            <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                <span class="material-icons-round">account_balance_wallet</span>
+                <span>Budgets</span>
             </a>
-            <a href="#" class="nav-item" id="historyLink">
-                <span class="material-symbols-outlined">history</span>
-                <span>History</span>
-            </a>
-            <a href="#" class="nav-item" id="aboutLink">
-                <span class="material-symbols-outlined">info</span>
-                <span>About</span>
+            <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                <span class="material-icons-round">settings</span>
+                <span>Settings</span>
             </a>
         </nav>
-        
-        <div class="sidebar-footer">
-            <div class="user-profile">
-                <div class="user-avatar" id="userAvatar">U</div>
-                <div class="user-info">
-                    <h4 id="userName">User Name</h4>
-                    <p id="userEmail">user@example.com</p>
+
+        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-3 p-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500"></div>
+                <div class="flex-1">
+                    <p class="font-medium text-gray-900 dark:text-white">Olivia Rhye</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">olivia@example.com</p>
                 </div>
+                <button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <span class="material-icons-round text-gray-600 dark:text-gray-400">logout</span>
+                </button>
             </div>
         </div>
     </aside>
-    
+
     <!-- Main Content -->
-    <div class="main-content">
-        <!-- Top Navigation -->
-        <header class="top-nav">
-            <div class="page-title">
-                <h1>Dashboard</h1>
-            </div>
-            
-            <div class="nav-actions">
-                <button class="theme-toggle" id="themeToggle">
-                    <span class="material-symbols-outlined">dark_mode</span>
-                    <span>Theme</span>
-                </button>
-                
-                <button class="logout-btn" id="googleLogoutBtn">
-                    <span class="material-symbols-outlined">logout</span>
-                    <span>Logout</span>
-                </button>
+    <main class="md:ml-64 min-h-screen">
+        <!-- Top Bar -->
+        <header class="sticky top-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+            <div class="px-4 md:px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="md:hidden">
+                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">Analytics</h1>
+                    </div>
+                    <div class="hidden md:block">
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Analytics Dashboard</h1>
+                        <p class="text-gray-500 dark:text-gray-400">Track and analyze your spending patterns</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <input type="text" 
+                                   placeholder="Search expenses..." 
+                                   class="pl-10 pr-4 py-2 w-full md:w-64 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <span class="material-icons-round absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                search
+                            </span>
+                        </div>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
+                            <span class="material-icons-round text-sm">add</span>
+                            <span class="hidden md:inline">Add Expense</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </header>
-        
-        <!-- Content Area -->
-        <div class="content-area">
-            <!-- Dashboard Page -->
-            <div id="dashboardPage" class="page-content active">
-                <!-- Budget Overview -->
-                <div class="dashboard-grid">
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h3 class="card-title">Monthly Budget</h3>
-                            <span class="material-symbols-outlined" style="color: var(--primary)">savings</span>
+
+        <!-- Stats Cards -->
+        <section class="p-4 md:p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Total Expenses -->
+                <div class="card stat-card animate-fade-in" style="animation-delay: 0.1s;">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Total Expenses</p>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1">$2,450.78</h3>
                         </div>
-                        <h2 class="card-value" id="budgetAmount">$0</h2>
-                        <p class="card-subtext" id="budgetStatus">No budget set</p>
-                        <div class="progress-bar">
-                            <div id="budgetProgress" class="progress-fill budget-progress" style="width: 0%"></div>
-                        </div>
-                        <div class="flex justify-between items-center mt-4">
-                            <div>
-                                <p class="card-subtext">Spent</p>
-                                <p class="text-lg font-semibold" id="totalSpent">$0</p>
-                            </div>
-                            <div>
-                                <p class="card-subtext">Remaining</p>
-                                <p class="text-lg font-semibold text-success" id="remainingBudget">$0</p>
-                            </div>
+                        <div class="p-3 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                            <span class="material-icons-round text-blue-600 dark:text-blue-400">attach_money</span>
                         </div>
                     </div>
-                    
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h3 class="card-title">Total Expenses</h3>
-                            <span class="material-symbols-outlined" style="color: var(--success)">trending_up</span>
-                        </div>
-                        <h2 class="card-value" id="totalExpenses">$0</h2>
-                        <p class="card-subtext" id="expenseCount">0 expenses</p>
-                        <div class="mt-4">
-                            <p class="card-subtext">This Month</p>
-                            <p class="text-lg font-semibold" id="monthlyExpenses">$0</p>
-                        </div>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h3 class="card-title">Top Category</h3>
-                            <span class="material-symbols-outlined" style="color: var(--secondary)">category</span>
-                        </div>
-                        <h2 class="card-value" id="topCategory">-</h2>
-                        <p class="card-subtext" id="categoryAmount">$0</p>
-                        <div class="mt-4">
-                            <p class="card-subtext">Other Categories</p>
-                            <p class="text-sm text-muted" id="otherCategories">-</p>
-                        </div>
+                    <div class="mt-4 flex items-center">
+                        <span class="text-green-500 text-sm font-medium flex items-center">
+                            <span class="material-icons-round text-sm mr-1">trending_up</span>
+                            +2.1%
+                        </span>
+                        <span class="text-gray-500 dark:text-gray-400 text-sm ml-2">vs last month</span>
                     </div>
                 </div>
-                
-                <!-- Add Expense Form -->
-                <div class="form-card">
-                    <h3 class="card-title mb-6">Add New Expense</h3>
-                    <form id="expenseForm">
-                        <input type="hidden" id="editId">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label class="form-label" for="name">Name</label>
-                                <input type="text" id="name" class="form-control" placeholder="Enter expense name" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label" for="amount">Amount</label>
-                                <input type="number" id="amount" class="form-control" placeholder="0.00" step="0.01" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label" for="type">Type</label>
-                                <select id="type" class="form-control" required>
-                                    <option value="">Select type</option>
-                                    <option value="Card">Card</option>
-                                    <option value="Cash">Cash</option>
-                                    <option value="Gpay/Paytm">Gpay/Paytm</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label" for="description">Description</label>
-                                <input type="text" id="description" class="form-control" placeholder="What was this for?" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label" for="date">Date</label>
-                                <input type="date" id="date" class="form-control" required>
-                            </div>
+
+                <!-- Avg Daily Spend -->
+                <div class="card stat-card animate-fade-in" style="animation-delay: 0.2s;">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Avg. Daily Spend</p>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1">$81.69</h3>
                         </div>
-                        
-                        <div class="form-actions">
-                            <button type="reset" class="btn btn-secondary">
-                                <span class="material-symbols-outlined">close</span>
-                                Clear
-                            </button>
-                            <button type="submit" class="btn btn-primary">
-                                <span class="material-symbols-outlined">check</span>
-                                Confirm Expense
-                            </button>
+                        <div class="p-3 rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                            <span class="material-icons-round text-purple-600 dark:text-purple-400">trending_flat</span>
                         </div>
-                    </form>
+                    </div>
+                    <div class="mt-4 flex items-center">
+                        <span class="text-red-500 text-sm font-medium flex items-center">
+                            <span class="material-icons-round text-sm mr-1">trending_down</span>
+                            -0.5%
+                        </span>
+                        <span class="text-gray-500 dark:text-gray-400 text-sm ml-2">vs last month</span>
+                    </div>
                 </div>
-                
-                <!-- Recent Expenses Table -->
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3 class="table-title">Recent Expenses</h3>
-                        <button class="btn btn-primary btn-sm" onclick="loadData()">
-                            <span class="material-symbols-outlined">refresh</span>
-                            Refresh
+
+                <!-- Top Category -->
+                <div class="card stat-card animate-fade-in" style="animation-delay: 0.3s;">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Top Category</p>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1">Food & Dining</h3>
+                        </div>
+                        <div class="p-3 rounded-lg bg-green-100 dark:bg-green-900/30">
+                            <span class="material-icons-round text-green-600 dark:text-green-400">restaurant</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center">
+                        <span class="text-green-500 text-sm font-medium flex items-center">
+                            <span class="material-icons-round text-sm mr-1">trending_up</span>
+                            +5%
+                        </span>
+                        <span class="text-gray-500 dark:text-gray-400 text-sm ml-2">vs last month</span>
+                    </div>
+                </div>
+
+                <!-- Frequent Merchant -->
+                <div class="card stat-card animate-fade-in" style="animation-delay: 0.4s;">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Frequent Merchant</p>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1">Starbucks</h3>
+                        </div>
+                        <div class="p-3 rounded-lg bg-orange-100 dark:bg-orange-900/30">
+                            <span class="material-icons-round text-orange-600 dark:text-orange-400">local_cafe</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center">
+                        <span class="text-green-500 text-sm font-medium flex items-center">
+                            <span class="material-icons-round text-sm mr-1">trending_up</span>
+                            +1.2%
+                        </span>
+                        <span class="text-gray-500 dark:text-gray-400 text-sm ml-2">vs last month</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="p-4 md:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Spending Over Time -->
+            <div class="card animate-fade-in">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Spending Over Time</h2>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">Monthly expense trends</p>
+                        </div>
+                        <select class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>This Month</option>
+                            <option>Last Month</option>
+                            <option>Last 3 Months</option>
+                            <option>This Year</option>
+                        </select>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expense by Category -->
+            <div class="card animate-fade-in">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Expense by Category</h2>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">Breakdown of spending</p>
+                        </div>
+                        <button class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
+                            <span class="material-icons-round text-sm">filter_list</span>
+                            <span>Filter</span>
                         </button>
                     </div>
                     
-                    <div class="table-responsive">
-                        <table class="data-table">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex items-center justify-center">
+                            <div class="relative w-48 h-48">
+                                <canvas id="pieChart"></canvas>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold text-gray-900 dark:text-white">$2.4k</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">Total</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                                    <span class="text-gray-700 dark:text-gray-300 text-sm">Food & Dining</span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-medium text-gray-900 dark:text-white">$857.77</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">35%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+                                    <span class="text-gray-700 dark:text-gray-300 text-sm">Transport</span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-medium text-gray-900 dark:text-white">$735.23</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">30%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 rounded-full bg-teal-500"></div>
+                                    <span class="text-gray-700 dark:text-gray-300 text-sm">Bills</span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-medium text-gray-900 dark:text-white">$490.16</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">20%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                    <span class="text-gray-700 dark:text-gray-300 text-sm">Other</span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-medium text-gray-900 dark:text-white">$367.62</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">15%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Transactions -->
+        <section class="p-4 md:p-6">
+            <div class="card animate-fade-in">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Transactions</h2>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">Latest expense entries</p>
+                        </div>
+                        <button class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
+                            <span class="material-icons-round text-sm">download</span>
+                            <span>Export</span>
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
                             <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Amount</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
+                                <tr class="border-b border-gray-200 dark:border-gray-700">
+                                    <th class="text-left py-3 px-4 text-gray-500 dark:text-gray-400 text-sm font-medium">Date</th>
+                                    <th class="text-left py-3 px-4 text-gray-500 dark:text-gray-400 text-sm font-medium">Merchant</th>
+                                    <th class="text-left py-3 px-4 text-gray-500 dark:text-gray-400 text-sm font-medium">Category</th>
+                                    <th class="text-left py-3 px-4 text-gray-500 dark:text-gray-400 text-sm font-medium">Payment Method</th>
+                                    <th class="text-right py-3 px-4 text-gray-500 dark:text-gray-400 text-sm font-medium">Amount</th>
                                 </tr>
                             </thead>
-                            <tbody id="expensesTable">
-                                <!-- Data will be loaded here -->
-                                <tr>
-                                    <td colspan="6" class="text-center py-8 text-muted">
-                                        No expenses yet. Add your first expense!
+                            <tbody>
+                                <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium text-gray-900 dark:text-white">Oct 28, 2023</div>
+                                        <div class="text-gray-500 dark:text-gray-400 text-sm">Saturday</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium text-gray-900 dark:text-white">Starbucks</div>
+                                        <div class="text-gray-500 dark:text-gray-400 text-sm">Coffee Shop</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
+                                            <span class="material-icons-round text-xs">restaurant</span>
+                                            Food & Dining
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-icons-round text-gray-400 text-sm">credit_card</span>
+                                            <span class="text-gray-700 dark:text-gray-300">Card</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-right">
+                                        <div class="font-medium text-gray-900 dark:text-white">$5.75</div>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium text-gray-900 dark:text-white">Oct 27, 2023</div>
+                                        <div class="text-gray-500 dark:text-gray-400 text-sm">Friday</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium text-gray-900 dark:text-white">Uber</div>
+                                        <div class="text-gray-500 dark:text-gray-400 text-sm">Transportation</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">
+                                            <span class="material-icons-round text-xs">directions_car</span>
+                                            Transport
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-icons-round text-gray-400 text-sm">payments</span>
+                                            <span class="text-gray-700 dark:text-gray-300">Gpay</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-right">
+                                        <div class="font-medium text-gray-900 dark:text-white">$22.10</div>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium text-gray-900 dark:text-white">Oct 26, 2023</div>
+                                        <div class="text-gray-500 dark:text-gray-400 text-sm">Thursday</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium text-gray-900 dark:text-white">Netflix</div>
+                                        <div class="text-gray-500 dark:text-gray-400 text-sm">Subscription</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300">
+                                            <span class="material-icons-round text-xs">receipt</span>
+                                            Bills
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-icons-round text-gray-400 text-sm">credit_card</span>
+                                            <span class="text-gray-700 dark:text-gray-300">Card</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-right">
+                                        <div class="font-medium text-gray-900 dark:text-white">$15.49</div>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium text-gray-900 dark:text-white">Oct 25, 2023</div>
+                                        <div class="text-gray-500 dark:text-gray-400 text-sm">Wednesday</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium text-gray-900 dark:text-white">Whole Foods</div>
+                                        <div class="text-gray-500 dark:text-gray-400 text-sm">Grocery Store</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                                            <span class="material-icons-round text-xs">shopping_cart</span>
+                                            Groceries
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-icons-round text-gray-400 text-sm">credit_card</span>
+                                            <span class="text-gray-700 dark:text-gray-300">Card</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-right">
+                                        <div class="font-medium text-gray-900 dark:text-white">$78.32</div>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium text-gray-900 dark:text-white">Oct 24, 2023</div>
+                                        <div class="text-gray-500 dark:text-gray-400 text-sm">Tuesday</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium text-gray-900 dark:text-white">Amazon</div>
+                                        <div class="text-gray-500 dark:text-gray-400 text-sm">Online Shopping</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
+                                            <span class="material-icons-round text-xs">shopping_bag</span>
+                                            Shopping
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-icons-round text-gray-400 text-sm">payments</span>
+                                            <span class="text-gray-700 dark:text-gray-300">Gpay</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-right">
+                                        <div class="font-medium text-gray-900 dark:text-white">$49.99</div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-            
-            <!-- Analytics Page -->
-            <div id="analyticsPage" class="page-content hidden">
-                <div class="chart-container">
-                    <h3 class="chart-title">Spending Trend</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="lineChart"></canvas>
-                    </div>
-                </div>
-                
-                <div class="chart-container">
-                    <h3 class="chart-title">Spending by Category</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="pieChart"></canvas>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Budget Page -->
-            <div id="budgetPage" class="page-content hidden">
-                <div class="form-card">
-                    <h3 class="card-title mb-6">Budget Management</h3>
                     
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="budgetInput">Monthly Budget</label>
-                            <input type="number" id="budgetInput" class="form-control" placeholder="Enter budget amount">
-                            <p class="text-sm text-muted mt-2">Set a monthly budget for your expenses</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Current Status</label>
-                            <div class="mt-2">
-                                <p class="text-lg font-semibold" id="budgetDisplay">No budget set</p>
-                                <div class="progress-bar mt-2">
-                                    <div id="budgetProgressBar" class="progress-fill budget-progress" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" id="resetBudgetBtn">
-                            <span class="material-symbols-outlined">delete</span>
-                            Reset Budget
-                        </button>
-                        <button type="button" class="btn btn-primary" id="saveBudgetBtn">
-                            <span class="material-symbols-outlined">save</span>
-                            Save Budget
+                    <div class="mt-6 text-center">
+                        <button class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2 mx-auto">
+                            <span>View All Transactions</span>
+                            <span class="material-icons-round text-sm">arrow_forward</span>
                         </button>
                     </div>
                 </div>
-                
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Budget Alerts</h3>
-                        <span class="material-symbols-outlined" style="color: var(--warning)">notifications</span>
-                    </div>
-                    <div id="budgetAlerts">
-                        <!-- Alerts will appear here -->
-                        <p class="text-muted">No budget alerts yet.</p>
-                    </div>
-                </div>
+            </div>
+        </section>
+
+        <!-- Loading State Example -->
+        <div id="loadingState" class="hidden fixed inset-0 bg-white dark:bg-gray-900 z-50 flex items-center justify-center">
+            <div class="text-center">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+                <p class="mt-4 text-gray-600 dark:text-gray-400">Loading analytics...</p>
             </div>
         </div>
-    </div>
-    
-    <!-- Footer -->
-    <footer class="app-footer">
-        <div class="footer-content">
-            <div class="footer-links">
-                <a href="terms-conditions.html">Terms & Conditions</a>
-                <a href="privacy-policy.html">Privacy Policy</a>
-                <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank">Contact</a>
-                <a href="#" id="aboutLinkFooter">About</a>
-            </div>
-            
-            <p class="copyright">
-                &copy; 2025 E-TRAX. All rights reserved. | 
-                Email: <a href="mailto:alphaprime.co.in@gmail.com">alphaprime.co.in@gmail.com</a>
-            </p>
-            <p class="copyright">
-                Developed by <strong>ALPHA DEVELOPERS</strong>
-            </p>
-        </div>
-    </footer>
-</div>
+    </main>
 
-<!-- ================= MODALS ================= -->
-<!-- About Modal -->
-<div id="aboutModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 class="modal-title">About E-TRAX</h3>
-            <button class="close-modal" id="closeAbout">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <p><strong>E-TRAX</strong> helps you track your daily expenses and manage your budget efficiently.</p>
-            <h4>Features:</h4>
-            <ul>
-                <li>Track expenses with name, amount, date, and category</li>
-                <li>Set and monitor monthly budgets</li>
-                <li>View spending analytics with charts</li>
-                <li>Complete edit history tracking</li>
-                <li>Secure Google authentication</li>
-                <li>Dark/Light theme support</li>
-            </ul>
-        </div>
-    </div>
-</div>
+    <script>
+        // DOM Elements
+        const themeToggle = document.getElementById('themeToggle');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const loadingState = document.getElementById('loadingState');
 
-<!-- History Modal -->
-<div id="historyModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 class="modal-title">Edit History</h3>
-            <button class="close-modal" id="closeHistory">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div id="historyContent">
-                <p>Loading history...</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Message Box -->
-<div id="msgBox" class="message-box hidden"></div>
-
-<!-- ================= JAVASCRIPT ================= -->
-<script>
-// BASE URL
-const BASE_URL = window.location.hostname.includes("localhost")
-    ? "http://localhost:3000"
-    : "https://sandy-backend2-0.onrender.com";
-
-// App State
-let auth = null;
-let currentUserUid = null;
-let currentUserName = null;
-let currentUserEmail = null;
-let currentBudgetAmount = 0;
-
-// Chart Instances
-let lineChartInstance = null;
-let pieChartInstance = null;
-
-// Theme Management
-const themes = ['dark', 'light'];
-let currentThemeIndex = 0;
-
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    currentThemeIndex = themes.indexOf(savedTheme);
-    applyTheme(savedTheme);
-}
-
-function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-    
-    // Update theme button icon
-    const themeIcon = document.querySelector('#themeToggle .material-symbols-outlined');
-    if (theme === 'light') {
-        themeIcon.textContent = 'light_mode';
-    } else {
-        themeIcon.textContent = 'dark_mode';
-    }
-}
-
-function cycleTheme() {
-    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-    applyTheme(themes[currentThemeIndex]);
-}
-
-// Initialize Firebase
-async function initializeFirebase() {
-    try { 
-        const response = await fetch(`${BASE_URL}/firebase-config`);
-        const firebaseConfig = await response.json();
-        
-        if (!firebaseConfig.apiKey) {
-            throw new Error('Firebase config not available');
-        }
-        
-        firebase.initializeApp(firebaseConfig);
-        auth = firebase.auth();
-        console.log('Firebase initialized');
-        
-        setupAuthListener();
-        
-    } catch (error) {
-        console.error('Failed to initialize Firebase:', error);
-        showMessage('❌ Failed to initialize app. Please refresh.', 5000, 'error');
-    }
-}
-
-// Auth State Listener
-function setupAuthListener() {
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            currentUserUid = user.uid;
-            currentUserName = user.displayName || "User";
-            currentUserEmail = user.email || "user@example.com";
-            
-            // Update UI
-            document.getElementById('loginView').style.display = 'none';
-            document.getElementById('appView').classList.add('active');
-            
-            // Update user info
-            document.getElementById('userName').textContent = currentUserName;
-            document.getElementById('userEmail').textContent = currentUserEmail;
-            
-            // Set avatar initials
-            const avatar = document.getElementById('userAvatar');
-            avatar.textContent = currentUserName.charAt(0).toUpperCase();
-            
-            // Load data
-            loadData();
-            fetchBudget();
-            
-            showMessage(`✅ Welcome back, ${currentUserName}!`, 2000, 'success');
-            
-        } else {
-            currentUserUid = null;
-            currentUserName = null;
-            currentUserEmail = null;
-            
-            document.getElementById('loginView').style.display = 'flex';
-            document.getElementById('appView').classList.remove('active');
-            
-            clearBudgetUI();
-        }
-    });
-}
-
-// Message Function
-function showMessage(msg, duration = 3000, type = 'info') {
-    const msgBox = document.getElementById('msgBox');
-    msgBox.textContent = msg;
-    msgBox.className = `message-box message-${type}`;
-    msgBox.style.display = 'block';
-    
-    setTimeout(() => {
-        msgBox.style.display = 'none';
-    }, duration);
-}
-
-// Login Button
-document.getElementById('googleLoginBtn').addEventListener('click', async () => {
-    if (!auth) {
-        showMessage("Please wait...", 2000, 'warning');
-        return;
-    }
-    
-    const provider = new firebase.auth.GoogleAuthProvider();
-    try {
-        const result = await auth.signInWithPopup(provider);
-        showMessage("✅ Login successful!", 2000, 'success');
-    } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Login failed", 2000, 'error'); 
-    }
-});
-
-// Logout Button
-document.getElementById('googleLogoutBtn').addEventListener('click', async () => {
-    if (!auth) return;
-    
-    try {
-        await auth.signOut();
-        showMessage("✅ Logged out successfully", 2000, 'success');
-    } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Logout failed", 2000, 'error'); 
-    }
-});
-
-// Theme Toggle
-document.getElementById('themeToggle').addEventListener('click', cycleTheme);
-
-// Navigation
-document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        // Remove active class from all nav items
-        document.querySelectorAll('.nav-item').forEach(nav => {
-            nav.classList.remove('active');
-        });
-        
-        // Add active class to clicked item
-        this.classList.add('active');
-        
-        // Get page to show
-        const page = this.getAttribute('data-page');
-        
-        // Hide all pages
-        document.querySelectorAll('.page-content').forEach(page => {
-            page.classList.add('hidden');
-            page.classList.remove('active');
-        });
-        
-        // Show selected page
-        const targetPage = document.getElementById(`${page}Page`);
-        if (targetPage) {
-            targetPage.classList.remove('hidden');
-            targetPage.classList.add('active');
-            
-            // Update page title
-            const pageTitle = document.querySelector('.page-title h1');
-            pageTitle.textContent = this.querySelector('span:last-child').textContent;
-            
-            // Load specific data if needed
-            if (page === 'analytics') {
-                setTimeout(() => {
-                    renderCharts(window.expensesData || []);
-                }, 100);
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeToggle.querySelector('span').textContent = 'light_mode';
+            } else {
+                document.body.classList.remove('dark-mode');
+                themeToggle.querySelector('span').textContent = 'dark_mode';
             }
         }
-    });
-});
 
-// Expense Form
-const expenseForm = document.getElementById('expenseForm');
-const editId = document.getElementById('editId');
-
-expenseForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    
-    if (!currentUserUid) {
-        showMessage("Please login first", 2000, 'warning');
-        return;
-    }
-    
-    const data = {
-        uid: currentUserUid,
-        name: document.getElementById('name').value.trim(),
-        amount: document.getElementById('amount').value.trim(),
-        type: document.getElementById('type').value,
-        description: document.getElementById('description').value.trim(),
-        date: document.getElementById('date').value
-    };
-    
-    // Validate
-    if (!data.name || !data.amount || !data.type || !data.description || !data.date) {
-        showMessage("Please fill all fields", 2000, 'warning');
-        return;
-    }
-    
-    try {
-        const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
-        const method = editId.value ? "PUT" : "POST";
-        
-        // Add editor name when updating
-        if (editId.value) {
-            data.editorName = currentUserName;
-        }
-        
-        const res = await fetch(url, { 
-            method, 
-            headers: { "Content-Type": "application/json" }, 
-            body: JSON.stringify(data) 
-        });
-        
-        const result = await res.json();
-        showMessage(result.message || "✅ Expense saved successfully!", 2000, 'success');
-        
-        // Reset form
-        editId.value = "";
-        expenseForm.reset();
-        document.getElementById('date').valueAsDate = new Date();
-        
-        // Reload data
-        await loadData();
-        await fetchBudget();
-        
-    } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Failed to save expense", 2500, 'error');
-    }
-});
-
-// Set default date to today
-document.getElementById('date').valueAsDate = new Date();
-
-// Load Data
-async function loadData() {
-    if (!currentUserUid) return;
-    
-    try {
-        const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
-        if (!res.ok) throw new Error("Failed to fetch expenses");
-        
-        const users = await res.json();
-        window.expensesData = users; // Store for charts
-        
-        if (!Array.isArray(users) || users.length === 0) {
-            document.getElementById('expensesTable').innerHTML = `
-                <tr>
-                    <td colspan="6" class="text-center py-8 text-muted">
-                        No expenses yet. Add your first expense!
-                    </td>
-                </tr>
-            `;
-            
-            updateDashboardStats([], 0);
-            renderCharts([]);
-            return;
-        }
-        
-        // Render table
-        renderExpenseTable(users);
-        
-        // Update dashboard stats
-        updateDashboardStats(users);
-        
-        // Render charts
-        renderCharts(users);
-        
-    } catch(err) { 
-        console.error(err); 
-        document.getElementById('expensesTable').innerHTML = `
-            <tr>
-                <td colspan="6" class="text-center py-8 text-danger">
-                    ❌ Failed to load expenses. Please try again.
-                </td>
-            </tr>
-        `;
-    }
-}
-
-// Render Expense Table
-function renderExpenseTable(expenses) {
-    const tbody = document.getElementById('expensesTable');
-    let html = '';
-    
-    let totalAmount = 0;
-    
-    expenses.forEach((expense, index) => {
-        totalAmount += parseFloat(expense.amount) || 0;
-        
-        html += `
-            <tr>
-                <td class="font-medium">${expense.name}</td>
-                <td>$${parseFloat(expense.amount).toFixed(2)}</td>
-                <td><span class="category-badge">${expense.type}</span></td>
-                <td>${expense.description}</td>
-                <td>${expense.date}</td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editExpense('${expense._id}')" title="Edit">
-                            <span class="material-symbols-outlined">edit</span>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteExpense('${expense._id}', '${expense.name}')" title="Delete">
-                            <span class="material-symbols-outlined">delete</span>
-                        </button>
-                        <button class="action-btn" onclick="viewHistory('${expense._id}')" title="History">
-                            <span class="material-symbols-outlined">history</span>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `;
-    });
-    
-    tbody.innerHTML = html;
-}
-
-// Update Dashboard Stats
-function updateDashboardStats(expenses = []) {
-    const totalExpenses = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
-    const expenseCount = expenses.length;
-    
-    // Calculate monthly expenses (this month)
-    const currentMonth = new Date().getMonth();
-    const currentYear = new Date().getFullYear();
-    const monthlyExpenses = expenses
-        .filter(exp => {
-            const expDate = new Date(exp.date);
-            return expDate.getMonth() === currentMonth && expDate.getFullYear() === currentYear;
-        })
-        .reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
-    
-    // Find top category
-    const categories = {};
-    expenses.forEach(exp => {
-        const type = exp.type || 'Other';
-        categories[type] = (categories[type] || 0) + parseFloat(exp.amount || 0);
-    });
-    
-    let topCategory = '-';
-    let categoryAmount = 0;
-    let otherCategories = [];
-    
-    if (Object.keys(categories).length > 0) {
-        const sortedCategories = Object.entries(categories).sort((a, b) => b[1] - a[1]);
-        topCategory = sortedCategories[0][0];
-        categoryAmount = sortedCategories[0][1];
-        otherCategories = sortedCategories.slice(1, 4).map(([cat, amt]) => `${cat}: $${amt.toFixed(2)}`);
-    }
-    
-    // Update DOM
-    document.getElementById('totalExpenses').textContent = `$${totalExpenses.toFixed(2)}`;
-    document.getElementById('expenseCount').textContent = `${expenseCount} expense${expenseCount !== 1 ? 's' : ''}`;
-    document.getElementById('monthlyExpenses').textContent = `$${monthlyExpenses.toFixed(2)}`;
-    document.getElementById('topCategory').textContent = topCategory;
-    document.getElementById('categoryAmount').textContent = `$${categoryAmount.toFixed(2)}`;
-    document.getElementById('otherCategories').textContent = otherCategories.join(', ') || '-';
-    
-    // Update budget display
-    if (currentBudgetAmount > 0) {
-        const remaining = currentBudgetAmount - totalExpenses;
-        const percentage = Math.min((totalExpenses / currentBudgetAmount) * 100, 100);
-        
-        document.getElementById('totalSpent').textContent = `$${totalExpenses.toFixed(2)}`;
-        document.getElementById('remainingBudget').textContent = `$${remaining.toFixed(2)}`;
-        document.getElementById('budgetProgress').style.width = `${percentage}%`;
-        
-        // Update progress bar color
-        const progressBar = document.getElementById('budgetProgress');
-        progressBar.className = 'progress-fill ';
-        if (percentage >= 100) {
-            progressBar.classList.add('danger-progress');
-        } else if (percentage >= 80) {
-            progressBar.classList.add('warning-progress');
-        } else {
-            progressBar.classList.add('budget-progress');
-        }
-    }
-}
-
-// Edit Expense
-window.editExpense = async function(id) {
-    try {
-        const res = await fetch(`${BASE_URL}/user/${id}`);
-        if (!res.ok) throw new Error("Failed to fetch expense");
-        
-        const expense = await res.json();
-        
-        // Fill form
-        document.getElementById('name').value = expense.name;
-        document.getElementById('amount').value = expense.amount;
-        document.getElementById('type').value = expense.type;
-        document.getElementById('description').value = expense.description;
-        document.getElementById('date').value = expense.date;
-        editId.value = id;
-        
-        // Scroll to form
-        document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
-        
-        showMessage("✏️ Edit mode enabled. Make changes and click Confirm.", 3000, 'info');
-        
-    } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Failed to load expense for editing", 2500, 'error');
-    }
-}
-
-// Delete Expense
-window.deleteExpense = async function(id, name) {
-    if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
-    
-    try {
-        const res = await fetch(`${BASE_URL}/delete/${id}`, { method: "DELETE" });
-        const result = await res.json();
-        
-        if (res.ok) {
-            showMessage("✅ Expense deleted successfully", 2000, 'success');
-            await loadData();
-            await fetchBudget();
-        } else {
-            showMessage(result.message || "Delete failed", 2000, 'error');
-        }
-    } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Failed to delete expense", 2000, 'error'); 
-    }
-}
-
-// Budget Functions
-async function fetchBudget() {
-    if (!currentUserUid) return clearBudgetUI();
-    
-    try {
-        const res = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
-        if (!res.ok) return clearBudgetUI();
-        
-        const data = await res.json();
-        if (!data || typeof data.amount === "undefined" || data.amount === 0) {
-            currentBudgetAmount = 0;
-            clearBudgetUI();
-            return;
-        }
-        
-        currentBudgetAmount = parseFloat(data.amount) || 0;
-        updateBudgetUI();
-        
-    } catch(err) { 
-        console.error(err); 
-        clearBudgetUI(); 
-    }
-}
-
-function clearBudgetUI() {
-    currentBudgetAmount = 0;
-    
-    document.getElementById('budgetAmount').textContent = '$0';
-    document.getElementById('budgetStatus').textContent = 'No budget set';
-    document.getElementById('totalSpent').textContent = '$0';
-    document.getElementById('remainingBudget').textContent = '$0';
-    document.getElementById('budgetProgress').style.width = '0%';
-    
-    document.getElementById('budgetInput').value = '';
-    document.getElementById('budgetDisplay').textContent = 'No budget set';
-    document.getElementById('budgetProgressBar').style.width = '0%';
-    document.getElementById('budgetAlerts').innerHTML = '<p class="text-muted">No budget alerts yet.</p>';
-}
-
-function updateBudgetUI() {
-    if (currentBudgetAmount <= 0) {
-        clearBudgetUI();
-        return;
-    }
-    
-    // Get total expenses
-    const expenses = window.expensesData || [];
-    const totalSpent = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
-    const remaining = currentBudgetAmount - totalSpent;
-    const percentage = Math.min((totalSpent / currentBudgetAmount) * 100, 100);
-    
-    // Update dashboard card
-    document.getElementById('budgetAmount').textContent = `$${currentBudgetAmount.toFixed(2)}`;
-    document.getElementById('budgetStatus').textContent = `$${remaining.toFixed(2)} remaining`;
-    document.getElementById('totalSpent').textContent = `$${totalSpent.toFixed(2)}`;
-    document.getElementById('remainingBudget').textContent = `$${remaining.toFixed(2)}`;
-    
-    // Update progress bar
-    const progressBar = document.getElementById('budgetProgress');
-    progressBar.style.width = `${percentage}%`;
-    
-    if (percentage >= 100) {
-        progressBar.className = 'progress-fill danger-progress';
-        document.getElementById('budgetStatus').innerHTML = `<span class="text-danger">Budget exceeded by $${Math.abs(remaining).toFixed(2)}</span>`;
-    } else if (percentage >= 80) {
-        progressBar.className = 'progress-fill warning-progress';
-        document.getElementById('budgetStatus').innerHTML = `<span class="text-warning">${Math.round(percentage)}% used</span>`;
-    } else {
-        progressBar.className = 'progress-fill budget-progress';
-    }
-    
-    // Update budget page
-    document.getElementById('budgetInput').value = currentBudgetAmount;
-    document.getElementById('budgetDisplay').textContent = `$${currentBudgetAmount.toFixed(2)}`;
-    document.getElementById('budgetProgressBar').style.width = `${percentage}%`;
-    
-    // Update alerts
-    const alertsDiv = document.getElementById('budgetAlerts');
-    if (percentage >= 100) {
-        alertsDiv.innerHTML = `
-            <div class="p-3 rounded-lg bg-danger/10 border border-danger/20">
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-danger">warning</span>
-                    <p class="text-danger font-semibold">Budget exceeded by $${Math.abs(remaining).toFixed(2)}</p>
-                </div>
-                <p class="text-sm text-danger mt-1">You've spent all your budget for this month.</p>
-            </div>
-        `;
-    } else if (percentage >= 80) {
-        alertsDiv.innerHTML = `
-            <div class="p-3 rounded-lg bg-warning/10 border border-warning/20">
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-warning">warning</span>
-                    <p class="text-warning font-semibold">Budget warning: ${Math.round(percentage)}% used</p>
-                </div>
-                <p class="text-sm text-warning mt-1">You have $${remaining.toFixed(2)} remaining this month.</p>
-            </div>
-        `;
-    } else {
-        alertsDiv.innerHTML = `
-            <div class="p-3 rounded-lg bg-success/10 border border-success/20">
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-success">check_circle</span>
-                    <p class="text-success font-semibold">On track: ${Math.round(percentage)}% of budget used</p>
-                </div>
-                <p class="text-sm text-success mt-1">You have $${remaining.toFixed(2)} remaining this month.</p>
-            </div>
-        `;
-    }
-}
-
-// Save Budget
-document.getElementById('saveBudgetBtn').addEventListener('click', async () => {
-    const amount = parseFloat(document.getElementById('budgetInput').value);
-    
-    if (!amount || amount <= 0) {
-        showMessage("Enter a valid budget amount", 2000, 'warning');
-        return;
-    }
-    
-    if (!currentUserUid) return;
-    
-    try {
-        const res = await fetch(`${BASE_URL}/setBudget`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ uid: currentUserUid, amount })
-        });
-        
-        const data = await res.json();
-        if (res.ok) {
-            currentBudgetAmount = amount;
-            updateBudgetUI();
-            showMessage("✅ Budget saved successfully", 2000, 'success');
-        } else {
-            showMessage(data.message || "Failed to save budget", 2000, 'error');
-        }
-    } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Failed to save budget", 2000, 'error'); 
-    }
-});
-
-// Reset Budget
-document.getElementById('resetBudgetBtn').addEventListener('click', async () => {
-    if (!currentUserUid) return;
-    
-    if (!confirm("Reset/delete your budget?")) return;
-    
-    try {
-        const res = await fetch(`${BASE_URL}/setBudget`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ uid: currentUserUid, amount: 0, reset: true })
-        });
-        
-        const data = await res.json();
-        if (res.ok) {
-            clearBudgetUI();
-            showMessage("✅ Budget reset successfully", 2000, 'success');
-        } else {
-            showMessage(data.message || "Reset failed", 2000, 'error');
-        }
-    } catch(err) { 
-        console.error(err); 
-        showMessage("❌ Reset failed", 2000, 'error'); 
-    }
-});
-
-// Charts
-function renderCharts(expenses) {
-    if (!expenses || expenses.length === 0) {
-        // Clear charts if no data
-        if (lineChartInstance) lineChartInstance.destroy();
-        if (pieChartInstance) pieChartInstance.destroy();
-        return;
-    }
-    
-    // Prepare data for line chart (daily expenses)
-    const dailyData = {};
-    expenses.forEach(exp => {
-        const date = exp.date;
-        dailyData[date] = (dailyData[date] || 0) + parseFloat(exp.amount || 0);
-    });
-    
-    const dates = Object.keys(dailyData).sort();
-    const amounts = dates.map(date => dailyData[date]);
-    
-    // Prepare data for pie chart (by type)
-    const typeData = {};
-    expenses.forEach(exp => {
-        const type = exp.type || 'Other';
-        typeData[type] = (typeData[type] || 0) + parseFloat(exp.amount || 0);
-    });
-    
-    const types = Object.keys(typeData);
-    const typeAmounts = types.map(type => typeData[type]);
-    
-    // Colors for pie chart
-    const colors = ['#2C097F', '#607AFB', '#00bcd4', '#10b981', '#f59e0b', '#ef4444'];
-    
-    // Line Chart
-    const lineCtx = document.getElementById('lineChart').getContext('2d');
-    if (lineChartInstance) lineChartInstance.destroy();
-    
-    lineChartInstance = new Chart(lineCtx, {
-        type: 'line',
-        data: {
-            labels: dates,
-            datasets: [{
-                label: 'Daily Expenses',
-                data: amounts,
-                borderColor: 'var(--primary)',
-                backgroundColor: 'rgba(44, 9, 127, 0.1)',
-                fill: true,
-                tension: 0.3,
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    labels: { color: 'var(--text)' }
-                }
-            },
-            scales: {
-                x: {
-                    ticks: { color: 'var(--text-muted)' },
-                    grid: { color: 'var(--border)' }
-                },
-                y: {
-                    ticks: { color: 'var(--text-muted)' },
-                    grid: { color: 'var(--border)' },
-                    beginAtZero: true
-                }
+        function toggleTheme() {
+            if (document.body.classList.contains('dark-mode')) {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+                themeToggle.querySelector('span').textContent = 'dark_mode';
+            } else {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+                themeToggle.querySelector('span').textContent = 'light_mode';
             }
         }
-    });
-    
-    // Pie Chart
-    const pieCtx = document.getElementById('pieChart').getContext('2d');
-    if (pieChartInstance) pieChartInstance.destroy();
-    
-    pieChartInstance = new Chart(pieCtx, {
-        type: 'pie',
-        data: {
-            labels: types,
-            datasets: [{
-                data: typeAmounts,
-                backgroundColor: colors,
-                borderColor: 'var(--card-bg)',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        color: 'var(--text)',
-                        padding: 15
-                    }
+
+        // Mobile Menu
+        function toggleMenu() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        function closeMenu() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+
+        // Event Listeners
+        themeToggle.addEventListener('click', toggleTheme);
+        menuToggle.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', closeMenu);
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 768 && 
+                !sidebar.contains(e.target) && 
+                !menuToggle.contains(e.target) && 
+                sidebar.classList.contains('open')) {
+                closeMenu();
+            }
+        });
+
+        // Charts
+        let lineChart, pieChart;
+
+        function initializeCharts() {
+            // Line Chart - Spending Over Time
+            const lineCtx = document.getElementById('lineChart').getContext('2d');
+            lineChart = new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [{
+                        label: 'Spending',
+                        data: [450, 600, 850, 550],
+                        borderColor: '#2b8cee',
+                        backgroundColor: 'rgba(43, 140, 238, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
                 },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const label = context.label || '';
-                            const value = context.raw || 0;
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = Math.round((value / total) * 100);
-                            return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
                         }
                     }
                 }
-            }
-        }
-    });
-}
-
-// History Functions
-window.viewHistory = async function(expenseId) {
-    try {
-        const res = await fetch(`${BASE_URL}/user/${expenseId}`);
-        if (!res.ok) throw new Error("Failed to fetch expense");
-        
-        const expense = await res.json();
-        
-        let historyHtml = `
-            <h4 class="mb-4">Edit History for: <strong>${expense.name}</strong></h4>
-            <p><strong>Created:</strong> ${new Date(expense.createdAt).toLocaleString()} by You</p>
-        `;
-        
-        if (expense.editHistory && expense.editHistory.length > 0) {
-            historyHtml += `
-                <div class="mt-4">
-                    <h5 class="mb-3">Edits:</h5>
-                    <div class="space-y-3">
-            `;
-            
-            expense.editHistory.forEach(edit => {
-                const changes = [];
-                if (edit.before.name !== edit.after.name) {
-                    changes.push(`Name: "${edit.before.name}" → "${edit.after.name}"`);
-                }
-                if (edit.before.amount !== edit.after.amount) {
-                    changes.push(`Amount: $${edit.before.amount} → $${edit.after.amount}`);
-                }
-                if (edit.before.type !== edit.after.type) {
-                    changes.push(`Type: ${edit.before.type} → ${edit.after.type}`);
-                }
-                if (edit.before.description !== edit.after.description) {
-                    changes.push(`Description: "${edit.before.description}" → "${edit.after.description}"`);
-                }
-                if (edit.before.date !== edit.after.date) {
-                    changes.push(`Date: ${edit.before.date} → ${edit.after.date}`);
-                }
-                
-                historyHtml += `
-                    <div class="p-3 rounded-lg bg-background border border-border">
-                        <div class="flex justify-between items-center mb-2">
-                            <strong>${edit.editorName}</strong>
-                            <span class="text-sm text-muted">${new Date(edit.date).toLocaleString()}</span>
-                        </div>
-                        <div class="space-y-1">
-                            ${changes.map(change => `<div class="text-sm">• ${change}</div>`).join('')}
-                        </div>
-                    </div>
-                `;
             });
+
+            // Pie Chart - Expense by Category
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            pieChart = new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Food & Dining', 'Transport', 'Bills', 'Other'],
+                    datasets: [{
+                        data: [35, 30, 20, 15],
+                        backgroundColor: [
+                            '#2b8cee', // Blue
+                            '#8b5cf6', // Purple
+                            '#14b8a6', // Teal
+                            '#f59e0b'  // Yellow
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    return `${label}: ${value}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Simulate data loading
+        function simulateDataLoading() {
+            loadingState.classList.remove('hidden');
             
-            historyHtml += `</div></div>`;
-        } else {
-            historyHtml += `<p class="text-muted mt-4">No edit history available for this expense.</p>`;
+            setTimeout(() => {
+                loadingState.classList.add('hidden');
+                initializeCharts();
+                
+                // Add animation classes to cards
+                document.querySelectorAll('.animate-fade-in').forEach((card, index) => {
+                    card.style.animationDelay = `${(index * 0.1) + 0.1}s`;
+                });
+            }, 1500);
         }
-        
-        document.getElementById('historyContent').innerHTML = historyHtml;
-        document.getElementById('historyModal').style.display = 'flex';
-        
-    } catch(err) {
-        console.error(err);
-        document.getElementById('historyContent').innerHTML = "<p class='text-danger'>Failed to load history.</p>";
-    }
-}
 
-// Modal Controls
-document.getElementById('aboutLink').addEventListener('click', e => {
-    e.preventDefault();
-    document.getElementById('aboutModal').style.display = 'flex';
-});
-
-document.getElementById('aboutLinkFooter').addEventListener('click', e => {
-    e.preventDefault();
-    document.getElementById('aboutModal').style.display = 'flex';
-});
-
-document.getElementById('closeAbout').addEventListener('click', () => {
-    document.getElementById('aboutModal').style.display = 'none';
-});
-
-document.getElementById('closeHistory').addEventListener('click', () => {
-    document.getElementById('historyModal').style.display = 'none';
-});
-
-// Close modals when clicking outside
-document.querySelectorAll('.modal-overlay').forEach(modal => {
-    modal.addEventListener('click', e => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-});
-
-// Initialize App
-document.addEventListener('DOMContentLoaded', () => {
-    initTheme();
-    initializeFirebase();
-    
-    // Set default date
-    document.getElementById('date').valueAsDate = new Date();
-    
-    // Check for service worker
-    if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-            navigator.serviceWorker.register("/sw.js")
-                .then(() => console.log("Service Worker registered"))
-                .catch(err => console.error("SW failed", err));
+        // Search functionality
+        const searchInput = document.querySelector('input[placeholder="Search expenses..."]');
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
         });
-    }
-});
 
-// Export for global access
-window.loadData = loadData;
-window.editExpense = editExpense;
-window.deleteExpense = deleteExpense;
-window.viewHistory = viewHistory;
-</script>
+        // Export button functionality
+        document.querySelector('button:contains("Export")').addEventListener('click', function() {
+            alert('Exporting data... This would generate a CSV file in a real application.');
+        });
+
+        // Date filter functionality
+        document.querySelector('select').addEventListener('change', function(e) {
+            alert(`Loading data for: ${e.target.value}`);
+            // In a real app, this would fetch new data from API
+        });
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            simulateDataLoading();
+            
+            // Update date in recent transactions
+            const now = new Date();
+            const dates = document.querySelectorAll('tbody td:first-child .font-medium');
+            dates.forEach((dateEl, index) => {
+                const date = new Date();
+                date.setDate(now.getDate() - index);
+                dateEl.textContent = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                
+                const dayEl = dateEl.nextElementSibling;
+                dayEl.textContent = date.toLocaleDateString('en-US', { weekday: 'long' });
+            });
+        });
+
+        // Responsive adjustments
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                closeMenu();
+            }
+        });
+    </script>
 </body>
 </html>
