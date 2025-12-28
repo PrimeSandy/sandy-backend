@@ -1164,3 +1164,262 @@ footer a:hover {
         font-size: 0.8rem;
     }
 }
+/* ================= BUDGET CARD MOBILE FIX ================= */
+@media (max-width: 768px) {
+    /* Budget card specific fixes */
+    #budgetCard .card-body {
+        padding: 16px 12px;
+    }
+    
+    #budgetCard .d-flex.justify-content-between.align-items-center {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    #budgetCard .d-flex.justify-content-between.align-items-center > div {
+        width: 100%;
+    }
+    
+    #budgetCard .d-flex.justify-content-between.align-items-center > div:last-child {
+        text-align: right;
+    }
+    
+    /* Budget input row - stack vertically */
+    #budgetCard .row.g-2 {
+        flex-direction: column;
+        gap: 12px !important;
+        margin-bottom: 16px !important;
+    }
+    
+    #budgetCard .row.g-2 > [class*="col-"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 0;
+    }
+    
+    /* Budget input field */
+    #budgetInput {
+        width: 100%;
+        font-size: 16px; /* Prevents iOS zoom */
+        padding: 12px 14px;
+        box-sizing: border-box;
+    }
+    
+    /* Save Budget button */
+    #saveBudgetBtn {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+    
+    /* Budget status text */
+    #budgetStatusText {
+        font-size: 0.9rem;
+        text-align: center;
+        padding: 8px 0;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    /* Reset Budget button */
+    #resetBudgetBtn {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        margin-top: 4px;
+    }
+    
+    /* Budget progress bar */
+    #budgetBar {
+        margin-top: 12px;
+        height: 24px;
+        border-radius: 12px;
+    }
+    
+    #budgetProgressBar {
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Budget alerts */
+    #budgetAlerts {
+        margin-top: 12px;
+        font-size: 0.85rem;
+        padding: 10px;
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.05);
+        border-left: 4px solid var(--warning);
+    }
+    
+    /* Make the budget card itself more compact */
+    #budgetCard {
+        margin-bottom: 16px;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    /* Budget card header adjustments */
+    #budgetCard h5 {
+        font-size: 1.1rem;
+        margin-bottom: 4px;
+    }
+    
+    #budgetCard .text-muted {
+        font-size: 0.8rem;
+    }
+}
+
+/* ================= SMALL MOBILE FIXES (max-width: 480px) ================= */
+@media (max-width: 480px) {
+    #budgetCard .card-body {
+        padding: 14px 10px;
+    }
+    
+    #budgetInput {
+        font-size: 15px;
+        padding: 10px 12px;
+    }
+    
+    #saveBudgetBtn {
+        padding: 10px 14px;
+        font-size: 15px;
+    }
+    
+    #budgetStatusText {
+        font-size: 0.85rem;
+    }
+    
+    #budgetBar {
+        height: 22px;
+    }
+    
+    #budgetCard h5 {
+        font-size: 1rem;
+    }
+    
+    #budgetCard .text-muted {
+        font-size: 0.75rem;
+    }
+}
+
+/* ================= EXPENSE FORM MOBILE FIXES ================= */
+@media (max-width: 768px) {
+    /* Expense form container */
+    #expenseFormContainer {
+        margin-bottom: 16px;
+    }
+    
+    /* Card body padding */
+    #expenseFormContainer .card-body {
+        padding: 16px 12px;
+    }
+    
+    /* Form row adjustments */
+    #expenseForm .row.g-3 {
+        margin-left: -6px;
+        margin-right: -6px;
+    }
+    
+    #expenseForm .row.g-3 > [class*="col-"] {
+        padding-left: 6px;
+        padding-right: 6px;
+        margin-bottom: 12px;
+    }
+    
+    /* Form labels */
+    #expenseForm .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+        font-weight: 600;
+    }
+    
+    /* Form inputs */
+    #expenseForm .form-control,
+    #expenseForm .form-select {
+        font-size: 16px;
+        padding: 10px 12px;
+        border-radius: 8px;
+    }
+    
+    /* Form buttons container */
+    #expenseForm .col-12.d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    /* Form buttons */
+    #expenseForm .col-12.d-flex.justify-content-between .btn {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+    
+    /* Clear button */
+    #expenseForm .btn-danger {
+        order: 2;
+        margin-top: 8px;
+    }
+    
+    /* Confirm button */
+    #expenseForm .btn-primary {
+        order: 1;
+    }
+}
+
+/* ================= CONTAINER ADJUSTMENTS ================= */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+    
+    /* Prevent horizontal overflow */
+    body {
+        overflow-x: hidden;
+        width: 100%;
+    }
+    
+    /* Ensure all cards fit within screen */
+    .card {
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+/* ================= PREVENT HORIZONTAL SCROLL ================= */
+@media (max-width: 768px) {
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    
+    /* Force all content to stay within viewport */
+    .row, .col-12, .col-md-6, .col-md-5, .col-md-3, .col-md-4 {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Fix for form elements causing overflow */
+    input, select, textarea, button {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
