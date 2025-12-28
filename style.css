@@ -14,19 +14,7 @@
     --danger: #ef4444;
     --shadow: 0 10px 30px rgba(0,0,0,0.6);
 }
-.budget-mobile-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
 
-@media (min-width: 769px) {
-    .budget-mobile-container {
-        flex-direction: row;
-        align-items: center;
-    }
-}
 [data-theme="light"] {
     --primary: #2563eb;
     --primary-dark: #1d4ed8;
@@ -63,6 +51,7 @@
     box-sizing: border-box;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
+
 /* sandy font changes */
 /* HEADINGS & BRAND */
 h1, h2, h3, h4, h5, h6,
@@ -79,7 +68,6 @@ button,
     font-weight: 500;
 }
 /* sandy font changes */
-
 
 body {
     background-color: var(--background);
@@ -177,7 +165,7 @@ body {
 .google-btn img { width:20px; height:20px; }
 .small-note { color: var(--text-muted); font-size:0.9rem; margin-top:16px; font-weight: 500; }
 
-/* HEADER */
+/* HEADER - DESKTOP VERSION (UNCHANGED) */
 header { 
     display: none;
     background: var(--card-bg);
@@ -296,6 +284,13 @@ header.visible {
 .container {
     padding-top: 20px;
     padding-bottom: 20px;
+}
+
+/* Add padding for fixed header on mobile */
+@media (max-width: 768px) {
+    .container {
+        padding-top: 70px; /* Space for fixed header */
+    }
 }
 
 /* CARDS */
@@ -609,62 +604,6 @@ footer a:hover {
     text-decoration: underline;
 }
 
-/* RESPONSIVE DESIGN */
-@media (max-width: 768px) {
-    .login-card {
-        padding: 30px 20px;
-    }
-    
-    .header-content {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-    }
-    
-    .brand-section {
-        flex-direction: column;
-        gap: 5px;
-    }
-    
-    .header-controls {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .nav-links {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-    
-    .table-responsive {
-        font-size: 0.85rem;
-    }
-    
-    .btn-sm {
-        padding: 5px 10px;
-        font-size: 0.8rem;
-    }
-    
-    .modal-content {
-        padding: 20px;
-        margin: 20px;
-    }
-    
-    .card-body {
-        padding: 15px;
-    }
-}
-
-@media (max-width: 576px) {
-    .header-controls {
-        flex-direction: column;
-    }
-    
-    .theme-toggle span {
-        display: none;
-    }
-}
-
 /* CHART CONTAINERS */
 .chart-container {
     position: relative;
@@ -739,22 +678,6 @@ footer a:hover {
     font-weight: 700;
 }
 
-/* Mobile responsive buttons */
-@media (max-width: 576px) {
-    .btn-sm {
-        padding: 6px 10px;
-        font-size: 0.75rem;
-    }
-    
-    .expense-card .card-body {
-        padding: 15px;
-    }
-    
-    .expense-details {
-        font-size: 0.85rem;
-    }
-}
-
 /* Better table responsiveness */
 .table-responsive {
     border-radius: 12px;
@@ -765,33 +688,6 @@ footer a:hover {
 .btn-group .btn {
     border-radius: 6px;
     margin: 2px;
-}
-
-/* Mobile Table Fix */
-@media (max-width: 768px) {
-    .table-responsive {
-        font-size: 0.8rem;
-    }
-    
-    .btn-sm {
-        padding: 4px 8px;
-        font-size: 0.7rem;
-        margin: 1px;
-    }
-    
-    .table td, .table th {
-        padding: 8px 4px;
-    }
-    
-    /* Force horizontal scroll */
-    .table-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .table {
-        min-width: 600px;
-    }
 }
 
 /* Budget status text */
@@ -814,12 +710,21 @@ footer a:hover {
 
 /* ================= MOBILE RESPONSIVE DESIGN (max-width: 768px) ================= */
 @media (max-width: 768px) {
-    /* ========== HEADER REDESIGN ========== */
+    /* ========== FIXED HEADER - NO OVERLAP ========== */
     header {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px !important;
+        min-height: 60px;
         padding: 8px 12px !important;
-        height: 56px; /* Fixed compact height */
-        display: flex;
+        display: flex !important;
         align-items: center;
+        background: var(--card-bg) !important;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        z-index: 1000;
     }
     
     .header-content {
@@ -828,14 +733,16 @@ footer a:hover {
         justify-content: space-between;
         align-items: center;
         gap: 8px;
+        flex-wrap: nowrap;
     }
     
-    /* Brand section - more compact */
+    /* Brand section - compact */
     .brand-section {
         display: flex;
         align-items: center;
         gap: 8px;
         flex-shrink: 0;
+        max-width: 40%;
     }
     
     .project-name {
@@ -844,26 +751,24 @@ footer a:hover {
         color: var(--primary);
         margin: 0;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     
     .typing {
-        font-size: 0.7rem !important;
-        min-height: 0.9rem;
-        color: var(--secondary);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 120px;
+        display: none !important; /* Hide typing animation on mobile */
     }
     
-    /* Header controls - compact row layout */
+    /* Header controls - proper layout */
     .header-controls {
         display: flex;
         align-items: center;
         gap: 8px;
         margin-left: auto;
+        flex-shrink: 0;
     }
     
+    /* Username display - compact */
     #userNameDisplay {
         font-size: 0.75rem;
         color: var(--text-muted);
@@ -875,13 +780,15 @@ footer a:hover {
         max-width: 100px;
         overflow: hidden;
         text-overflow: ellipsis;
+        display: none; /* Hide on very small screens */
     }
     
     /* Theme toggle - icon only */
     .theme-toggle {
         padding: 6px !important;
-        min-width: 36px;
+        width: 36px;
         height: 36px;
+        min-width: 36px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -910,8 +817,9 @@ footer a:hover {
     
     .nav-links a {
         padding: 6px !important;
-        min-width: 36px;
+        width: 36px;
         height: 36px;
+        min-width: 36px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -919,6 +827,8 @@ footer a:hover {
         font-size: 0; /* Hide text on mobile */
         background: var(--card-bg);
         border: 1px solid var(--border);
+        text-decoration: none;
+        position: static !important; /* Remove any absolute positioning */
     }
     
     .nav-links a i {
@@ -929,8 +839,9 @@ footer a:hover {
     /* Logout button - compact icon button */
     #googleLogoutBtn {
         padding: 6px !important;
-        min-width: 36px;
+        width: 36px;
         height: 36px;
+        min-width: 36px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -938,6 +849,7 @@ footer a:hover {
         border: 1px solid var(--danger) !important;
         background: var(--card-bg);
         font-size: 0; /* Hide text on mobile */
+        position: static !important; /* Remove any absolute positioning */
     }
     
     #googleLogoutBtn i {
@@ -950,28 +862,19 @@ footer a:hover {
         color: white;
     }
     
-    /* ========== MAIN CONTENT ADJUSTMENTS ========== */
+    /* Add main content padding to avoid header overlap */
     .container {
-        padding-top: 12px;
-        padding-bottom: 12px;
+        padding-top: 70px !important; /* Space for fixed header */
+        padding-bottom: 20px;
     }
     
-    /* Login card adjustments */
-    .login-card {
-        padding: 24px 16px;
-        margin: 16px;
+    /* ========== BUDGET CARD MOBILE FIX ========== */
+    #budgetCard {
+        margin-top: 0;
+        position: relative;
+        z-index: 1;
     }
     
-    .login-card h1 {
-        font-size: 1.8rem;
-    }
-    
-    .login-card p {
-        font-size: 0.95rem;
-        margin-bottom: 20px;
-    }
-    
-    /* Budget card adjustments */
     #budgetCard .card-body {
         padding: 16px;
     }
@@ -988,7 +891,18 @@ footer a:hover {
         max-width: 100%;
     }
     
-    /* Expense form adjustments */
+    #budgetInput {
+        width: 100%;
+        font-size: 16px;
+        padding: 10px 12px;
+    }
+    
+    #saveBudgetBtn {
+        width: 100%;
+        padding: 10px 16px;
+    }
+    
+    /* ========== EXPENSE FORM MOBILE FIX ========== */
     #expenseFormContainer .card-body {
         padding: 16px;
     }
@@ -1007,35 +921,13 @@ footer a:hover {
         width: 100%;
     }
     
-    /* Table container adjustments */
+    /* ========== TABLE CONTAINER ========== */
     .table-container {
         padding: 16px;
         margin-top: 16px;
     }
     
-    /* Mobile expense cards enhancement */
-    .expense-card {
-        border-radius: 12px;
-        margin-bottom: 12px;
-        border: 1px solid var(--border);
-    }
-    
-    .expense-card .card-body {
-        padding: 16px;
-    }
-    
-    .expense-card .btn-group {
-        display: flex;
-        gap: 8px;
-    }
-    
-    .expense-card .btn {
-        flex: 1;
-        padding: 8px 12px;
-        font-size: 0.8rem;
-    }
-    
-    /* Analytics section */
+    /* ========== ANALYTICS ========== */
     #analyticsContainer .table-container {
         padding: 16px;
     }
@@ -1045,9 +937,23 @@ footer a:hover {
         margin-bottom: 16px;
     }
     
+    /* ========== LOGIN CARD ========== */
+    .login-card {
+        padding: 24px 16px;
+        margin: 16px;
+    }
+    
+    .login-card h1 {
+        font-size: 1.8rem;
+    }
+    
+    .login-card p {
+        font-size: 0.95rem;
+    }
+    
     /* ========== MODALS ========== */
     .modal-overlay {
-        padding: 20px 12px;
+        padding: 60px 12px 20px; /* Account for fixed header */
     }
     
     .modal-content {
@@ -1062,24 +968,22 @@ footer a:hover {
         font-size: 0.7rem;
     }
     
-    footer > div {
-        gap: 8px;
+    /* ========== TABLE RESPONSIVE FIX ========== */
+    .table-responsive {
+        font-size: 0.8rem;
     }
     
-    /* ========== UTILITY CLASSES ========== */
-    .d-none-mobile {
-        display: none !important;
-    }
-    
-    .d-flex-mobile {
-        display: flex !important;
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+        margin: 1px;
     }
 }
 
-/* ================= SMALL MOBILE ENHANCEMENTS (max-width: 480px) ================= */
+/* ================= VERY SMALL MOBILE (max-width: 480px) ================= */
 @media (max-width: 480px) {
     header {
-        height: 52px;
+        height: 56px !important;
         padding: 6px 10px !important;
     }
     
@@ -1087,22 +991,12 @@ footer a:hover {
         font-size: 1.1rem !important;
     }
     
-    .typing {
-        font-size: 0.65rem !important;
-        max-width: 100px;
-    }
-    
-    #userNameDisplay {
-        font-size: 0.7rem;
-        padding: 3px 6px;
-        max-width: 80px;
-    }
-    
     .theme-toggle,
     .nav-links a,
     #googleLogoutBtn {
-        min-width: 32px;
+        width: 32px;
         height: 32px;
+        min-width: 32px;
     }
     
     .theme-toggle i,
@@ -1111,58 +1005,31 @@ footer a:hover {
         font-size: 0.8rem;
     }
     
-    /* Adjust header spacing for very small screens */
-    .header-content {
-        gap: 4px;
+    .container {
+        padding-top: 66px !important;
     }
     
-    .brand-section {
-        gap: 6px;
-    }
-    
-    .header-controls {
-        gap: 4px;
-    }
-    
-    .nav-links {
-        gap: 4px;
-    }
-    
-    /* Improve touch targets */
-    button,
-    .btn,
-    .nav-links a,
-    #googleLogoutBtn {
-        min-height: 44px; /* Apple HIG recommendation */
-    }
-    
-    /* Expense form improvements */
-    .form-control,
-    .form-select {
-        padding: 12px 14px;
-        font-size: 16px; /* Prevents iOS zoom on focus */
-    }
-    
-    /* Mobile expense card buttons */
-    .expense-card .btn-group {
-        gap: 6px;
-    }
-    
-    .expense-card .btn {
-        padding: 10px 8px;
-        font-size: 0.75rem;
+    /* Show username on slightly larger phones */
+    @media (min-width: 380px) {
+        #userNameDisplay {
+            display: inline-block;
+        }
     }
 }
 
 /* ================= TABLET OPTIMIZATION (769px - 992px) ================= */
 @media (min-width: 769px) and (max-width: 992px) {
     /* Ensure desktop styles apply correctly on tablets */
-    .header-content {
-        flex-direction: row;
+    header {
+        position: sticky !important; /* Not fixed on tablet */
+    }
+    
+    .container {
+        padding-top: 20px !important; /* Reset for tablet */
     }
     
     .nav-links a span {
-        display: inline; /* Show text on tablets */
+        display: inline;
         font-size: 0.8rem;
     }
     
@@ -1176,244 +1043,12 @@ footer a:hover {
         font-size: 0.8rem;
     }
 }
-/* ================= BUDGET CARD MOBILE FIX ================= */
-@media (max-width: 768px) {
-    /* Budget card specific fixes */
-    #budgetCard .card-body {
-        padding: 16px 12px;
-    }
-    
-    #budgetCard .d-flex.justify-content-between.align-items-center {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    
-    #budgetCard .d-flex.justify-content-between.align-items-center > div {
-        width: 100%;
-    }
-    
-    #budgetCard .d-flex.justify-content-between.align-items-center > div:last-child {
-        text-align: right;
-    }
-    
-    /* Budget input row - stack vertically */
-    #budgetCard .row.g-2 {
-        flex-direction: column;
-        gap: 12px !important;
-        margin-bottom: 16px !important;
-    }
-    
-    #budgetCard .row.g-2 > [class*="col-"] {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin-bottom: 0;
-    }
-    
-    /* Budget input field */
-    #budgetInput {
-        width: 100%;
-        font-size: 16px; /* Prevents iOS zoom */
-        padding: 12px 14px;
-        box-sizing: border-box;
-    }
-    
-    /* Save Budget button */
-    #saveBudgetBtn {
-        width: 100%;
-        padding: 12px 16px;
-        font-size: 16px;
-        font-weight: 600;
-    }
-    
-    /* Budget status text */
-    #budgetStatusText {
-        font-size: 0.9rem;
-        text-align: center;
-        padding: 8px 0;
-        width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    
-    /* Reset Budget button */
-    #resetBudgetBtn {
-        font-size: 0.85rem;
-        padding: 8px 12px;
-        margin-top: 4px;
-    }
-    
-    /* Budget progress bar */
-    #budgetBar {
-        margin-top: 12px;
-        height: 24px;
-        border-radius: 12px;
-    }
-    
-    #budgetProgressBar {
-        font-size: 0.8rem;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    /* Budget alerts */
-    #budgetAlerts {
-        margin-top: 12px;
-        font-size: 0.85rem;
-        padding: 10px;
-        border-radius: 8px;
-        background: rgba(0, 0, 0, 0.05);
-        border-left: 4px solid var(--warning);
-    }
-    
-    /* Make the budget card itself more compact */
-    #budgetCard {
-        margin-bottom: 16px;
-        border-radius: 12px;
-        overflow: hidden;
-    }
-    
-    /* Budget card header adjustments */
-    #budgetCard h5 {
-        font-size: 1.1rem;
-        margin-bottom: 4px;
-    }
-    
-    #budgetCard .text-muted {
-        font-size: 0.8rem;
-    }
-}
 
-/* ================= SMALL MOBILE FIXES (max-width: 480px) ================= */
-@media (max-width: 480px) {
-    #budgetCard .card-body {
-        padding: 14px 10px;
-    }
-    
-    #budgetInput {
-        font-size: 15px;
-        padding: 10px 12px;
-    }
-    
-    #saveBudgetBtn {
-        padding: 10px 14px;
-        font-size: 15px;
-    }
-    
-    #budgetStatusText {
-        font-size: 0.85rem;
-    }
-    
-    #budgetBar {
-        height: 22px;
-    }
-    
-    #budgetCard h5 {
-        font-size: 1rem;
-    }
-    
-    #budgetCard .text-muted {
-        font-size: 0.75rem;
-    }
-}
-
-/* ================= EXPENSE FORM MOBILE FIXES ================= */
-@media (max-width: 768px) {
-    /* Expense form container */
-    #expenseFormContainer {
-        margin-bottom: 16px;
-    }
-    
-    /* Card body padding */
-    #expenseFormContainer .card-body {
-        padding: 16px 12px;
-    }
-    
-    /* Form row adjustments */
-    #expenseForm .row.g-3 {
-        margin-left: -6px;
-        margin-right: -6px;
-    }
-    
-    #expenseForm .row.g-3 > [class*="col-"] {
-        padding-left: 6px;
-        padding-right: 6px;
-        margin-bottom: 12px;
-    }
-    
-    /* Form labels */
-    #expenseForm .form-label {
-        font-size: 0.9rem;
-        margin-bottom: 6px;
-        font-weight: 600;
-    }
-    
-    /* Form inputs */
-    #expenseForm .form-control,
-    #expenseForm .form-select {
-        font-size: 16px;
-        padding: 10px 12px;
-        border-radius: 8px;
-    }
-    
-    /* Form buttons container */
-    #expenseForm .col-12.d-flex.justify-content-between {
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 20px;
-    }
-    
-    /* Form buttons */
-    #expenseForm .col-12.d-flex.justify-content-between .btn {
-        width: 100%;
-        padding: 12px 16px;
-        font-size: 16px;
-        font-weight: 600;
-    }
-    
-    /* Clear button */
-    #expenseForm .btn-danger {
-        order: 2;
-        margin-top: 8px;
-    }
-    
-    /* Confirm button */
-    #expenseForm .btn-primary {
-        order: 1;
-    }
-}
-
-/* ================= CONTAINER ADJUSTMENTS ================= */
-@media (max-width: 768px) {
-    .container {
-        padding-left: 12px;
-        padding-right: 12px;
-        padding-top: 8px;
-        padding-bottom: 8px;
-    }
-    
-    /* Prevent horizontal overflow */
-    body {
-        overflow-x: hidden;
-        width: 100%;
-    }
-    
-    /* Ensure all cards fit within screen */
-    .card {
-        max-width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-    }
-}
-
-/* ================= PREVENT HORIZONTAL SCROLL ================= */
+/* ================= PREVENT HORIZONTAL OVERFLOW ================= */
 @media (max-width: 768px) {
     html, body {
-        max-width: 100%;
         overflow-x: hidden;
+        width: 100%;
     }
     
     .container {
@@ -1423,15 +1058,9 @@ footer a:hover {
         padding-right: 12px;
     }
     
-    /* Force all content to stay within viewport */
-    .row, .col-12, .col-md-6, .col-md-5, .col-md-3, .col-md-4 {
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-    
-    /* Fix for form elements causing overflow */
-    input, select, textarea, button {
-        max-width: 100%;
-        box-sizing: border-box;
+    /* Ensure no content overlaps */
+    .card, .table-container, #budgetCard, #expenseFormContainer {
+        position: relative;
+        z-index: 1;
     }
 }
