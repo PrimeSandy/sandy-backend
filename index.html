@@ -1,1885 +1,2241 @@
-
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html lang="en" data-theme="dark">
+<head>
     <!-- ================= BASIC SEO ================= -->
-  <title>E-TRAX | Smart Expense Tracker for Daily Budget Management</title>
-
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <meta name="description" content="E-TRAX is a smart expense tracker to manage daily income and expenses with analytics, Firebase login, secure cloud storage, and budget tracking." />
-<meta name="keywords" content="expense tracker, expense tracker app, expense tracker web app, daily expense tracker, budget tracker, budget management app, money manager, personal finance tracker, finance management app, income and expense tracker, expense tracker for students, expense tracker for professionals, smart expense tracker, E-TRAX expense tracker, AlphaPrime expense tracker, alphaprime.co.in">
-
-
-  <meta name="author" content="AlphaPrime" />
-  <meta name="robots" content="index, follow" />
-
-  <!-- ================= CANONICAL ================= -->
-  <link rel="canonical" href="https://www.alphaprime.co.in/" />
-
-  <!-- ================= OPEN GRAPH ================= -->
-  <meta property="og:title" content="E-TRAX | Smart Expense Tracker" />
-  <meta property="og:description" content="Track your daily expenses, set budgets, and analyze spending with E-TRAX – a secure smart expense tracker." />
-  <meta property="og:url" content="https://www.alphaprime.co.in/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://www.alphaprime.co.in/e.png" />
-
-  <!-- ================= TWITTER CARD ================= -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="E-TRAX | Smart Expense Tracker" />
-  <meta name="twitter:description" content="Manage daily expenses and budgets easily with E-TRAX." />
-  <meta name="twitter:image" content="https://www.alphaprime.co.in/e.png" />
-
-  <!-- ================= FAVICONS ================= ------------------------------------------------------------------------------>
-  <link rel="icon" href="EtraxPub.jpg" type="image/png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-<!-- /public/favicon.png          (512x512)
-/public/apple-touch-icon.png (180x180) -->
-
-  <!-- ================= PWA ================= -->
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#00bcd4" />
-
-  <!-- ================= FONTS & CSS ================= -->
-  <!-- <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"> -->
-   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <!-- ================= JS LIBS ================= -->
-   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- ================= STRUCTURED DATA ================= -->
- <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "E-TRAX",
-  "url": "https://www.alphaprime.co.in/",
-  "logo": "https://www.alphaprime.co.in/logo.png"
-}
-</script>
-
-  
-<style>
-:root {
-  /* Dark Theme (Default) - HIGH CONTRAST */
-  --primary: #00bcd4;
-  --primary-dark: #0097a7;
-  --secondary: #ffcc00;
-  --background: #0b0b0b;
-  --card-bg: #1a1a1a;
-  --text: #ffffff;
-  --text-light: #f1f5f9;
-  --text-muted: #cbd5e1;
-  --border: rgba(255,255,255,0.2);
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --shadow: 0 10px 30px rgba(0,0,0,0.6);
-}
-
-[data-theme="light"] {
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --secondary: #dc2626;
-  --background: #ffffff;
-  --card-bg: #f8fafc;
-  --text: #000000;
-  --text-light: #1e293b;
-  --text-muted: #475569;
-  --border: rgba(0,0,0,0.15);
-  --success: #059669;
-  --warning: #d97706;
-  --danger: #dc2626;
-  --shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-[data-theme="professional"] {
-  --primary: #3b82f6;
-  --primary-dark: #2563eb;
-  --secondary: #f59e0b;
-  --background: #0f172a;
-  --card-bg: #1e293b;
-  --text: #ffffff;
-  --text-light: #e2e8f0;
-  --text-muted: #94a3b8;
-  --border: rgba(255,255,255,0.2);
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
-* {
-  box-sizing: border-box;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-}
-/* sandy font changes */
-/* HEADINGS & BRAND */
-h1, h2, h3, h4, h5, h6,
-.project-name,
-.login-card h1 {
-  font-family: "Space Grotesk", sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-}
-button,
-.btn,
-.nav-links a {
-  font-family: "Inter", sans-serif;
-  font-weight: 500;
-}
-/* sandy font changes */
-
-
-body {
-  background-color: var(--background);
-  color: var(--text);
-  min-height: 100vh;
-  margin: 0;
- font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  line-height: 1.6;
-  font-weight: 500;
-}
-
-/* ---------- LOGIN CARD ---------- */
-.login-wrapper {
-  display: flex;
-  align-items: center; 
-  justify-content: center;
-  min-height: 100vh;
-  padding: 24px;
-  background: linear-gradient(135deg, var(--background) 0%, var(--card-bg) 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.login-wrapper::before {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(0,188,212,0.1) 0%, transparent 70%);
-  animation: pulse 15s infinite linear;
-}
-
-@keyframes pulse {
-  0% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.1); }
-  100% { transform: translate(-50%, -50%) scale(1); }
-}
-
-.login-card {
-  width: 100%;
-  max-width: 460px;
-  background: var(--card-bg);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  padding: 40px 32px;
-  text-align: center;
-  border: 1px solid var(--border);
-  position: relative;
-  z-index: 1;
-  transition: transform 0.3s ease;
-}
-
-.login-card:hover {
-  transform: translateY(-5px);
-}
-
-.login-card h1 { 
-  color: var(--primary); 
-  margin-bottom: 8px; 
-  font-size: 2.2rem; 
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.login-card p { 
-  color: var(--text); 
-  margin-bottom: 28px; 
-  font-size: 1.05rem;
-  font-weight: 500;
-}
-
-.google-btn {
-  display:flex; 
-  align-items:center; 
-  gap:12px; 
-  justify-content:center;
-  width:100%; 
-  background: var(--text);
-  color: var(--background);
-  border-radius:10px; 
-  padding:14px 16px;
-  font-weight:600; 
-  cursor:pointer; 
-  border:none;
-  box-shadow: 0 4px 12px rgba(2,6,23,0.4);
-  transition: all 0.3s ease;
-  font-size: 1rem;
-}
-
-.google-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(2,6,23,0.5);
-}
-
-.google-btn img { width:20px; height:20px; }
-.small-note { color: var(--text-muted); font-size:0.9rem; margin-top:16px; font-weight: 500; }
-
-/* HEADER */
-header { 
-  display: none;
-  background: var(--card-bg);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
-  padding: 12px 20px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-}
-
-header.visible {
-  display: block;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-.brand-section {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.brand-section h1 {
-  font-size: 1.5rem; 
-  color: var(--primary); 
-  font-weight: 700; 
-  margin: 0;
-}
-
-.typing { 
-  font-size: 0.9rem; 
-  color: var(--secondary); 
-  font-weight: 600;
-  min-height: 1.2rem;
-}
-
-.header-controls {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-#userNameDisplay {
-  color: var(--secondary);
-  font-weight: 700;
-  font-size: 1rem;
-}
-
-.theme-toggle {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 12px;
-  color: var(--text);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-}
-
-.theme-toggle:hover {
-  background: var(--primary);
-  color: white;
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.nav-links a { 
-  color: var(--text); 
-  text-decoration:none; 
-  font-weight:600; 
-  transition:all 0.3s ease; 
-  position: relative;
-  padding: 8px 12px;
-  border-radius: 6px;
-}
-
-.nav-links a:hover { 
-  color: var(--primary);
-  background: rgba(0,188,212,0.1);
-}
-
-#googleLogoutBtn {
-  background: transparent; 
-  border: 2px solid var(--danger); 
-  color: var(--danger);
-  font-weight:600; 
-  border-radius:8px; 
-  padding:8px 16px; 
-  transition:all 0.3s ease;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-#googleLogoutBtn:hover { 
-  background:var(--danger); 
-  color:white; 
-  transform: translateY(-2px);
-}
-
-/* MAIN CONTENT */
-.container {
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-
-/* CARDS */
-.card {
-  background: var(--card-bg);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-  transition: all 0.3s ease;
-  margin-bottom: 20px;
-  color: var(--text);
-}
-
-.card:hover {
-  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
-  transform: translateY(-2px);
-}
-
-.card-header {
-  background: rgba(0,0,0,0.1);
-  border-bottom: 1px solid var(--border);
-  padding: 15px 20px;
-  border-radius: 12px 12px 0 0 !important;
-  color: var(--primary);
-  font-weight: 700;
-}
-
-.card-body {
-  padding: 20px;
-  color: var(--text);
-}
-
-.card h5, .card h6 {
-  color: var(--text);
-  font-weight: 600;
-}
-
-/* TABLE */
-.table-container { 
-  margin-top: 20px; 
-  padding: 20px; 
-  background: var(--card-bg); 
-  border-radius: 12px; 
-  box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
-  overflow: hidden;
-  color: var(--text);
-}
-
-table { 
-  color: var(--text) !important; 
-  font-size:0.95rem; 
-  margin-bottom: 0;
-}
-
-table thead { 
-  background: var(--primary); 
-  color: white; 
-  font-weight:600; 
-}
-
-table tbody tr { 
-  transition: all 0.3s ease;
-  color: var(--text) !important;
-}
-
-table tbody tr:hover { 
-  background-color: rgba(0,188,212,0.1); 
-}
-
-/* BUDGET */
-#budgetCard { 
-  display:none; 
-}
-
-#budgetBar { 
-  height: 22px; 
-  border-radius:8px; 
-  overflow:hidden; 
-  background: var(--border);
-  margin-top: 10px;
-}
-
-#budgetBar .progress { 
-  height:22px; 
-  line-height:22px; 
-  font-weight:600; 
-  transition: width 0.5s ease;
-}
-
-/* BUTTONS */
-.btn {
-  border-radius: 8px;
-  font-weight: 600;
-  padding: 10px 20px;
-  transition: all 0.3s ease;
-  border: none;
-  cursor: pointer;
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--primary-dark);
-  color: white;
-}
-
-.btn-danger {
-  background: var(--danger);
-  color: white;
-}
-
-.btn-warning {
-  background: var(--warning);
-  color: black;
-  font-weight: 600;
-}
-
-.btn-outline-danger {
-  border-color: var(--danger);
-  color: var(--danger);
-  background: transparent;
-}
-
-.btn-outline-danger:hover {
-  background: var(--danger);
-  color: white;
-}
-
-.btn-info {
-  background: var(--primary);
-  color: white;
-}
-
-/* FORM CONTROLS */
-.form-control, .form-select {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  color: var(--text);
-  border-radius: 8px;
-  padding: 10px 15px;
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-
-.form-control:focus, .form-select:focus {
-  background: var(--card-bg);
-  border-color: var(--primary);
-  color: var(--text);
-  box-shadow: 0 0 0 0.2rem rgba(0,188,212,0.25);
-}
-
-.form-label {
-  color: var(--text-light);
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-/* MODALS */
-.modal-overlay {
-  display:none; 
-  position:fixed; 
-  top:0; 
-  left:0; 
-  width:100%; 
-  height:100%;
-  background: rgba(0,0,0,0.8); 
-  color: var(--text); 
-  z-index:9999; 
-  overflow:auto;
-  padding:50px 20px; 
-  box-sizing:border-box;
-  backdrop-filter: blur(5px);
-}
-
-.modal-content {
-  max-width:800px; 
-  margin:auto; 
-  background: var(--card-bg); 
-  padding:30px; 
-  border-radius:20px; 
-  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-  animation: modalFadeIn 0.3s ease;
-  border: 1px solid var(--border);
-  color: var(--text);
-}
-
-@keyframes modalFadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.modal-content h2 { 
-  color: var(--warning); 
-  text-align:center; 
-  margin-bottom:20px; 
-  font-weight: 700;
-}
-
-.modal-content h4 { 
-  color: var(--primary); 
-  margin-top: 20px; 
-  font-weight: 600;
-}
-
-.modal-content p, .modal-content li {
-  color: var(--text);
-  font-weight: 500;
-}
-
-/* HISTORY TABLE */
-.history-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-  color: var(--text);
-}
-
-.history-table th,
-.history-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-  color: var(--text);
-  font-weight: 500;
-}
-
-.history-table th {
-  background: var(--primary);
-  color: white;
-  font-weight: 600;
-}
-
-.history-table tr:hover {
-  background: rgba(0,188,212,0.05);
-}
-
-.changes-list {
-  font-size: 0.85rem;
-}
-
-.changes-list div {
-  margin: 2px 0;
-  padding: 2px 5px;
-  border-radius: 3px;
-  background: rgba(0,188,212,0.1);
-  color: var(--text);
-  font-weight: 500;
-}
-
-/* MESSAGE BOX */
-#msgBox {
-  position: fixed; 
-  top: 20px; 
-  right: 20px;
-  background-color: var(--success); 
-  color: white; 
-  padding: 12px 24px;
-  border-radius: 10px; 
-  display: none; 
-  z-index: 9999;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  animation: slideInRight 0.3s ease;
-  font-weight: 600;
-}
-
-@keyframes slideInRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-/* FOOTER */
-footer {
-  background: var(--card-bg);
-  color: var(--text-muted);
-  text-align:center; 
-  padding:20px; 
-  border-top:1px solid var(--border);
-  margin-top:40px; 
-  font-size:0.7rem;
-  font-weight: 500;
-}
-
-.blinking-name { 
-  color: var(--primary); 
-  animation: blink 2s infinite;
-  font-weight: 700;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-footer a {
-  color: var(--primary);
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-weight: 600;
-}
-
-footer a:hover {
-  color: var(--primary-dark);
-  text-decoration: underline;
-}
-
-/* RESPONSIVE DESIGN */
-@media (max-width: 768px) {
-  .login-card {
-    padding: 30px 20px;
-  }
-  
-  .header-content {
-    flex-direction: column;
-    text-align: center;
-    gap: 10px;
-  }
-  
-  .brand-section {
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .header-controls {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .nav-links {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  
-  .table-responsive {
-    font-size: 0.85rem;
-  }
-  
-  .btn-sm {
-    padding: 5px 10px;
-    font-size: 0.8rem;
-  }
-  
-  .modal-content {
-    padding: 20px;
-    margin: 20px;
-  }
-  
-  .card-body {
-    padding: 15px;
-  }
-}
-
-@media (max-width: 576px) {
-  .header-controls {
-    flex-direction: column;
-  }
-  
-  .theme-toggle span {
-    display: none;
-  }
-}
-
-/* CHART CONTAINERS */
-.chart-container {
-  position: relative;
-  height: 300px;
-  margin-bottom: 20px;
-}
-
-/* LOADING */
-.loading {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255,255,255,.3);
-  border-radius: 50%;
-  border-top-color: var(--primary);
-  animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* BADGES */
-.badge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: white;
-}
-
-.badge-success {
-  background: var(--success);
-  color: white;
-}
-
-.badge-warning {
-  background: var(--warning);
-  color: black;
-}
-
-.badge-danger {
-  background: var(--danger);
-  color: white;
-}
-
-.badge-info {
-  background: var(--primary);
-  color: white;
-}
-
-/* Mobile Expense Cards */
-.expense-card {
-  transition: all 0.3s ease;
-  border-radius: 12px;
-  color: var(--text);
-}
-
-.expense-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-}
-
-.expense-details {
-  font-size: 0.9rem;
-  color: var(--text-light);
-  font-weight: 500;
-}
-
-.expense-card .card-title {
-  color: var(--primary) !important;
-  font-weight: 700;
-}
-
-/* Mobile responsive buttons */
-@media (max-width: 576px) {
-  .btn-sm {
-    padding: 6px 10px;
-    font-size: 0.75rem;
-  }
-  
-  .expense-card .card-body {
-    padding: 15px;
-  }
-  
-  .expense-details {
-    font-size: 0.85rem;
-  }
-}
-
-/* Better table responsiveness */
-.table-responsive {
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-/* Action buttons styling */
-.btn-group .btn {
-  border-radius: 6px;
-  margin: 2px;
-}
-
-/* Mobile Table Fix */
-@media (max-width: 768px) {
-  .table-responsive {
-    font-size: 0.8rem;
-  }
-  
-  .btn-sm {
-    padding: 4px 8px;
-    font-size: 0.7rem;
-    margin: 1px;
-  }
-  
-  .table td, .table th {
-    padding: 8px 4px;
-  }
-  
-  /* Force horizontal scroll */
-  .table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  .table {
-    min-width: 600px;
-  }
-}
-
-/* Budget status text */
-#budgetStatusText {
-  color: var(--text) !important;
-  font-weight: 600;
-}
-
-/* Text muted with better contrast */
-.text-muted {
-  color: var(--text-muted) !important;
-  font-weight: 500;
-}
-
-/* Ensure all critical text is bright */
-.high-contrast-text {
-  color: var(--text) !important;
-  font-weight: 600 !important;
-}
-</style>
-
+    <title>E-TRAX | Smart Expense Tracker for Daily Budget Management</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="E-TRAX is a smart expense tracker to manage daily income and expenses with analytics, Firebase login, secure cloud storage, and budget tracking." />
+    <meta name="keywords" content="expense tracker, budget tracker, money manager, personal finance, E-TRAX" />
+    <meta name="author" content="AlphaPrime" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- ================= CANONICAL ================= -->
+    <link rel="canonical" href="https://www.alphaprime.co.in/" />
+
+    <!-- ================= OPEN GRAPH & TWITTER ================= -->
+    <meta property="og:title" content="E-TRAX | Smart Expense Tracker" />
+    <meta property="og:description" content="Track your daily expenses, set budgets, and analyze spending with E-TRAX – a secure smart expense tracker." />
+    <meta property="og:url" content="https://www.alphaprime.co.in/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://www.alphaprime.co.in/e.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="E-TRAX | Smart Expense Tracker" />
+    <meta name="twitter:description" content="Manage daily expenses and budgets easily with E-TRAX." />
+    <meta name="twitter:image" content="https://www.alphaprime.co.in/e.png" />
+
+    <!-- ================= FAVICONS ================= -->
+    <link rel="icon" href="EtraxPub.jpg" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <!-- ================= PWA ================= -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#2C097F" />
+
+    <!-- ================= FONTS & ICONS ================= -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <!-- ================= CSS LIBRARIES ================= -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- ================= JS LIBS ================= -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- ================= STRUCTURED DATA ================= -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "E-TRAX",
+        "url": "https://www.alphaprime.co.in/",
+        "logo": "https://www.alphaprime.co.in/logo.png"
+    }
+    </script>
+
+    <!-- ================= CUSTOM CSS ================= -->
+    <style>
+    :root {
+        /* NEW COLOR THEME BASED ON YOUR UI */
+        --primary: #2C097F;
+        --primary-light: #3d2b99;
+        --primary-dark: #1e0755;
+        --secondary: #607AFB;
+        --accent: #00bcd4;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        
+        /* Dark Theme */
+        --background: #151022;
+        --card-bg: #1e1b2e;
+        --text: #ffffff;
+        --text-light: #e2e8f0;
+        --text-muted: #94a3b8;
+        --border: rgba(255,255,255,0.1);
+        --shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    [data-theme="light"] {
+        --primary: #2C097F;
+        --primary-light: #3d2b99;
+        --primary-dark: #1e0755;
+        --secondary: #607AFB;
+        --accent: #00bcd4;
+        --success: #059669;
+        --warning: #d97706;
+        --danger: #dc2626;
+        
+        --background: #f6f6f8;
+        --card-bg: #ffffff;
+        --text: #111827;
+        --text-light: #374151;
+        --text-muted: #6b7280;
+        --border: rgba(0,0,0,0.1);
+        --shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    * {
+        box-sizing: border-box;
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    body {
+        background-color: var(--background);
+        color: var(--text);
+        min-height: 100vh;
+        margin: 0;
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        line-height: 1.6;
+        font-weight: 400;
+        overflow-x: hidden;
+    }
+
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* ================= LOGIN SCREEN (YOUR UI) ================= */
+    #loginView {
+        display: flex;
+        min-height: 100vh;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: var(--background);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-background {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        opacity: 0.1;
+        z-index: 0;
+    }
+
+    .login-container {
+        width: 100%;
+        max-width: 440px;
+        background: var(--card-bg);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        z-index: 1;
+        position: relative;
+    }
+
+    .login-header {
+        padding: 40px 40px 20px;
+        text-align: center;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+    }
+
+    .login-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .login-logo-icon {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .login-logo h1 {
+        font-size: 28px;
+        font-weight: 800;
+        margin: 0;
+        color: white;
+    }
+
+    .login-header h2 {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 0 0 10px 0;
+        color: white;
+    }
+
+    .login-header p {
+        color: rgba(255,255,255,0.8);
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .login-content {
+        padding: 40px;
+    }
+
+    .google-login-btn {
+        width: 100%;
+        padding: 16px;
+        background: white;
+        color: #333;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        transition: all 0.3s ease;
+        margin-bottom: 24px;
+    }
+
+    .google-login-btn:hover {
+        background: #f8f9fa;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .google-login-btn img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .login-note {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 13px;
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+    }
+
+    .developer-credit {
+        text-align: center;
+        margin-top: 20px;
+        color: var(--text-muted);
+        font-size: 12px;
+    }
+
+    .developer-credit strong {
+        color: var(--primary);
+    }
+
+    /* ================= MAIN APP LAYOUT ================= */
+    .app-container {
+        display: none;
+        min-height: 100vh;
+    }
+
+    .app-container.active {
+        display: block;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 260px;
+        background: var(--card-bg);
+        border-right: 1px solid var(--border);
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        padding: 24px 0;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-header {
+        padding: 0 24px 24px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 24px;
+    }
+
+    .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .sidebar-logo-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .sidebar-logo h2 {
+        font-size: 20px;
+        font-weight: 800;
+        margin: 0;
+        color: var(--text);
+    }
+
+    .nav-menu {
+        flex: 1;
+        padding: 0 16px;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        color: var(--text-light);
+        text-decoration: none;
+        border-radius: 10px;
+        margin-bottom: 4px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .nav-item:hover {
+        background: rgba(96, 122, 251, 0.1);
+        color: var(--primary);
+    }
+
+    .nav-item.active {
+        background: var(--primary);
+        color: white;
+    }
+
+    .nav-item .material-symbols-outlined {
+        font-size: 22px;
+    }
+
+    .nav-item span:last-child {
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .sidebar-footer {
+        padding: 24px;
+        border-top: 1px solid var(--border);
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        background: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .user-info h4 {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text);
+    }
+
+    .user-info p {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin: 2px 0 0 0;
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 260px;
+        min-height: 100vh;
+        background: var(--background);
+    }
+
+    .top-nav {
+        height: 70px;
+        background: var(--card-bg);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 32px;
+        position: sticky;
+        top: 0;
+        z-index: 99;
+    }
+
+    .page-title h1 {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 0;
+        color: var(--text);
+    }
+
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .theme-toggle {
+        background: none;
+        border: none;
+        color: var(--text);
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+        background: rgba(96, 122, 251, 0.1);
+    }
+
+    .logout-btn {
+        background: var(--danger);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+        background: #dc2626;
+        transform: translateY(-2px);
+    }
+
+    .content-area {
+        padding: 32px;
+    }
+
+    /* ================= DASHBOARD CARDS ================= */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .dashboard-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text);
+        margin: 0;
+    }
+
+    .card-value {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--text);
+        margin: 8px 0;
+    }
+
+    .card-subtext {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin: 4px 0;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: var(--border);
+        border-radius: 4px;
+        margin: 16px 0;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.5s ease;
+    }
+
+    .budget-progress {
+        background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+
+    .warning-progress {
+        background: var(--warning);
+    }
+
+    .danger-progress {
+        background: var(--danger);
+    }
+
+    /* ================= EXPENSE FORM ================= */
+    .form-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 32px;
+        margin-bottom: 32px;
+        box-shadow: var(--shadow);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 14px 16px;
+        background: var(--background);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--text);
+        font-size: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(44, 9, 127, 0.1);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+        margin-top: 24px;
+    }
+
+    .btn {
+        padding: 12px 28px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(44, 9, 127, 0.3);
+    }
+
+    .btn-secondary {
+        background: var(--background);
+        color: var(--text);
+        border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+        background: var(--card-bg);
+    }
+
+    .btn-danger {
+        background: var(--danger);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+    }
+
+    /* ================= TABLE ================= */
+    .table-container {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+    }
+
+    .table-header {
+        padding: 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .table-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text);
+        margin: 0;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table th {
+        padding: 16px 24px;
+        text-align: left;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: var(--background);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .data-table td {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text);
+        font-size: 14px;
+    }
+
+    .data-table tr:hover {
+        background: rgba(96, 122, 251, 0.05);
+    }
+
+    .category-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        background: rgba(96, 122, 251, 0.1);
+        color: var(--secondary);
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .action-btn {
+        padding: 8px;
+        border-radius: 8px;
+        border: none;
+        background: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .action-btn:hover {
+        background: var(--background);
+        color: var(--text);
+    }
+
+    .edit-btn:hover {
+        color: var(--primary);
+    }
+
+    .delete-btn:hover {
+        color: var(--danger);
+    }
+
+    /* ================= CHARTS ================= */
+    .chart-container {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 32px;
+        box-shadow: var(--shadow);
+    }
+
+    .chart-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text);
+        margin: 0 0 20px 0;
+    }
+
+    .chart-wrapper {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+
+    /* ================= MODALS ================= */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+        background: var(--card-bg);
+        border-radius: 20px;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+    }
+
+    .modal-header {
+        padding: 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text);
+        margin: 0;
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .close-modal:hover {
+        background: var(--background);
+        color: var(--text);
+    }
+
+    .modal-body {
+        padding: 24px;
+    }
+
+    /* ================= FOOTER ================= */
+    .app-footer {
+        margin-left: 260px;
+        padding: 24px 32px;
+        background: var(--card-bg);
+        border-top: 1px solid var(--border);
+        text-align: center;
+    }
+
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .footer-links a {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+        color: var(--primary);
+    }
+
+    .copyright {
+        color: var(--text-muted);
+        font-size: 13px;
+        margin: 8px 0 0 0;
+    }
+
+    .copyright a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    /* ================= RESPONSIVE DESIGN ================= */
+    @media (max-width: 1024px) {
+        .sidebar {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .main-content,
+        .app-footer {
+            margin-left: 0;
+        }
+        
+        .mobile-menu-btn {
+            display: flex;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .content-area {
+            padding: 20px;
+        }
+        
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .top-nav {
+            padding: 0 20px;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .login-container {
+            margin: 10px;
+        }
+        
+        .login-header,
+        .login-content {
+            padding: 30px 20px;
+        }
+        
+        .content-area {
+            padding: 16px;
+        }
+        
+        .table-header {
+            flex-direction: column;
+            gap: 16px;
+            align-items: stretch;
+        }
+    }
+
+    /* ================= UTILITIES ================= */
+    .hidden {
+        display: none !important;
+    }
+
+    .flex {
+        display: flex;
+    }
+
+    .items-center {
+        align-items: center;
+    }
+
+    .justify-between {
+        justify-content: space-between;
+    }
+
+    .gap-2 { gap: 8px; }
+    .gap-3 { gap: 12px; }
+    .gap-4 { gap: 16px; }
+    .gap-6 { gap: 24px; }
+
+    .mb-2 { margin-bottom: 8px; }
+    .mb-3 { margin-bottom: 12px; }
+    .mb-4 { margin-bottom: 16px; }
+    .mb-6 { margin-bottom: 24px; }
+    .mb-8 { margin-bottom: 32px; }
+
+    .mt-2 { margin-top: 8px; }
+    .mt-3 { margin-top: 12px; }
+    .mt-4 { margin-top: 16px; }
+    .mt-6 { margin-top: 24px; }
+
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+
+    .w-full { width: 100%; }
+    .h-full { height: 100%; }
+
+    /* Animation */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.3s ease forwards;
+    }
+
+    /* Loading */
+    .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,.3);
+        border-radius: 50%;
+        border-top-color: var(--primary);
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Message Box */
+    .message-box {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 16px 24px;
+        border-radius: 12px;
+        color: white;
+        font-weight: 600;
+        z-index: 1000;
+        animation: slideInRight 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    .message-success { background: var(--success); }
+    .message-error { background: var(--danger); }
+    .message-warning { background: var(--warning); }
+    .message-info { background: var(--primary); }
+    </style>
 </head>
-
 <body>
 
-<!-- LOGIN VIEW -->
+<!-- ================= LOGIN VIEW ================= -->
 <div id="loginView" class="login-wrapper">
-  <!-- LOTTIE ANIMATED BACKGROUND (LOGIN ONLY) -->
-<lottie-player
-  src="https://lottie.host/fef0dd87-b7ca-430b-b7ff-f306c934d368/WKpgmIC1iO.lottie"
-  background="transparent"
-  speed="1"
-  loop
-  autoplay
-  style="
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    opacity: 0.6;
-  ">
-</lottie-player>
-
-  <div class="login-card">
-    <h1>E-TRAX</h1>
-    <p>Track expenses — smarter. Sign in with Google to continue.</p>
-
-    <button id="googleLoginBtn" class="google-btn" aria-label="Login with Google">
-      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
-      <span>Sign in with Google</span>
-    </button>
-
-    <div class="small-note">We only use Google to authenticate you — no payment info required.</div>
-    <div style="margin-top:14px;">
-      <small style="color:var(--text-muted)">Developed by <strong style="color:var(--primary)">ALPHA DEVELOPERS </strong></small>
+    <div class="login-background"></div>
+    
+    <div class="login-container">
+        <div class="login-header">
+            <div class="login-logo">
+                <div class="login-logo-icon">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+                </div>
+                <h1>E-TRAX</h1>
+            </div>
+            <h2>Sign in to E-TRAX</h2>
+            <p>Enter your details below to access your account.</p>
+        </div>
+        
+        <div class="login-content">
+            <button id="googleLoginBtn" class="google-login-btn">
+                <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
+                <span>Sign in with Google</span>
+            </button>
+            
+            <p class="login-note">
+                We only use Google to authenticate you — no payment info required.
+            </p>
+            
+            <div class="developer-credit">
+                <small>Developed by <strong>ALPHA DEVELOPERS</strong></small>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
-<!-- HEADER -->
-<header id="mainHeader">
-  <div class="header-content">
-    <div class="brand-section">
-      <h1 class="project-name">E-TRAX</h1>
-      <div class="typing" id="typingHeader"></div>
+<!-- ================= MAIN APP ================= -->
+<div id="appView" class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+                </div>
+                <h2>E-TRAX</h2>
+            </div>
+        </div>
+        
+        <nav class="nav-menu">
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-page="expenses">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <span>Transactions</span>
+            </a>
+            <a href="#" class="nav-item" data-page="analytics">
+                <span class="material-symbols-outlined">bar_chart</span>
+                <span>Analytics</span>
+            </a>
+            <a href="#" class="nav-item" data-page="budget">
+                <span class="material-symbols-outlined">savings</span>
+                <span>Budget</span>
+            </a>
+            <a href="#" class="nav-item" id="historyLink">
+                <span class="material-symbols-outlined">history</span>
+                <span>History</span>
+            </a>
+            <a href="#" class="nav-item" id="aboutLink">
+                <span class="material-symbols-outlined">info</span>
+                <span>About</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <h4 id="userName">User Name</h4>
+                    <p id="userEmail">user@example.com</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <header class="top-nav">
+            <div class="page-title">
+                <h1>Dashboard</h1>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle">
+                    <span class="material-symbols-outlined">dark_mode</span>
+                    <span>Theme</span>
+                </button>
+                
+                <button class="logout-btn" id="googleLogoutBtn">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Dashboard Page -->
+            <div id="dashboardPage" class="page-content active">
+                <!-- Budget Overview -->
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Monthly Budget</h3>
+                            <span class="material-symbols-outlined" style="color: var(--primary)">savings</span>
+                        </div>
+                        <h2 class="card-value" id="budgetAmount">$0</h2>
+                        <p class="card-subtext" id="budgetStatus">No budget set</p>
+                        <div class="progress-bar">
+                            <div id="budgetProgress" class="progress-fill budget-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <div>
+                                <p class="card-subtext">Spent</p>
+                                <p class="text-lg font-semibold" id="totalSpent">$0</p>
+                            </div>
+                            <div>
+                                <p class="card-subtext">Remaining</p>
+                                <p class="text-lg font-semibold text-success" id="remainingBudget">$0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Total Expenses</h3>
+                            <span class="material-symbols-outlined" style="color: var(--success)">trending_up</span>
+                        </div>
+                        <h2 class="card-value" id="totalExpenses">$0</h2>
+                        <p class="card-subtext" id="expenseCount">0 expenses</p>
+                        <div class="mt-4">
+                            <p class="card-subtext">This Month</p>
+                            <p class="text-lg font-semibold" id="monthlyExpenses">$0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Top Category</h3>
+                            <span class="material-symbols-outlined" style="color: var(--secondary)">category</span>
+                        </div>
+                        <h2 class="card-value" id="topCategory">-</h2>
+                        <p class="card-subtext" id="categoryAmount">$0</p>
+                        <div class="mt-4">
+                            <p class="card-subtext">Other Categories</p>
+                            <p class="text-sm text-muted" id="otherCategories">-</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add Expense Form -->
+                <div class="form-card">
+                    <h3 class="card-title mb-6">Add New Expense</h3>
+                    <form id="expenseForm">
+                        <input type="hidden" id="editId">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="name">Name</label>
+                                <input type="text" id="name" class="form-control" placeholder="Enter expense name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="amount">Amount</label>
+                                <input type="number" id="amount" class="form-control" placeholder="0.00" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="type">Type</label>
+                                <select id="type" class="form-control" required>
+                                    <option value="">Select type</option>
+                                    <option value="Card">Card</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Gpay/Paytm">Gpay/Paytm</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="description">Description</label>
+                                <input type="text" id="description" class="form-control" placeholder="What was this for?" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="date">Date</label>
+                                <input type="date" id="date" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="reset" class="btn btn-secondary">
+                                <span class="material-symbols-outlined">close</span>
+                                Clear
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <span class="material-symbols-outlined">check</span>
+                                Confirm Expense
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Recent Expenses Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Recent Expenses</h3>
+                        <button class="btn btn-primary btn-sm" onclick="loadData()">
+                            <span class="material-symbols-outlined">refresh</span>
+                            Refresh
+                        </button>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expensesTable">
+                                <!-- Data will be loaded here -->
+                                <tr>
+                                    <td colspan="6" class="text-center py-8 text-muted">
+                                        No expenses yet. Add your first expense!
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analytics Page -->
+            <div id="analyticsPage" class="page-content hidden">
+                <div class="chart-container">
+                    <h3 class="chart-title">Spending Trend</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Spending by Category</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Budget Page -->
+            <div id="budgetPage" class="page-content hidden">
+                <div class="form-card">
+                    <h3 class="card-title mb-6">Budget Management</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="budgetInput">Monthly Budget</label>
+                            <input type="number" id="budgetInput" class="form-control" placeholder="Enter budget amount">
+                            <p class="text-sm text-muted mt-2">Set a monthly budget for your expenses</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Current Status</label>
+                            <div class="mt-2">
+                                <p class="text-lg font-semibold" id="budgetDisplay">No budget set</p>
+                                <div class="progress-bar mt-2">
+                                    <div id="budgetProgressBar" class="progress-fill budget-progress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="resetBudgetBtn">
+                            <span class="material-symbols-outlined">delete</span>
+                            Reset Budget
+                        </button>
+                        <button type="button" class="btn btn-primary" id="saveBudgetBtn">
+                            <span class="material-symbols-outlined">save</span>
+                            Save Budget
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Budget Alerts</h3>
+                        <span class="material-symbols-outlined" style="color: var(--warning)">notifications</span>
+                    </div>
+                    <div id="budgetAlerts">
+                        <!-- Alerts will appear here -->
+                        <p class="text-muted">No budget alerts yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
-    <div class="header-controls">
-      <div id="userNameDisplay"></div>
-      
-      <button class="theme-toggle" id="themeToggle">
-        <i class="fas fa-palette"></i>
-        <span>Theme</span>
-      </button>
-      
-      <nav class="nav-links">
-        <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank" rel="noopener">
-          <i class="fas fa-phone"></i> Contact
-        </a>
-        <a href="#" id="aboutLink">
-          <i class="fas fa-info-circle"></i> About
-        </a>
-        <a href="#" id="historyLink">
-          <i class="fas fa-history"></i> History
-        </a>
-        <button id="googleLogoutBtn">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
-      </nav>
-    </div>
-  </div>
-</header>
-
-<!-- MAIN CONTAINER -->
-<div class="container my-3">
-  <!-- BUDGET CARD -->
-  <div id="budgetCard" class="card">
-    <div class="card-body">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <h5 style="margin:0;color:var(--warning);">Budget Limit</h5>
-          <small class="text-muted">Set a monthly/total budget for your expenses</small>
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="terms-conditions.html">Terms & Conditions</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="https://whatsapp.com/channel/0029Va5gnd0CcW4xKICHcb0k" target="_blank">Contact</a>
+                <a href="#" id="aboutLinkFooter">About</a>
+            </div>
+            
+            <p class="copyright">
+                &copy; 2025 E-TRAX. All rights reserved. | 
+                Email: <a href="mailto:alphaprime.co.in@gmail.com">alphaprime.co.in@gmail.com</a>
+            </p>
+            <p class="copyright">
+                Developed by <strong>ALPHA DEVELOPERS</strong>
+            </p>
         </div>
-        <div>
-          <button id="resetBudgetBtn" class="btn btn-outline-danger btn-sm">Reset Budget</button>
-        </div>
-      </div>
-
-      <div class="row g-2 mb-3">
-        <div class="col-md-5">
-          <input type="number" id="budgetInput" class="form-control" placeholder="Enter budget amount (e.g. 5000)">
-        </div>
-        <div class="col-md-3">
-          <button id="saveBudgetBtn" class="btn btn-primary w-100">Save Budget</button>
-        </div>
-        <div class="col-md-4 text-end">
-          <div id="budgetStatusText" style="font-weight:600;color:var(--text);">No budget set</div>
-        </div>
-      </div>
-
-      <div id="budgetBar" class="mb-2">
-        <div id="budgetProgress" class="progress" style="width:100%">
-          <div id="budgetProgressBar" class="progress-bar" role="progressbar" style="width:0%"></div>
-        </div>
-      </div>
-
-      <div id="budgetAlerts" style="min-height:22px;"></div>
-    </div>
-  </div>
-
-  <!-- EXPENSE FORM -->
-  <div id="expenseFormContainer" style="display:none;">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-plus-circle"></i> Add New Expense</h5>
-      </div>
-      <div class="card-body">
-        <form id="expenseForm" class="row g-3">
-          <input type="hidden" id="editId">
-          <div class="col-md-6">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" id="name" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="amount" class="form-label">Amount</label>
-            <input type="number" id="amount" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="type" class="form-label">Type</label>
-            <select id="type" class="form-select" required>
-              <option value="">Choose one...</option>
-              <option value="Card">Card</option>
-              <option value="Cash">Cash</option>
-              <option value="Gpay/Paytm">Gpay/Paytm</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="description" class="form-label">Description</label>
-            <input type="text" id="description" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label for="date" class="form-label">Date</label>
-            <input type="date" id="date" class="form-control" required>
-          </div>
-          <div class="col-12 d-flex justify-content-between mt-3">
-            <button type="reset" class="btn btn-danger">
-              <i class="fas fa-times"></i> Clear
-            </button>
-            <button type="submit" class="btn btn-primary">
-              <i class="fas fa-check"></i> Confirm
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- TABLE -->
-  <div id="tableContainer" class="table-responsive"></div>
-
-  <!-- ANALYTICS -->
-  <div id="analyticsContainer" class="my-4" style="display:none;">
-    <div class="table-container">
-      <h4 class="text-center" style="color:var(--primary);">📊 Expense Analytics</h4>
-      <div class="row">
-        <div class="col-md-6">
-          <div class="chart-container">
-            <canvas id="lineChart"></canvas>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="chart-container">
-            <canvas id="pieChart"></canvas>
-          </div>
-          <div id="analyticsBadge" class="text-center mt-3"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+    </footer>
 </div>
 
-<!-- ABOUT MODAL -->
+<!-- ================= MODALS ================= -->
+<!-- About Modal -->
 <div id="aboutModal" class="modal-overlay">
-  <div class="modal-content">
-    <h2>About E-TRAX</h2>
-    <p><strong>E-TRAX</strong> helps you <strong>track your daily expenses</strong> and manage your budget efficiently.</p>
-    <h4>💡 Purpose</h4>
-    <p>Record, categorize, and analyze your spending patterns easily.</p>
-    <h4>⚙️ How It Works</h4>
-    <ul>
-      <li>Add expenses with name, amount, and date.</li>
-      <li>View and edit them anytime.</li>
-      <li>Check total expenses instantly.</li>
-      <li>See visual analytics of your spending trends.</li>
-      <li>Set budget limits and track your spending against them.</li>
-      <li>Track complete edit history with user details.</li>
-    </ul>
-    <div style="text-align:center;">
-      <button id="closeAbout" class="btn btn-primary">Close</button>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">About E-TRAX</h3>
+            <button class="close-modal" id="closeAbout">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p><strong>E-TRAX</strong> helps you track your daily expenses and manage your budget efficiently.</p>
+            <h4>Features:</h4>
+            <ul>
+                <li>Track expenses with name, amount, date, and category</li>
+                <li>Set and monitor monthly budgets</li>
+                <li>View spending analytics with charts</li>
+                <li>Complete edit history tracking</li>
+                <li>Secure Google authentication</li>
+                <li>Dark/Light theme support</li>
+            </ul>
+        </div>
     </div>
-  </div>
 </div>
 
-<!-- HISTORY MODAL -->
+<!-- History Modal -->
 <div id="historyModal" class="modal-overlay">
-  <div class="modal-content">
-    <h2>📝 Edit History</h2>
-    <div id="historyContent">
-      <p>Loading history...</p>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit History</h3>
+            <button class="close-modal" id="closeHistory">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="historyContent">
+                <p>Loading history...</p>
+            </div>
+        </div>
     </div>
-    <div style="text-align:center; margin-top: 20px;">
-      <button id="closeHistory" class="btn btn-primary">Close</button>
-    </div>
-  </div>
 </div>
 
-<!-- MESSAGE BOX -->
-<div id="msgBox"></div>
+<!-- Message Box -->
+<div id="msgBox" class="message-box hidden"></div>
 
+<!-- ================= JAVASCRIPT ================= -->
 <script>
 // BASE URL
 const BASE_URL = window.location.hostname.includes("localhost")
-  ? "http://localhost:3000"
-  : "https://sandy-backend2-0.onrender.com";
+    ? "http://localhost:3000"
+    : "https://sandy-backend2-0.onrender.com";
 
-// Firebase will be initialized after fetching config from backend
+// App State
 let auth = null;
 let currentUserUid = null;
 let currentUserName = null;
+let currentUserEmail = null;
+let currentBudgetAmount = 0;
+
+// Chart Instances
+let lineChartInstance = null;
+let pieChartInstance = null;
 
 // Theme Management
-const themes = ['dark', 'light', 'professional'];
+const themes = ['dark', 'light'];
 let currentThemeIndex = 0;
 
 function initTheme() {
-  const savedTheme = localStorage.getItem('theme') || 'dark';
-  currentThemeIndex = themes.indexOf(savedTheme);
-  applyTheme(savedTheme);
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    currentThemeIndex = themes.indexOf(savedTheme);
+    applyTheme(savedTheme);
 }
 
 function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    
+    // Update theme button icon
+    const themeIcon = document.querySelector('#themeToggle .material-symbols-outlined');
+    if (theme === 'light') {
+        themeIcon.textContent = 'light_mode';
+    } else {
+        themeIcon.textContent = 'dark_mode';
+    }
 }
 
 function cycleTheme() {
-  currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-  applyTheme(themes[currentThemeIndex]);
+    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+    applyTheme(themes[currentThemeIndex]);
 }
 
-// Initialize Firebase securely
+// Initialize Firebase
 async function initializeFirebase() {
-  try { 
-    const response = await fetch(`${BASE_URL}/firebase-config`);
-    const firebaseConfig = await response.json();
-    
-    if (!firebaseConfig.apiKey) {
-      throw new Error('Firebase config not available');
+    try { 
+        const response = await fetch(`${BASE_URL}/firebase-config`);
+        const firebaseConfig = await response.json();
+        
+        if (!firebaseConfig.apiKey) {
+            throw new Error('Firebase config not available');
+        }
+        
+        firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        console.log('Firebase initialized');
+        
+        setupAuthListener();
+        
+    } catch (error) {
+        console.error('Failed to initialize Firebase:', error);
+        showMessage('❌ Failed to initialize app. Please refresh.', 5000, 'error');
     }
-    
-    firebase.initializeApp(firebaseConfig);
-    auth = firebase.auth();
-    console.log('Firebase initialized securely');
-    
-    // Now initialize auth state listener
-    setupAuthListener();
-    
-  } catch (error) {
-    console.error('Failed to initialize Firebase:', error);
-    showMessage('❌ Failed to initialize app. Please refresh.', 5000);
-  }
 }
 
-// Setup auth state listener after Firebase is initialized
+// Auth State Listener
 function setupAuthListener() {
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      currentUserUid = user.uid;
-      currentUserName = user.displayName || "User";
-      toggleLoginState(true);
-      loadData();
-      userNameDisplay.textContent = currentUserName;
-      fetchBudget();
-    } else {
-      currentUserUid = null;
-      currentUserName = null;
-      toggleLoginState(false);
-      tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
-      analyticsContainer.style.display = "none";
-      userNameDisplay.textContent = "";
-      clearBudgetUI();
-    }
-  });
-}
-
-// Elements
-const loginBtn = document.getElementById("googleLoginBtn");
-const logoutBtn = document.getElementById("googleLogoutBtn");
-const loginView = document.getElementById("loginView");
-const mainHeader = document.getElementById("mainHeader");
-const expenseFormContainer = document.getElementById("expenseFormContainer");
-const tableContainer = document.getElementById("tableContainer");
-const msgBox = document.getElementById("msgBox");
-const userNameDisplay = document.getElementById("userNameDisplay");
-const analyticsContainer = document.getElementById("analyticsContainer");
-const themeToggle = document.getElementById("themeToggle");
-const historyLink = document.getElementById("historyLink");
-const historyModal = document.getElementById("historyModal");
-const closeHistory = document.getElementById("closeHistory");
-const historyContent = document.getElementById("historyContent");
-
-// Budget elements
-const budgetCard = document.getElementById("budgetCard");
-const budgetInput = document.getElementById("budgetInput");
-const saveBudgetBtn = document.getElementById("saveBudgetBtn");
-const resetBudgetBtn = document.getElementById("resetBudgetBtn");
-const budgetProgressBar = document.getElementById("budgetProgressBar");
-const budgetStatusText = document.getElementById("budgetStatusText");
-const budgetAlerts = document.getElementById("budgetAlerts");
-const analyticsBadge = document.getElementById("analyticsBadge");
-
-let currentBudgetAmount = 0;
-
-// About modal
-const aboutLink = document.getElementById("aboutLink");
-const aboutModal = document.getElementById("aboutModal");
-const closeAbout = document.getElementById("closeAbout");
-
-// Event Listeners
-aboutLink && aboutLink.addEventListener("click", e => { e.preventDefault(); aboutModal.style.display = "block"; });
-closeAbout && closeAbout.addEventListener("click", () => { aboutModal.style.display = "none"; });
-historyLink && historyLink.addEventListener("click", e => { e.preventDefault(); showHistory(); });
-closeHistory && closeHistory.addEventListener("click", () => { historyModal.style.display = "none"; });
-themeToggle && themeToggle.addEventListener("click", cycleTheme);
-
-window.addEventListener("click", e => { 
-  if(e.target == aboutModal) aboutModal.style.display="none";
-  if(e.target == historyModal) historyModal.style.display="none";
-});
-
-// Initialize theme and Firebase
-initTheme();
-initializeFirebase();
-
-// Message function
-function showMessage(msg, duration=2000) {
-  msgBox.innerText = msg;
-  msgBox.style.display = "block";
-  setTimeout(()=> msgBox.style.display="none", duration);
-}
-
-// Toggle login state
-function toggleLoginState(isLoggedIn) {
-  loginView.style.display = isLoggedIn ? "none" : "flex";
-  mainHeader.classList.toggle('visible', isLoggedIn);
-  expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
-  budgetCard.style.display = isLoggedIn ? "block" : "none";
-}
-
-// Login button
-loginBtn.addEventListener("click", async () => {
-  if (!auth) {
-    showMessage(" Please wait...", 2000);
-    return;
-  }
-  
-  const provider = new firebase.auth.GoogleAuthProvider();
-  try {
-    const result = await auth.signInWithPopup(provider);
-    currentUserUid = result.user.uid;
-    currentUserName = result.user.displayName || "User";
-    toggleLoginState(true);
-    loadData();
-    userNameDisplay.textContent = currentUserName;
-    showMessage("✅ Logged in successfully",2000);
-    fetchBudget();
-  } catch(err){ 
-    console.error(err); 
-    showMessage("❌ Login failed",2000); 
-  }
-});
-
-// Logout button
-logoutBtn && logoutBtn.addEventListener("click", async () => {
-  if (!auth) return;
-  
-  try {
-    await auth.signOut();
-    currentUserUid = null;
-    currentUserName = null;
-    toggleLoginState(false);
-    tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
-    analyticsContainer.style.display="none";
-    userNameDisplay.textContent = "";
-    clearBudgetUI();
-    showMessage("✅ Logged out successfully",2000);
-  } catch(err){ 
-    console.error(err); 
-    showMessage("❌ Logout failed",2000); 
-  }
-});
-
-// Typing animation
-const headerText = "Track Your Expenses Smartly!";
-const typingHeader = document.getElementById("typingHeader");
-let headerIndex = 0;
-function typeWriterHeader() {
-  if(headerIndex < headerText.length){
-    typingHeader.innerHTML += headerText.charAt(headerIndex);
-    headerIndex++;
-    setTimeout(typeWriterHeader,100);
-  } else {
-    setTimeout(()=>{ typingHeader.innerHTML=""; headerIndex=0; typeWriterHeader(); },2000);
-  }
-}
-typeWriterHeader();
-
-// Expense form handling
-const form = document.getElementById("expenseForm");
-const editId = document.getElementById("editId");
-form && form.addEventListener("submit", async e=>{
-  e.preventDefault();
-  if(!currentUserUid) return;
-  const data = {
-    uid: currentUserUid,
-    name: document.getElementById("name").value.trim(),
-    amount: document.getElementById("amount").value.trim(),
-    type: document.getElementById("type").value,
-    description: document.getElementById("description").value.trim(),
-    date: document.getElementById("date").value
-  };
-  try {
-    const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
-    const method = editId.value ? "PUT" : "POST";
-    // Add editor name when updating
-    if (editId.value) {
-      data.editorName = currentUserName;
-    }
-    const res = await fetch(url,{ method, headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data)});
-    const result = await res.json();
-    showMessage(result.message);
-    editId.value="";
-    form.reset();
-    await loadData();
-    await fetchBudget();
-  } catch(err){ console.error(err); showMessage("❌ Failed to submit/edit expense",2500);}
-});
-
-// Budget functions
-async function saveBudgetToServer(amount){
-  if(!currentUserUid) return;
-  try {
-    const res = await fetch(`${BASE_URL}/setBudget`, {
-      method: "POST",
-      headers: { "Content-Type":"application/json" },
-      body: JSON.stringify({ uid: currentUserUid, amount: parseFloat(amount) || 0 })
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            currentUserUid = user.uid;
+            currentUserName = user.displayName || "User";
+            currentUserEmail = user.email || "user@example.com";
+            
+            // Update UI
+            document.getElementById('loginView').style.display = 'none';
+            document.getElementById('appView').classList.add('active');
+            
+            // Update user info
+            document.getElementById('userName').textContent = currentUserName;
+            document.getElementById('userEmail').textContent = currentUserEmail;
+            
+            // Set avatar initials
+            const avatar = document.getElementById('userAvatar');
+            avatar.textContent = currentUserName.charAt(0).toUpperCase();
+            
+            // Load data
+            loadData();
+            fetchBudget();
+            
+            showMessage(`✅ Welcome back, ${currentUserName}!`, 2000, 'success');
+            
+        } else {
+            currentUserUid = null;
+            currentUserName = null;
+            currentUserEmail = null;
+            
+            document.getElementById('loginView').style.display = 'flex';
+            document.getElementById('appView').classList.remove('active');
+            
+            clearBudgetUI();
+        }
     });
-    const r = await res.json();
-    if(res.ok) showMessage(r.message || "Budget saved");
-    else showMessage(r.message || "Failed to save budget");
-    await fetchBudget();
-  } catch(err){ console.error(err); showMessage("❌ Failed to save budget",2000); }
 }
 
-async function fetchBudget(){
-  if(!currentUserUid) return clearBudgetUI();
-  try {
-    const res = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
-    if(!res.ok) return clearBudgetUI();
-    const r = await res.json();
-    if(!r || typeof r.amount === "undefined" || r.amount === 0){
-      currentBudgetAmount = 0;
-      clearBudgetUI();
-      return;
+// Message Function
+function showMessage(msg, duration = 3000, type = 'info') {
+    const msgBox = document.getElementById('msgBox');
+    msgBox.textContent = msg;
+    msgBox.className = `message-box message-${type}`;
+    msgBox.style.display = 'block';
+    
+    setTimeout(() => {
+        msgBox.style.display = 'none';
+    }, duration);
+}
+
+// Login Button
+document.getElementById('googleLoginBtn').addEventListener('click', async () => {
+    if (!auth) {
+        showMessage("Please wait...", 2000, 'warning');
+        return;
     }
-    currentBudgetAmount = parseFloat(r.amount) || 0;
-    const expensesRes = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
-    const arr = await expensesRes.json();
-    let totalAmount = 0;
-    if(Array.isArray(arr)) arr.forEach(x=> totalAmount += parseFloat(x.amount)||0);
-    updateBudgetUI(currentBudgetAmount, totalAmount);
-    budgetInput && (budgetInput.value = currentBudgetAmount);
-  } catch(err){ console.error(err); clearBudgetUI(); }
-}
-
-function clearBudgetUI(){
-  if(budgetInput) budgetInput.value = "";
-  if(budgetProgressBar) budgetProgressBar.style.width = "0%";
-  if(budgetProgressBar) budgetProgressBar.className = "progress-bar";
-  if(budgetStatusText) budgetStatusText.innerText = "No budget set";
-  if(budgetAlerts) budgetAlerts.innerHTML = "";
-  currentBudgetAmount = 0;
-  if(analyticsBadge) analyticsBadge.innerText = "";
-}
-
-function updateBudgetUI(budgetAmount, totalSpent){
-  if(!budgetAmount || budgetAmount <= 0){
-    clearBudgetUI();
-    return;
-  }
-  const pct = (totalSpent / budgetAmount) * 100;
-  const pctClamped = Math.min(Math.round(pct), 999);
-  const widthPct = Math.min(pctClamped, 100);
-  budgetProgressBar.style.width = widthPct + "%";
-  budgetProgressBar.innerText = `${pctClamped}%`;
-  budgetProgressBar.className = "progress-bar";
-  if(pct >= 100){
-    budgetProgressBar.classList.add("bg-danger");
-  } else if(pct >= 80){
-    budgetProgressBar.classList.add("bg-warning");
-  } else {
-    budgetProgressBar.classList.add("bg-success");
-  }
-  budgetStatusText.innerText = `Budget: ₹${budgetAmount.toFixed(2)}  —  Spent: ₹${totalSpent.toFixed(2)}`;
-  budgetAlerts.innerHTML = "";
-  analyticsBadge.innerText = "";
-  if(pct >= 100){
-    const over = (totalSpent - budgetAmount);
-    budgetAlerts.innerHTML = `<div class="text-danger" style="font-weight:700;">🚨 Budget exceeded! You spent ₹${over.toFixed(2)} over the limit.</div>`;
-    analyticsBadge.innerHTML = `<span class="badge badge-danger">🚨 Over budget: ₹${over.toFixed(2)}</span>`;
-  } else if(pct >= 80){
-    budgetAlerts.innerHTML = `<div class="text-warning" style="font-weight:700;">⚠️ You're at ${Math.round(pct)}% of your budget. Be careful!</div>`;
-    analyticsBadge.innerHTML = `<span class="badge badge-warning">⚠️ Usage: ${Math.round(pct)}% of budget</span>`;
-  } else {
-    analyticsBadge.innerHTML = `<span class="badge badge-success">✅ Usage: ${Math.round(pct)}% of budget</span>`;
-  }
-}
-
-// Save/Reset event listeners
-saveBudgetBtn && saveBudgetBtn.addEventListener("click", async () => {
-  const val = parseFloat(budgetInput.value);
-  if(!val || val <= 0){ showMessage("Enter valid budget amount"); return; }
-  await saveBudgetToServer(val);
-});
-resetBudgetBtn && resetBudgetBtn.addEventListener("click", async () => {
-  if(!currentUserUid) return;
-  if(!confirm("Reset/delete your budget?")) return;
-  try {
-    const res = await fetch(`${BASE_URL}/setBudget`, {
-      method: "POST",
-      headers: { "Content-Type":"application/json" },
-      body: JSON.stringify({ uid: currentUserUid, amount: 0, reset: true })
-    });
-    const r = await res.json();
-    if(res.ok) showMessage(r.message || "Budget reset");
-    else showMessage(r.message || "Reset failed");
-    clearBudgetUI();
-  } catch(err){ console.error(err); showMessage("❌ Reset failed",2000); }
+    
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try {
+        const result = await auth.signInWithPopup(provider);
+        showMessage("✅ Login successful!", 2000, 'success');
+    } catch(err) { 
+        console.error(err); 
+        showMessage("❌ Login failed", 2000, 'error'); 
+    }
 });
 
-// Load data and render table - MOBILE FRIENDLY VERSION
-async function loadData(){
-  if(!currentUserUid) return;
-  try{
-    const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
-    if(!res.ok) throw new Error("Failed to fetch users");
-    const users = await res.json();
-    if(!Array.isArray(users) || users.length===0){
-      tableContainer.innerHTML = "<p class='text-muted'>No expenses yet. Add your first expense above!</p>";
-      analyticsContainer.style.display="none";
-      const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
-      if(bRes.ok){
-        const b = await bRes.json();
-        if(b && b.amount) updateBudgetUI(parseFloat(b.amount), 0);
-      }
-      return;
-    }
-
-    let totalAmount = 0;
+// Logout Button
+document.getElementById('googleLogoutBtn').addEventListener('click', async () => {
+    if (!auth) return;
     
-    // Mobile-friendly table design
-    if (window.innerWidth < 768) {
-      // MOBILE VIEW - Card layout
-      let mobileHtml = `<div class="table-container">
-        <h5 class="text-center mb-3" style="color:var(--primary);">Your Expenses</h5>
-        <div class="row g-3">`;
-      
-      users.forEach((u,i)=>{
-        totalAmount += parseFloat(u.amount) || 0;
+    try {
+        await auth.signOut();
+        showMessage("✅ Logged out successfully", 2000, 'success');
+    } catch(err) { 
+        console.error(err); 
+        showMessage("❌ Logout failed", 2000, 'error'); 
+    }
+});
+
+// Theme Toggle
+document.getElementById('themeToggle').addEventListener('click', cycleTheme);
+
+// Navigation
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+        e.preventDefault();
         
-        mobileHtml += `
-          <div class="col-12">
-            <div class="card expense-card" style="background:var(--card-bg); border:1px solid var(--border);">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                  <h6 class="card-title mb-0" style="color:var(--primary);">${u.name}</h6>
-                  <span class="badge badge-info">${u.type}</span>
-                </div>
-                
-                <div class="expense-details">
-                  <div class="row small text-muted mb-2">
-                    <div class="col-6">
-                      <i class="fas fa-rupee-sign"></i> <strong>${parseFloat(u.amount).toFixed(2)}</strong>
-                    </div>
-                    <div class="col-6 text-end">
-                      <i class="fas fa-calendar"></i> ${u.date}
-                    </div>
-                  </div>
-                  
-                  <p class="small mb-3" style="color:var(--text-light);">
-                    <i class="fas fa-file-alt"></i> ${u.description}
-                  </p>
-                  
-                  <div class="d-flex justify-content-between">
-                    <button class="btn btn-warning btn-sm" onclick="editExpense('${u._id}')">
-                      <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-info btn-sm" onclick="viewHistory('${u._id}')">
-                      <i class="fas fa-history"></i> 
-                    </button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteExpense('${u._id}','${u.name}')">
-                      <i class="fas fa-trash"></i> 
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      });
-
-      mobileHtml += `
-        </div>
+        // Remove active class from all nav items
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            nav.classList.remove('active');
+        });
         
-        <!-- Total Summary -->
-        <div class="card mt-3" style="background:var(--primary); color:white;">
-          <div class="card-body text-center">
-            <h6 class="mb-0">Total Expenses: ₹${totalAmount.toFixed(2)}</h6>
-          </div>
-        </div>
-      </div>`;
-      
-      tableContainer.innerHTML = mobileHtml;
-      
-    } else {
-      // DESKTOP VIEW - Table layout
-      let desktopHtml = `<div class="table-container">
-        <div class="table-responsive">
-          <table class="table table-striped table-bordered">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Amount</th>
-                <th>Type</th>
-                <th>Description</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>`;
-
-      users.forEach((u,i)=>{
-        totalAmount += parseFloat(u.amount) || 0;
-        const actionBtn = `
-          <div class="btn-group">
-            <button class="btn btn-warning btn-sm me-1" onclick="editExpense('${u._id}')" title="Edit">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-info btn-sm me-1" onclick="viewHistory('${u._id}')" title="History">
-              <i class="fas fa-history"></i>
-            </button>
-            <button class="btn btn-danger btn-sm" onclick="deleteExpense('${u._id}','${u.name}')" title="Delete">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        `;
-        desktopHtml += `
-          <tr>
-            <td>${i+1}</td>
-            <td>${u.name}</td>
-            <td>₹${parseFloat(u.amount).toFixed(2)}</td>
-            <td><span class="badge badge-info">${u.type}</span></td>
-            <td>${u.description}</td>
-            <td>${u.date}</td>
-            <td>${actionBtn}</td>
-          </tr>
-        `;
-      });
-
-      desktopHtml += `
-            </tbody>
-          </table>
-        </div>
+        // Add active class to clicked item
+        this.classList.add('active');
         
-        <!-- Total Row -->
-        <div class="mt-3 p-3 rounded" style="background:var(--primary); color:white;">
-          <div class="row">
-            <div class="col-6 text-end">
-              <strong>Total Expenses:</strong>
-            </div>
-            <div class="col-6">
-              <strong>₹${totalAmount.toFixed(2)}</strong>
-            </div>
-          </div>
-        </div>
-      </div>`;
-      
-      tableContainer.innerHTML = desktopHtml;
-    }
-
-    analyticsContainer.style.display="block";
-    renderCharts(users);
-
-    const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
-    if(bRes.ok){
-      const b = await bRes.json();
-      if(b && b.amount && parseFloat(b.amount) > 0){
-        updateBudgetUI(parseFloat(b.amount), totalAmount);
-      } else clearBudgetUI();
-    }
-  } catch(err){ 
-    console.error(err); 
-    tableContainer.innerHTML=`
-      <div class="alert alert-danger text-center">
-        <i class="fas fa-exclamation-triangle"></i> Failed to load expenses. Please try again.
-      </div>
-    `; 
-  }
-}
-
-// Edit and Delete handlers
-window.editExpense = async function(id){
-  try{
-    const res = await fetch(`${BASE_URL}/user/${id}`);
-    if(!res.ok) throw new Error("Failed to fetch user");
-    const user = await res.json();
-    document.getElementById("name").value=user.name;
-    document.getElementById("amount").value=user.amount;
-    document.getElementById("type").value=user.type;
-    document.getElementById("description").value=user.description;
-    document.getElementById("date").value=user.date;
-    editId.value=id;
-    showMessage("✏ Edit mode enabled - Make your changes and click Confirm",2000);
-  } catch(err){ console.error(err); showMessage("❌ Failed to fetch expense for editing.",2500);}
-}
-
-window.deleteExpense = async function(id, name){
-  if(!confirm(`Are you sure you want to delete expense "${name}"? This action cannot be undone.`)) return;
-  try{
-    const res = await fetch(`${BASE_URL}/delete/${id}`, { method: "DELETE" });
-    const r = await res.json();
-    if(res.ok){
-      showMessage("✅ Expense deleted successfully");
-      await loadData();
-      await fetchBudget();
-    } else {
-      showMessage(r.message || "Delete failed",2000);
-    }
-  } catch(err){ console.error(err); showMessage("❌ Failed to delete expense",2000); }
-}
-
-// History functions
-window.viewHistory = async function(expenseId) {
-  try {
-    const res = await fetch(`${BASE_URL}/user/${expenseId}`);
-    if(!res.ok) throw new Error("Failed to fetch expense");
-    const expense = await res.json();
-    
-    let historyHtml = `
-      <h4>Edit History for: <strong>${expense.name}</strong></h4>
-      <p><strong>Created:</strong> ${new Date(expense.createdAt).toLocaleString()} by You</p>
-    `;
-    
-    if (expense.editHistory && expense.editHistory.length > 0) {
-      historyHtml += `
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>Editor</th>
-              <th>Date & Time</th>
-              <th>Changes Made</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-      
-      expense.editHistory.forEach(edit => {
-        const changes = [];
-        if (edit.before.name !== edit.after.name) {
-          changes.push(`Name: "${edit.before.name}" → "${edit.after.name}"`);
-        }
-        if (edit.before.amount !== edit.after.amount) {
-          changes.push(`Amount: ₹${edit.before.amount} → ₹${edit.after.amount}`);
-        }
-        if (edit.before.type !== edit.after.type) {
-          changes.push(`Type: ${edit.before.type} → ${edit.after.type}`);
-        }
-        if (edit.before.description !== edit.after.description) {
-          changes.push(`Description: "${edit.before.description}" → "${edit.after.description}"`);
-        }
-        if (edit.before.date !== edit.after.date) {
-          changes.push(`Date: ${edit.before.date} → ${edit.after.date}`);
-        }
+        // Get page to show
+        const page = this.getAttribute('data-page');
         
-        historyHtml += `
-          <tr>
-            <td><strong>${edit.editorName}</strong></td>
-            <td>${new Date(edit.date).toLocaleString()}</td>
-            <td class="changes-list">
-              ${changes.map(change => `<div>${change}</div>`).join('')}
-            </td>
-          </tr>
-        `;
-      });
-      
-      historyHtml += `</tbody></table>`;
-    } else {
-      historyHtml += `<p class="text-muted">No edit history available for this expense.</p>`;
-    }
-    
-    historyContent.innerHTML = historyHtml;
-    historyModal.style.display = "block";
-  } catch(err) {
-    console.error(err);
-    historyContent.innerHTML = "<p class='text-danger'>Failed to load history.</p>";
-  }
-}
-
-async function showHistory() {
-  try {
-    const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
-    if(!res.ok) throw new Error("Failed to fetch expenses");
-    const expenses = await res.json();
-    
-    let historyHtml = `<h4>Complete Edit History</h4>`;
-    
-    const expensesWithHistory = expenses.filter(exp => exp.editHistory && exp.editHistory.length > 0);
-    
-    if (expensesWithHistory.length === 0) {
-      historyHtml += `<p class="text-muted">No edit history available yet.</p>`;
-    } else {
-      expensesWithHistory.forEach(expense => {
-        historyHtml += `
-          <div style="margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.05); border-radius: 8px;">
-            <h5>${expense.name} - ₹${parseFloat(expense.amount).toFixed(2)}</h5>
-            <p><small>Total edits: ${expense.editCount || 0}</small></p>
-            <button class="btn btn-sm btn-info" onclick="viewHistory('${expense._id}')">
-              View Detailed History
-            </button>
-          </div>
-        `;
-      });
-    }
-    
-    historyContent.innerHTML = historyHtml;
-    historyModal.style.display = "block";
-  } catch(err) {
-    console.error(err);
-    historyContent.innerHTML = "<p class='text-danger'>Failed to load history.</p>";
-  }
-}
-
-// FIXED Charts renderer - Proper colors for each category
-function renderCharts(users){
-  const dates = {};
-  const types = {};
-
-  let totalAmount = 0;
-  users.forEach(u=>{
-    const date = u.date || "Unknown";
-    const amount = parseFloat(u.amount) || 0;
-    totalAmount += amount;
-    dates[date] = (dates[date]||0)+amount;
-    types[u.type] = (types[u.type]||0)+amount;
-  });
-
-  const overAmount = currentBudgetAmount && totalAmount > currentBudgetAmount ? (totalAmount - currentBudgetAmount) : 0;
-  
-  // Add over budget as separate category if exists
-  if (overAmount > 0) {
-    types['Over Budget'] = overAmount;
-  }
-
-  const lineCtx = document.getElementById('lineChart').getContext('2d');
-  if(window.lineChartInstance) window.lineChartInstance.destroy();
-  window.lineChartInstance = new Chart(lineCtx, {
-    type: 'line',
-    data: {
-      labels: Object.keys(dates),
-      datasets: [{
-        label: 'Daily Expenses',
-        data: Object.values(dates),
-        borderColor: 'var(--primary)',
-        backgroundColor: 'rgba(0,188,212,0.2)',
-        fill: true,
-        tension: 0.3
-      }]
-    },
-    options: { 
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: { 
-        y: { 
-          beginAtZero:true,
-          ticks: { color: 'var(--text-light)' },
-          grid: { color: 'var(--border)' }
-        },
-        x: {
-          ticks: { color: 'var(--text-light)' },
-          grid: { color: 'var(--border)' }
-        }
-      },
-      plugins: {
-        legend: {
-          labels: { color: 'var(--text-light)' }
-        }
-      }
-    }
-  });
-
-  const pieCtx = document.getElementById('pieChart').getContext('2d');
-  if(window.pieChartInstance) window.pieChartInstance.destroy();
-
-  const labels = Object.keys(types);
-  const values = Object.values(types);
-
-  // FIXED: Proper color assignment for each category
-  const categoryColors = {
-    'Card': '#00bcd4',      // Cyan
-    'Cash': '#ff9800',      // Orange
-    'Gpay/Paytm': '#8bc34a', // Green
-    'Other': '#e91e63',     // Pink
-    'Over Budget': '#ff3b30' // Red
-  };
-
-  // Assign colors - use predefined or generate unique ones
-  const bgColors = labels.map(label => {
-    return categoryColors[label] || 
-           `hsl(${Math.random() * 360}, 70%, 60%)`; // Random color for unknown categories
-  });
-
-  window.pieChartInstance = new Chart(pieCtx, {
-    type: 'pie',
-    data: {
-      labels,
-      datasets: [{
-        data: values,
-        backgroundColor: bgColors,
-        borderColor: 'var(--card-bg)',
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            color: 'var(--text-light)',
-            padding: 15,
-            font: { size: 11 }
-          }
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              const label = context.label || '';
-              const value = context.raw || 0;
-              const total = context.dataset.data.reduce((a, b) => a + b, 0);
-              const percentage = Math.round((value / total) * 100);
-              return `${label}: ₹${value.toFixed(2)} (${percentage}%)`;
+        // Hide all pages
+        document.querySelectorAll('.page-content').forEach(page => {
+            page.classList.add('hidden');
+            page.classList.remove('active');
+        });
+        
+        // Show selected page
+        const targetPage = document.getElementById(`${page}Page`);
+        if (targetPage) {
+            targetPage.classList.remove('hidden');
+            targetPage.classList.add('active');
+            
+            // Update page title
+            const pageTitle = document.querySelector('.page-title h1');
+            pageTitle.textContent = this.querySelector('span:last-child').textContent;
+            
+            // Load specific data if needed
+            if (page === 'analytics') {
+                setTimeout(() => {
+                    renderCharts(window.expensesData || []);
+                }, 100);
             }
-          }
         }
-      }
+    });
+});
+
+// Expense Form
+const expenseForm = document.getElementById('expenseForm');
+const editId = document.getElementById('editId');
+
+expenseForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    
+    if (!currentUserUid) {
+        showMessage("Please login first", 2000, 'warning');
+        return;
     }
-  });
+    
+    const data = {
+        uid: currentUserUid,
+        name: document.getElementById('name').value.trim(),
+        amount: document.getElementById('amount').value.trim(),
+        type: document.getElementById('type').value,
+        description: document.getElementById('description').value.trim(),
+        date: document.getElementById('date').value
+    };
+    
+    // Validate
+    if (!data.name || !data.amount || !data.type || !data.description || !data.date) {
+        showMessage("Please fill all fields", 2000, 'warning');
+        return;
+    }
+    
+    try {
+        const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
+        const method = editId.value ? "PUT" : "POST";
+        
+        // Add editor name when updating
+        if (editId.value) {
+            data.editorName = currentUserName;
+        }
+        
+        const res = await fetch(url, { 
+            method, 
+            headers: { "Content-Type": "application/json" }, 
+            body: JSON.stringify(data) 
+        });
+        
+        const result = await res.json();
+        showMessage(result.message || "✅ Expense saved successfully!", 2000, 'success');
+        
+        // Reset form
+        editId.value = "";
+        expenseForm.reset();
+        document.getElementById('date').valueAsDate = new Date();
+        
+        // Reload data
+        await loadData();
+        await fetchBudget();
+        
+    } catch(err) { 
+        console.error(err); 
+        showMessage("❌ Failed to save expense", 2500, 'error');
+    }
+});
 
-  // Update analytics badge
-  if(overAmount > 0){
-    analyticsBadge.innerHTML = `<span class="badge badge-danger">🚨 Over budget: ₹${overAmount.toFixed(2)}</span>`;
-  } else if(currentBudgetAmount > 0) {
-    const usagePercent = Math.round((totalAmount / currentBudgetAmount) * 100);
-    analyticsBadge.innerHTML = `<span class="badge badge-success">✅ Usage: ${usagePercent}% of budget</span>`;
-  } else {
-    analyticsBadge.innerHTML = `<span class="badge badge-info">📊 Total: ₹${totalAmount.toFixed(2)}</span>`;
-  }
+// Set default date to today
+document.getElementById('date').valueAsDate = new Date();
+
+// Load Data
+async function loadData() {
+    if (!currentUserUid) return;
+    
+    try {
+        const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
+        if (!res.ok) throw new Error("Failed to fetch expenses");
+        
+        const users = await res.json();
+        window.expensesData = users; // Store for charts
+        
+        if (!Array.isArray(users) || users.length === 0) {
+            document.getElementById('expensesTable').innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center py-8 text-muted">
+                        No expenses yet. Add your first expense!
+                    </td>
+                </tr>
+            `;
+            
+            updateDashboardStats([], 0);
+            renderCharts([]);
+            return;
+        }
+        
+        // Render table
+        renderExpenseTable(users);
+        
+        // Update dashboard stats
+        updateDashboardStats(users);
+        
+        // Render charts
+        renderCharts(users);
+        
+    } catch(err) { 
+        console.error(err); 
+        document.getElementById('expensesTable').innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-8 text-danger">
+                    ❌ Failed to load expenses. Please try again.
+                </td>
+            </tr>
+        `;
+    }
 }
 
-// Start the typing animation
-typeWriterHeader();
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js")
-      .then(() => console.log("Service Worker registered"))
-      .catch(err => console.error("SW failed", err));
-  });
+// Render Expense Table
+function renderExpenseTable(expenses) {
+    const tbody = document.getElementById('expensesTable');
+    let html = '';
+    
+    let totalAmount = 0;
+    
+    expenses.forEach((expense, index) => {
+        totalAmount += parseFloat(expense.amount) || 0;
+        
+        html += `
+            <tr>
+                <td class="font-medium">${expense.name}</td>
+                <td>$${parseFloat(expense.amount).toFixed(2)}</td>
+                <td><span class="category-badge">${expense.type}</span></td>
+                <td>${expense.description}</td>
+                <td>${expense.date}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-btn edit-btn" onclick="editExpense('${expense._id}')" title="Edit">
+                            <span class="material-symbols-outlined">edit</span>
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteExpense('${expense._id}', '${expense.name}')" title="Delete">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                        <button class="action-btn" onclick="viewHistory('${expense._id}')" title="History">
+                            <span class="material-symbols-outlined">history</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+    
+    tbody.innerHTML = html;
 }
+
+// Update Dashboard Stats
+function updateDashboardStats(expenses = []) {
+    const totalExpenses = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
+    const expenseCount = expenses.length;
+    
+    // Calculate monthly expenses (this month)
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    const monthlyExpenses = expenses
+        .filter(exp => {
+            const expDate = new Date(exp.date);
+            return expDate.getMonth() === currentMonth && expDate.getFullYear() === currentYear;
+        })
+        .reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
+    
+    // Find top category
+    const categories = {};
+    expenses.forEach(exp => {
+        const type = exp.type || 'Other';
+        categories[type] = (categories[type] || 0) + parseFloat(exp.amount || 0);
+    });
+    
+    let topCategory = '-';
+    let categoryAmount = 0;
+    let otherCategories = [];
+    
+    if (Object.keys(categories).length > 0) {
+        const sortedCategories = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+        topCategory = sortedCategories[0][0];
+        categoryAmount = sortedCategories[0][1];
+        otherCategories = sortedCategories.slice(1, 4).map(([cat, amt]) => `${cat}: $${amt.toFixed(2)}`);
+    }
+    
+    // Update DOM
+    document.getElementById('totalExpenses').textContent = `$${totalExpenses.toFixed(2)}`;
+    document.getElementById('expenseCount').textContent = `${expenseCount} expense${expenseCount !== 1 ? 's' : ''}`;
+    document.getElementById('monthlyExpenses').textContent = `$${monthlyExpenses.toFixed(2)}`;
+    document.getElementById('topCategory').textContent = topCategory;
+    document.getElementById('categoryAmount').textContent = `$${categoryAmount.toFixed(2)}`;
+    document.getElementById('otherCategories').textContent = otherCategories.join(', ') || '-';
+    
+    // Update budget display
+    if (currentBudgetAmount > 0) {
+        const remaining = currentBudgetAmount - totalExpenses;
+        const percentage = Math.min((totalExpenses / currentBudgetAmount) * 100, 100);
+        
+        document.getElementById('totalSpent').textContent = `$${totalExpenses.toFixed(2)}`;
+        document.getElementById('remainingBudget').textContent = `$${remaining.toFixed(2)}`;
+        document.getElementById('budgetProgress').style.width = `${percentage}%`;
+        
+        // Update progress bar color
+        const progressBar = document.getElementById('budgetProgress');
+        progressBar.className = 'progress-fill ';
+        if (percentage >= 100) {
+            progressBar.classList.add('danger-progress');
+        } else if (percentage >= 80) {
+            progressBar.classList.add('warning-progress');
+        } else {
+            progressBar.classList.add('budget-progress');
+        }
+    }
+}
+
+// Edit Expense
+window.editExpense = async function(id) {
+    try {
+        const res = await fetch(`${BASE_URL}/user/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch expense");
+        
+        const expense = await res.json();
+        
+        // Fill form
+        document.getElementById('name').value = expense.name;
+        document.getElementById('amount').value = expense.amount;
+        document.getElementById('type').value = expense.type;
+        document.getElementById('description').value = expense.description;
+        document.getElementById('date').value = expense.date;
+        editId.value = id;
+        
+        // Scroll to form
+        document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+        
+        showMessage("✏️ Edit mode enabled. Make changes and click Confirm.", 3000, 'info');
+        
+    } catch(err) { 
+        console.error(err); 
+        showMessage("❌ Failed to load expense for editing", 2500, 'error');
+    }
+}
+
+// Delete Expense
+window.deleteExpense = async function(id, name) {
+    if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+    
+    try {
+        const res = await fetch(`${BASE_URL}/delete/${id}`, { method: "DELETE" });
+        const result = await res.json();
+        
+        if (res.ok) {
+            showMessage("✅ Expense deleted successfully", 2000, 'success');
+            await loadData();
+            await fetchBudget();
+        } else {
+            showMessage(result.message || "Delete failed", 2000, 'error');
+        }
+    } catch(err) { 
+        console.error(err); 
+        showMessage("❌ Failed to delete expense", 2000, 'error'); 
+    }
+}
+
+// Budget Functions
+async function fetchBudget() {
+    if (!currentUserUid) return clearBudgetUI();
+    
+    try {
+        const res = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
+        if (!res.ok) return clearBudgetUI();
+        
+        const data = await res.json();
+        if (!data || typeof data.amount === "undefined" || data.amount === 0) {
+            currentBudgetAmount = 0;
+            clearBudgetUI();
+            return;
+        }
+        
+        currentBudgetAmount = parseFloat(data.amount) || 0;
+        updateBudgetUI();
+        
+    } catch(err) { 
+        console.error(err); 
+        clearBudgetUI(); 
+    }
+}
+
+function clearBudgetUI() {
+    currentBudgetAmount = 0;
+    
+    document.getElementById('budgetAmount').textContent = '$0';
+    document.getElementById('budgetStatus').textContent = 'No budget set';
+    document.getElementById('totalSpent').textContent = '$0';
+    document.getElementById('remainingBudget').textContent = '$0';
+    document.getElementById('budgetProgress').style.width = '0%';
+    
+    document.getElementById('budgetInput').value = '';
+    document.getElementById('budgetDisplay').textContent = 'No budget set';
+    document.getElementById('budgetProgressBar').style.width = '0%';
+    document.getElementById('budgetAlerts').innerHTML = '<p class="text-muted">No budget alerts yet.</p>';
+}
+
+function updateBudgetUI() {
+    if (currentBudgetAmount <= 0) {
+        clearBudgetUI();
+        return;
+    }
+    
+    // Get total expenses
+    const expenses = window.expensesData || [];
+    const totalSpent = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
+    const remaining = currentBudgetAmount - totalSpent;
+    const percentage = Math.min((totalSpent / currentBudgetAmount) * 100, 100);
+    
+    // Update dashboard card
+    document.getElementById('budgetAmount').textContent = `$${currentBudgetAmount.toFixed(2)}`;
+    document.getElementById('budgetStatus').textContent = `$${remaining.toFixed(2)} remaining`;
+    document.getElementById('totalSpent').textContent = `$${totalSpent.toFixed(2)}`;
+    document.getElementById('remainingBudget').textContent = `$${remaining.toFixed(2)}`;
+    
+    // Update progress bar
+    const progressBar = document.getElementById('budgetProgress');
+    progressBar.style.width = `${percentage}%`;
+    
+    if (percentage >= 100) {
+        progressBar.className = 'progress-fill danger-progress';
+        document.getElementById('budgetStatus').innerHTML = `<span class="text-danger">Budget exceeded by $${Math.abs(remaining).toFixed(2)}</span>`;
+    } else if (percentage >= 80) {
+        progressBar.className = 'progress-fill warning-progress';
+        document.getElementById('budgetStatus').innerHTML = `<span class="text-warning">${Math.round(percentage)}% used</span>`;
+    } else {
+        progressBar.className = 'progress-fill budget-progress';
+    }
+    
+    // Update budget page
+    document.getElementById('budgetInput').value = currentBudgetAmount;
+    document.getElementById('budgetDisplay').textContent = `$${currentBudgetAmount.toFixed(2)}`;
+    document.getElementById('budgetProgressBar').style.width = `${percentage}%`;
+    
+    // Update alerts
+    const alertsDiv = document.getElementById('budgetAlerts');
+    if (percentage >= 100) {
+        alertsDiv.innerHTML = `
+            <div class="p-3 rounded-lg bg-danger/10 border border-danger/20">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-danger">warning</span>
+                    <p class="text-danger font-semibold">Budget exceeded by $${Math.abs(remaining).toFixed(2)}</p>
+                </div>
+                <p class="text-sm text-danger mt-1">You've spent all your budget for this month.</p>
+            </div>
+        `;
+    } else if (percentage >= 80) {
+        alertsDiv.innerHTML = `
+            <div class="p-3 rounded-lg bg-warning/10 border border-warning/20">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-warning">warning</span>
+                    <p class="text-warning font-semibold">Budget warning: ${Math.round(percentage)}% used</p>
+                </div>
+                <p class="text-sm text-warning mt-1">You have $${remaining.toFixed(2)} remaining this month.</p>
+            </div>
+        `;
+    } else {
+        alertsDiv.innerHTML = `
+            <div class="p-3 rounded-lg bg-success/10 border border-success/20">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-success">check_circle</span>
+                    <p class="text-success font-semibold">On track: ${Math.round(percentage)}% of budget used</p>
+                </div>
+                <p class="text-sm text-success mt-1">You have $${remaining.toFixed(2)} remaining this month.</p>
+            </div>
+        `;
+    }
+}
+
+// Save Budget
+document.getElementById('saveBudgetBtn').addEventListener('click', async () => {
+    const amount = parseFloat(document.getElementById('budgetInput').value);
+    
+    if (!amount || amount <= 0) {
+        showMessage("Enter a valid budget amount", 2000, 'warning');
+        return;
+    }
+    
+    if (!currentUserUid) return;
+    
+    try {
+        const res = await fetch(`${BASE_URL}/setBudget`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ uid: currentUserUid, amount })
+        });
+        
+        const data = await res.json();
+        if (res.ok) {
+            currentBudgetAmount = amount;
+            updateBudgetUI();
+            showMessage("✅ Budget saved successfully", 2000, 'success');
+        } else {
+            showMessage(data.message || "Failed to save budget", 2000, 'error');
+        }
+    } catch(err) { 
+        console.error(err); 
+        showMessage("❌ Failed to save budget", 2000, 'error'); 
+    }
+});
+
+// Reset Budget
+document.getElementById('resetBudgetBtn').addEventListener('click', async () => {
+    if (!currentUserUid) return;
+    
+    if (!confirm("Reset/delete your budget?")) return;
+    
+    try {
+        const res = await fetch(`${BASE_URL}/setBudget`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ uid: currentUserUid, amount: 0, reset: true })
+        });
+        
+        const data = await res.json();
+        if (res.ok) {
+            clearBudgetUI();
+            showMessage("✅ Budget reset successfully", 2000, 'success');
+        } else {
+            showMessage(data.message || "Reset failed", 2000, 'error');
+        }
+    } catch(err) { 
+        console.error(err); 
+        showMessage("❌ Reset failed", 2000, 'error'); 
+    }
+});
+
+// Charts
+function renderCharts(expenses) {
+    if (!expenses || expenses.length === 0) {
+        // Clear charts if no data
+        if (lineChartInstance) lineChartInstance.destroy();
+        if (pieChartInstance) pieChartInstance.destroy();
+        return;
+    }
+    
+    // Prepare data for line chart (daily expenses)
+    const dailyData = {};
+    expenses.forEach(exp => {
+        const date = exp.date;
+        dailyData[date] = (dailyData[date] || 0) + parseFloat(exp.amount || 0);
+    });
+    
+    const dates = Object.keys(dailyData).sort();
+    const amounts = dates.map(date => dailyData[date]);
+    
+    // Prepare data for pie chart (by type)
+    const typeData = {};
+    expenses.forEach(exp => {
+        const type = exp.type || 'Other';
+        typeData[type] = (typeData[type] || 0) + parseFloat(exp.amount || 0);
+    });
+    
+    const types = Object.keys(typeData);
+    const typeAmounts = types.map(type => typeData[type]);
+    
+    // Colors for pie chart
+    const colors = ['#2C097F', '#607AFB', '#00bcd4', '#10b981', '#f59e0b', '#ef4444'];
+    
+    // Line Chart
+    const lineCtx = document.getElementById('lineChart').getContext('2d');
+    if (lineChartInstance) lineChartInstance.destroy();
+    
+    lineChartInstance = new Chart(lineCtx, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'Daily Expenses',
+                data: amounts,
+                borderColor: 'var(--primary)',
+                backgroundColor: 'rgba(44, 9, 127, 0.1)',
+                fill: true,
+                tension: 0.3,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: 'var(--text)' }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: 'var(--text-muted)' },
+                    grid: { color: 'var(--border)' }
+                },
+                y: {
+                    ticks: { color: 'var(--text-muted)' },
+                    grid: { color: 'var(--border)' },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Pie Chart
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    if (pieChartInstance) pieChartInstance.destroy();
+    
+    pieChartInstance = new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: types,
+            datasets: [{
+                data: typeAmounts,
+                backgroundColor: colors,
+                borderColor: 'var(--card-bg)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: 'var(--text)',
+                        padding: 15
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = Math.round((value / total) * 100);
+                            return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// History Functions
+window.viewHistory = async function(expenseId) {
+    try {
+        const res = await fetch(`${BASE_URL}/user/${expenseId}`);
+        if (!res.ok) throw new Error("Failed to fetch expense");
+        
+        const expense = await res.json();
+        
+        let historyHtml = `
+            <h4 class="mb-4">Edit History for: <strong>${expense.name}</strong></h4>
+            <p><strong>Created:</strong> ${new Date(expense.createdAt).toLocaleString()} by You</p>
+        `;
+        
+        if (expense.editHistory && expense.editHistory.length > 0) {
+            historyHtml += `
+                <div class="mt-4">
+                    <h5 class="mb-3">Edits:</h5>
+                    <div class="space-y-3">
+            `;
+            
+            expense.editHistory.forEach(edit => {
+                const changes = [];
+                if (edit.before.name !== edit.after.name) {
+                    changes.push(`Name: "${edit.before.name}" → "${edit.after.name}"`);
+                }
+                if (edit.before.amount !== edit.after.amount) {
+                    changes.push(`Amount: $${edit.before.amount} → $${edit.after.amount}`);
+                }
+                if (edit.before.type !== edit.after.type) {
+                    changes.push(`Type: ${edit.before.type} → ${edit.after.type}`);
+                }
+                if (edit.before.description !== edit.after.description) {
+                    changes.push(`Description: "${edit.before.description}" → "${edit.after.description}"`);
+                }
+                if (edit.before.date !== edit.after.date) {
+                    changes.push(`Date: ${edit.before.date} → ${edit.after.date}`);
+                }
+                
+                historyHtml += `
+                    <div class="p-3 rounded-lg bg-background border border-border">
+                        <div class="flex justify-between items-center mb-2">
+                            <strong>${edit.editorName}</strong>
+                            <span class="text-sm text-muted">${new Date(edit.date).toLocaleString()}</span>
+                        </div>
+                        <div class="space-y-1">
+                            ${changes.map(change => `<div class="text-sm">• ${change}</div>`).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            historyHtml += `</div></div>`;
+        } else {
+            historyHtml += `<p class="text-muted mt-4">No edit history available for this expense.</p>`;
+        }
+        
+        document.getElementById('historyContent').innerHTML = historyHtml;
+        document.getElementById('historyModal').style.display = 'flex';
+        
+    } catch(err) {
+        console.error(err);
+        document.getElementById('historyContent').innerHTML = "<p class='text-danger'>Failed to load history.</p>";
+    }
+}
+
+// Modal Controls
+document.getElementById('aboutLink').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('aboutModal').style.display = 'flex';
+});
+
+document.getElementById('aboutLinkFooter').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('aboutModal').style.display = 'flex';
+});
+
+document.getElementById('closeAbout').addEventListener('click', () => {
+    document.getElementById('aboutModal').style.display = 'none';
+});
+
+document.getElementById('closeHistory').addEventListener('click', () => {
+    document.getElementById('historyModal').style.display = 'none';
+});
+
+// Close modals when clicking outside
+document.querySelectorAll('.modal-overlay').forEach(modal => {
+    modal.addEventListener('click', e => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
+
+// Initialize App
+document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    initializeFirebase();
+    
+    // Set default date
+    document.getElementById('date').valueAsDate = new Date();
+    
+    // Check for service worker
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+            navigator.serviceWorker.register("/sw.js")
+                .then(() => console.log("Service Worker registered"))
+                .catch(err => console.error("SW failed", err));
+        });
+    }
+});
+
+// Export for global access
+window.loadData = loadData;
+window.editExpense = editExpense;
+window.deleteExpense = deleteExpense;
+window.viewHistory = viewHistory;
 </script>
-<footer>
-  <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-
-    <div style="display:flex; gap:15px; font-size:0.75rem;">
-      <a href="terms-conditions.html" id="termsLink">Terms & Conditions</a>
-      <a href="privacy-policy.html" id="privacyLink">Privacy Policy</a>
-    </div>
-
-    <p style="margin:0;">
-      Email: <a href="mailto:alphaprime.co.in@gmail.com">alphaprime.co.in@gmail.com</a>
-    </p>
-
-    <p style="margin:0;">&copy; 2025 E-TRAX. All rights reserved.</p>
-  </div>
-</footer>
-
 </body>
 </html>
-
