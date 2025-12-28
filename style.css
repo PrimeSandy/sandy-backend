@@ -14,370 +14,7 @@
     --danger: #ef4444;
     --shadow: 0 10px 30px rgba(0,0,0,0.6);
 }
-/* ================= MOBILE RESPONSIVE DESIGN (max-width: 768px) ================= */
-@media (max-width: 768px) {
-    /* ========== HEADER REDESIGN ========== */
-    header {
-        padding: 8px 12px !important;
-        height: 56px; /* Fixed compact height */
-        display: flex;
-        align-items: center;
-    }
-    
-    .header-content {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    /* Brand section - more compact */
-    .brand-section {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-shrink: 0;
-    }
-    
-    .project-name {
-        font-size: 1.2rem !important;
-        font-weight: 700;
-        color: var(--primary);
-        margin: 0;
-        white-space: nowrap;
-    }
-    
-    .typing {
-        font-size: 0.7rem !important;
-        min-height: 0.9rem;
-        color: var(--secondary);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 120px;
-    }
-    
-    /* Header controls - compact row layout */
-    .header-controls {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-left: auto;
-    }
-    
-    #userNameDisplay {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        font-weight: 500;
-        padding: 4px 8px;
-        background: rgba(0, 188, 212, 0.1);
-        border-radius: 12px;
-        white-space: nowrap;
-        max-width: 100px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    
-    /* Theme toggle - icon only */
-    .theme-toggle {
-        padding: 6px !important;
-        min-width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid var(--border);
-        background: var(--card-bg);
-    }
-    
-    .theme-toggle span {
-        display: none;
-    }
-    
-    .theme-toggle i {
-        margin: 0 !important;
-        font-size: 0.9rem;
-    }
-    
-    /* Navigation links - compact icon buttons */
-    .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin: 0;
-        padding: 0;
-    }
-    
-    .nav-links a {
-        padding: 6px !important;
-        min-width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0; /* Hide text on mobile */
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-    }
-    
-    .nav-links a i {
-        font-size: 0.9rem;
-        margin: 0;
-    }
-    
-    /* Logout button - compact icon button */
-    #googleLogoutBtn {
-        padding: 6px !important;
-        min-width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid var(--danger) !important;
-        background: var(--card-bg);
-        font-size: 0; /* Hide text on mobile */
-    }
-    
-    #googleLogoutBtn i {
-        font-size: 0.9rem;
-        color: var(--danger);
-        margin: 0;
-    }
-    
-    #googleLogoutBtn:hover i {
-        color: white;
-    }
-    
-    /* ========== MAIN CONTENT ADJUSTMENTS ========== */
-    .container {
-        padding-top: 12px;
-        padding-bottom: 12px;
-    }
-    
-    /* Login card adjustments */
-    .login-card {
-        padding: 24px 16px;
-        margin: 16px;
-    }
-    
-    .login-card h1 {
-        font-size: 1.8rem;
-    }
-    
-    .login-card p {
-        font-size: 0.95rem;
-        margin-bottom: 20px;
-    }
-    
-    /* Budget card adjustments */
-    #budgetCard .card-body {
-        padding: 16px;
-    }
-    
-    #budgetCard .row.g-2 {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    #budgetCard .col-md-5,
-    #budgetCard .col-md-3,
-    #budgetCard .col-md-4 {
-        width: 100%;
-        max-width: 100%;
-    }
-    
-    /* Expense form adjustments */
-    #expenseFormContainer .card-body {
-        padding: 16px;
-    }
-    
-    #expenseForm .col-md-6 {
-        width: 100%;
-        margin-bottom: 12px;
-    }
-    
-    #expenseForm .col-12 {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    #expenseForm .col-12 button {
-        width: 100%;
-    }
-    
-    /* Table container adjustments */
-    .table-container {
-        padding: 16px;
-        margin-top: 16px;
-    }
-    
-    /* Mobile expense cards enhancement */
-    .expense-card {
-        border-radius: 12px;
-        margin-bottom: 12px;
-        border: 1px solid var(--border);
-    }
-    
-    .expense-card .card-body {
-        padding: 16px;
-    }
-    
-    .expense-card .btn-group {
-        display: flex;
-        gap: 8px;
-    }
-    
-    .expense-card .btn {
-        flex: 1;
-        padding: 8px 12px;
-        font-size: 0.8rem;
-    }
-    
-    /* Analytics section */
-    #analyticsContainer .table-container {
-        padding: 16px;
-    }
-    
-    .chart-container {
-        height: 250px;
-        margin-bottom: 16px;
-    }
-    
-    /* ========== MODALS ========== */
-    .modal-overlay {
-        padding: 20px 12px;
-    }
-    
-    .modal-content {
-        padding: 20px 16px;
-        margin: 0;
-        border-radius: 16px;
-    }
-    
-    /* ========== FOOTER ========== */
-    footer {
-        padding: 16px 12px;
-        font-size: 0.7rem;
-    }
-    
-    footer > div {
-        gap: 8px;
-    }
-    
-    /* ========== UTILITY CLASSES ========== */
-    .d-none-mobile {
-        display: none !important;
-    }
-    
-    .d-flex-mobile {
-        display: flex !important;
-    }
-}
 
-/* ================= SMALL MOBILE ENHANCEMENTS (max-width: 480px) ================= */
-@media (max-width: 480px) {
-    header {
-        height: 52px;
-        padding: 6px 10px !important;
-    }
-    
-    .project-name {
-        font-size: 1.1rem !important;
-    }
-    
-    .typing {
-        font-size: 0.65rem !important;
-        max-width: 100px;
-    }
-    
-    #userNameDisplay {
-        font-size: 0.7rem;
-        padding: 3px 6px;
-        max-width: 80px;
-    }
-    
-    .theme-toggle,
-    .nav-links a,
-    #googleLogoutBtn {
-        min-width: 32px;
-        height: 32px;
-    }
-    
-    .theme-toggle i,
-    .nav-links a i,
-    #googleLogoutBtn i {
-        font-size: 0.8rem;
-    }
-    
-    /* Adjust header spacing for very small screens */
-    .header-content {
-        gap: 4px;
-    }
-    
-    .brand-section {
-        gap: 6px;
-    }
-    
-    .header-controls {
-        gap: 4px;
-    }
-    
-    .nav-links {
-        gap: 4px;
-    }
-    
-    /* Improve touch targets */
-    button,
-    .btn,
-    .nav-links a,
-    #googleLogoutBtn {
-        min-height: 44px; /* Apple HIG recommendation */
-    }
-    
-    /* Expense form improvements */
-    .form-control,
-    .form-select {
-        padding: 12px 14px;
-        font-size: 16px; /* Prevents iOS zoom on focus */
-    }
-    
-    /* Mobile expense card buttons */
-    .expense-card .btn-group {
-        gap: 6px;
-    }
-    
-    .expense-card .btn {
-        padding: 10px 8px;
-        font-size: 0.75rem;
-    }
-}
-
-/* ================= TABLET OPTIMIZATION (769px - 992px) ================= */
-@media (min-width: 769px) and (max-width: 992px) {
-    /* Ensure desktop styles apply correctly on tablets */
-    .header-content {
-        flex-direction: row;
-    }
-    
-    .nav-links a span {
-        display: inline; /* Show text on tablets */
-        font-size: 0.8rem;
-    }
-    
-    #googleLogoutBtn span {
-        display: inline;
-        font-size: 0.8rem;
-    }
-    
-    .theme-toggle span {
-        display: inline;
-        font-size: 0.8rem;
-    }
-}
 [data-theme="light"] {
     --primary: #2563eb;
     --primary-dark: #1d4ed8;
@@ -1161,4 +798,369 @@ footer a:hover {
 .high-contrast-text {
     color: var(--text) !important;
     font-weight: 600 !important;
+}
+
+/* ================= MOBILE RESPONSIVE DESIGN (max-width: 768px) ================= */
+@media (max-width: 768px) {
+    /* ========== HEADER REDESIGN ========== */
+    header {
+        padding: 8px 12px !important;
+        height: 56px; /* Fixed compact height */
+        display: flex;
+        align-items: center;
+    }
+    
+    .header-content {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    /* Brand section - more compact */
+    .brand-section {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+    
+    .project-name {
+        font-size: 1.2rem !important;
+        font-weight: 700;
+        color: var(--primary);
+        margin: 0;
+        white-space: nowrap;
+    }
+    
+    .typing {
+        font-size: 0.7rem !important;
+        min-height: 0.9rem;
+        color: var(--secondary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 120px;
+    }
+    
+    /* Header controls - compact row layout */
+    .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+    }
+    
+    #userNameDisplay {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        padding: 4px 8px;
+        background: rgba(0, 188, 212, 0.1);
+        border-radius: 12px;
+        white-space: nowrap;
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* Theme toggle - icon only */
+    .theme-toggle {
+        padding: 6px !important;
+        min-width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border);
+        background: var(--card-bg);
+    }
+    
+    .theme-toggle span {
+        display: none;
+    }
+    
+    .theme-toggle i {
+        margin: 0 !important;
+        font-size: 0.9rem;
+    }
+    
+    /* Navigation links - compact icon buttons */
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .nav-links a {
+        padding: 6px !important;
+        min-width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0; /* Hide text on mobile */
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+    }
+    
+    .nav-links a i {
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    
+    /* Logout button - compact icon button */
+    #googleLogoutBtn {
+        padding: 6px !important;
+        min-width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--danger) !important;
+        background: var(--card-bg);
+        font-size: 0; /* Hide text on mobile */
+    }
+    
+    #googleLogoutBtn i {
+        font-size: 0.9rem;
+        color: var(--danger);
+        margin: 0;
+    }
+    
+    #googleLogoutBtn:hover i {
+        color: white;
+    }
+    
+    /* ========== MAIN CONTENT ADJUSTMENTS ========== */
+    .container {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+    
+    /* Login card adjustments */
+    .login-card {
+        padding: 24px 16px;
+        margin: 16px;
+    }
+    
+    .login-card h1 {
+        font-size: 1.8rem;
+    }
+    
+    .login-card p {
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+    }
+    
+    /* Budget card adjustments */
+    #budgetCard .card-body {
+        padding: 16px;
+    }
+    
+    #budgetCard .row.g-2 {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    #budgetCard .col-md-5,
+    #budgetCard .col-md-3,
+    #budgetCard .col-md-4 {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    /* Expense form adjustments */
+    #expenseFormContainer .card-body {
+        padding: 16px;
+    }
+    
+    #expenseForm .col-md-6 {
+        width: 100%;
+        margin-bottom: 12px;
+    }
+    
+    #expenseForm .col-12 {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    #expenseForm .col-12 button {
+        width: 100%;
+    }
+    
+    /* Table container adjustments */
+    .table-container {
+        padding: 16px;
+        margin-top: 16px;
+    }
+    
+    /* Mobile expense cards enhancement */
+    .expense-card {
+        border-radius: 12px;
+        margin-bottom: 12px;
+        border: 1px solid var(--border);
+    }
+    
+    .expense-card .card-body {
+        padding: 16px;
+    }
+    
+    .expense-card .btn-group {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .expense-card .btn {
+        flex: 1;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    /* Analytics section */
+    #analyticsContainer .table-container {
+        padding: 16px;
+    }
+    
+    .chart-container {
+        height: 250px;
+        margin-bottom: 16px;
+    }
+    
+    /* ========== MODALS ========== */
+    .modal-overlay {
+        padding: 20px 12px;
+    }
+    
+    .modal-content {
+        padding: 20px 16px;
+        margin: 0;
+        border-radius: 16px;
+    }
+    
+    /* ========== FOOTER ========== */
+    footer {
+        padding: 16px 12px;
+        font-size: 0.7rem;
+    }
+    
+    footer > div {
+        gap: 8px;
+    }
+    
+    /* ========== UTILITY CLASSES ========== */
+    .d-none-mobile {
+        display: none !important;
+    }
+    
+    .d-flex-mobile {
+        display: flex !important;
+    }
+}
+
+/* ================= SMALL MOBILE ENHANCEMENTS (max-width: 480px) ================= */
+@media (max-width: 480px) {
+    header {
+        height: 52px;
+        padding: 6px 10px !important;
+    }
+    
+    .project-name {
+        font-size: 1.1rem !important;
+    }
+    
+    .typing {
+        font-size: 0.65rem !important;
+        max-width: 100px;
+    }
+    
+    #userNameDisplay {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+        max-width: 80px;
+    }
+    
+    .theme-toggle,
+    .nav-links a,
+    #googleLogoutBtn {
+        min-width: 32px;
+        height: 32px;
+    }
+    
+    .theme-toggle i,
+    .nav-links a i,
+    #googleLogoutBtn i {
+        font-size: 0.8rem;
+    }
+    
+    /* Adjust header spacing for very small screens */
+    .header-content {
+        gap: 4px;
+    }
+    
+    .brand-section {
+        gap: 6px;
+    }
+    
+    .header-controls {
+        gap: 4px;
+    }
+    
+    .nav-links {
+        gap: 4px;
+    }
+    
+    /* Improve touch targets */
+    button,
+    .btn,
+    .nav-links a,
+    #googleLogoutBtn {
+        min-height: 44px; /* Apple HIG recommendation */
+    }
+    
+    /* Expense form improvements */
+    .form-control,
+    .form-select {
+        padding: 12px 14px;
+        font-size: 16px; /* Prevents iOS zoom on focus */
+    }
+    
+    /* Mobile expense card buttons */
+    .expense-card .btn-group {
+        gap: 6px;
+    }
+    
+    .expense-card .btn {
+        padding: 10px 8px;
+        font-size: 0.75rem;
+    }
+}
+
+/* ================= TABLET OPTIMIZATION (769px - 992px) ================= */
+@media (min-width: 769px) and (max-width: 992px) {
+    /* Ensure desktop styles apply correctly on tablets */
+    .header-content {
+        flex-direction: row;
+    }
+    
+    .nav-links a span {
+        display: inline; /* Show text on tablets */
+        font-size: 0.8rem;
+    }
+    
+    #googleLogoutBtn span {
+        display: inline;
+        font-size: 0.8rem;
+    }
+    
+    .theme-toggle span {
+        display: inline;
+        font-size: 0.8rem;
+    }
 }
