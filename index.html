@@ -3,33 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-TRAX | Smart Expense Tracker</title>
+    <title>E-TRAX Expense Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* ========== CSS VARIABLES ========== */
+        /* Simple Dark Theme */
         :root {
             --primary: #3b82f6;
             --primary-dark: #2563eb;
             --secondary: #10b981;
-            --accent: #8b5cf6;
-            --warning: #f59e0b;
             --danger: #ef4444;
+            --warning: #f59e0b;
             
             --bg-dark: #0f172a;
             --card-dark: #1e293b;
             --text-dark: #f1f5f9;
-            --text-muted-dark: #94a3b8;
-            --border-dark: rgba(255,255,255,0.1);
-            
-            --bg-light: #f8fafc;
-            --card-light: #ffffff;
-            --text-light: #1e293b;
-            --text-muted-light: #64748b;
-            --border-light: rgba(0,0,0,0.1);
+            --text-muted: #94a3b8;
+            --border: rgba(255,255,255,0.1);
         }
         
-        /* ========== BASE STYLES ========== */
         * {
             margin: 0;
             padding: 0;
@@ -37,92 +28,53 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-dark);
             color: var(--text-dark);
             min-height: 100vh;
-            line-height: 1.6;
         }
         
-        /* ========== LAYOUT ========== */
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
         
-        /* ========== HEADER ========== */
+        /* Header */
         .header {
             background: var(--card-dark);
-            padding: 1rem 2rem;
-            border-bottom: 1px solid var(--border-dark);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
         }
         
         .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-        }
-        
-        .logo-text {
             font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .user-section {
+            font-weight: bold;
+            color: var(--primary);
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
         
         .user-avatar {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 1rem;
-        }
-        
-        .user-info {
-            text-align: right;
-        }
-        
-        .user-name {
-            font-weight: 600;
-            font-size: 1rem;
-        }
-        
-        .user-email {
-            font-size: 0.85rem;
-            color: var(--text-muted-dark);
         }
         
         .logout-btn {
@@ -130,102 +82,56 @@
             background: var(--danger);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 6px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s;
         }
         
-        .logout-btn:hover {
-            background: #dc2626;
-            transform: translateY(-2px);
-        }
-        
-        /* ========== STATS CARDS ========== */
+        /* Stats */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin: 30px 0;
         }
         
         .stat-card {
             background: var(--card-dark);
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid var(--border-dark);
-            transition: transform 0.3s;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
         }
         
         .stat-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .stat-icon {
-            color: var(--primary);
-            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
         }
         
         .stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin: 10px 0;
+            font-size: 2rem;
+            font-weight: bold;
             color: var(--primary);
+            margin: 5px 0;
         }
         
         .stat-subtext {
-            color: var(--text-muted-dark);
+            color: var(--text-muted);
             font-size: 0.9rem;
         }
         
-        .progress-bar {
-            height: 8px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 15px 0;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            border-radius: 4px;
-            width: 0%;
-            transition: width 1s ease-in-out;
-        }
-        
-        /* ========== FORM ========== */
+        /* Form */
         .form-container {
             background: var(--card-dark);
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid var(--border-dark);
+            padding: 25px;
+            border-radius: 10px;
             margin-bottom: 30px;
         }
         
         .form-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             color: var(--text-dark);
             display: flex;
             align-items: center;
@@ -234,153 +140,87 @@
         
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
             margin-bottom: 20px;
         }
         
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-label {
+        .form-group label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-dark);
+            margin-bottom: 5px;
+            color: var(--text-muted);
             font-size: 0.9rem;
         }
         
         .form-input, .form-select {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px;
             background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border-dark);
-            border-radius: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
             color: var(--text-dark);
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
         
         .form-actions {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: flex-end;
-            margin-top: 30px;
         }
         
-        /* ========== BUTTONS ========== */
+        /* Buttons */
         .btn {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 600;
-            font-size: 0.95rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
-            transition: all 0.3s;
-            min-width: 120px;
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: var(--primary);
             color: white;
-        }
-        
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
         }
         
         .btn-secondary {
             background: rgba(255,255,255,0.1);
             color: var(--text-dark);
-            border: 1px solid var(--border-dark);
         }
         
-        .btn-secondary:hover:not(:disabled) {
-            background: rgba(255,255,255,0.15);
-            transform: translateY(-2px);
-        }
-        
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-        
-        .btn-danger:hover:not(:disabled) {
-            background: #dc2626;
-            transform: translateY(-2px);
-        }
-        
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        
-        /* ========== TABLE ========== */
+        /* Table */
         .table-container {
             background: var(--card-dark);
-            border-radius: 12px;
-            border: 1px solid var(--border-dark);
+            border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 40px;
+            margin-top: 30px;
         }
         
         .table-header {
             padding: 20px;
-            border-bottom: 1px solid var(--border-dark);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .table-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .table-responsive {
-            overflow-x: auto;
-        }
-        
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 800px;
         }
         
         th {
-            padding: 15px 20px;
+            padding: 15px;
             text-align: left;
             background: rgba(255,255,255,0.05);
-            color: var(--text-muted-dark);
+            color: var(--text-muted);
             font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--border-dark);
+            font-size: 0.9rem;
         }
         
         td {
-            padding: 15px 20px;
+            padding: 15px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            color: var(--text-dark);
-            font-size: 0.95rem;
         }
         
         tr:hover {
@@ -389,127 +229,60 @@
         
         .category-badge {
             display: inline-block;
-            padding: 5px 12px;
+            padding: 4px 10px;
             background: rgba(59, 130, 246, 0.2);
             color: var(--primary);
             border-radius: 20px;
             font-size: 0.85rem;
-            font-weight: 500;
         }
         
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 5px;
         }
         
         .action-btn {
-            padding: 8px;
-            border: none;
+            padding: 6px;
             background: transparent;
-            color: var(--text-muted-dark);
+            border: none;
+            color: var(--text-muted);
             cursor: pointer;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
+            border-radius: 4px;
         }
         
         .action-btn:hover {
             background: rgba(255,255,255,0.1);
         }
         
-        .action-btn.edit:hover {
-            color: var(--primary);
-        }
-        
-        .action-btn.delete:hover {
-            color: var(--danger);
-        }
-        
-        /* ========== CHARTS ========== */
-        .charts-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-        
-        .chart-card {
-            background: var(--card-dark);
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid var(--border-dark);
-        }
-        
-        .chart-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .chart-wrapper {
-            position: relative;
-            height: 300px;
-            width: 100%;
-        }
-        
-        /* ========== LOADER ========== */
-        .loader-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-dark);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(59, 130, 246, 0.3);
+        /* Loader */
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
             border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            margin: 50px auto;
         }
         
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
         
-        /* ========== TOAST ========== */
-        .toast-container {
+        /* Toast */
+        .toast {
             position: fixed;
             top: 20px;
             right: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .toast {
             background: var(--card-dark);
+            padding: 15px;
             border-radius: 8px;
-            padding: 15px 20px;
             border-left: 4px solid var(--primary);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
             gap: 15px;
             min-width: 300px;
-            animation: slideIn 0.3s ease;
-            border: 1px solid var(--border-dark);
+            z-index: 1000;
         }
         
         .toast.success {
@@ -520,123 +293,7 @@
             border-left-color: var(--danger);
         }
         
-        .toast.warning {
-            border-left-color: var(--warning);
-        }
-        
-        .toast-icon {
-            font-size: 1.2rem;
-        }
-        
-        .toast.success .toast-icon {
-            color: var(--secondary);
-        }
-        
-        .toast.error .toast-icon {
-            color: var(--danger);
-        }
-        
-        .toast.warning .toast-icon {
-            color: var(--warning);
-        }
-        
-        .toast-content {
-            flex: 1;
-        }
-        
-        .toast-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--text-dark);
-        }
-        
-        .toast-message {
-            color: var(--text-muted-dark);
-            font-size: 0.9rem;
-        }
-        
-        .toast-close {
-            background: none;
-            border: none;
-            color: var(--text-muted-dark);
-            cursor: pointer;
-            padding: 5px;
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        /* ========== MODAL ========== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-        
-        .modal-content {
-            background: var(--card-dark);
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 1px solid var(--border-dark);
-            transform: translateY(20px);
-            transition: transform 0.3s;
-        }
-        
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .modal-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--text-muted-dark);
-            cursor: pointer;
-            padding: 8px;
-            font-size: 1.2rem;
-        }
-        
-        /* ========== LOGIN ========== */
+        /* Login */
         .login-container {
             min-height: 100vh;
             display: flex;
@@ -648,109 +305,46 @@
         .login-card {
             background: var(--card-dark);
             padding: 40px;
-            border-radius: 12px;
+            border-radius: 10px;
             text-align: center;
             max-width: 400px;
             width: 100%;
-            border: 1px solid var(--border-dark);
         }
         
-        .login-logo {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            margin: 0 auto 20px;
-        }
-        
-        .login-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--text-dark);
-        }
-        
-        .login-subtitle {
-            color: var(--text-muted-dark);
-            margin-bottom: 30px;
-        }
-        
-        .google-login-btn {
+        .login-btn {
             width: 100%;
             padding: 15px;
             background: white;
             color: #333;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: all 0.3s;
+            margin-top: 20px;
         }
         
-        .google-login-btn:hover {
-            background: #f8f9fa;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
         }
         
-        .login-footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-dark);
-            color: var(--text-muted-dark);
-            font-size: 0.9rem;
-        }
-        
-        /* ========== UTILITY ========== */
+        /* Hidden */
         .hidden {
             display: none !important;
         }
         
-        .text-center {
-            text-align: center;
-        }
-        
-        .mb-1 { margin-bottom: 0.5rem; }
-        .mb-2 { margin-bottom: 1rem; }
-        .mb-3 { margin-bottom: 1.5rem; }
-        .mb-4 { margin-bottom: 2rem; }
-        
-        .mt-1 { margin-top: 0.5rem; }
-        .mt-2 { margin-top: 1rem; }
-        .mt-3 { margin-top: 1.5rem; }
-        .mt-4 { margin-top: 2rem; }
-        
-        .flex { display: flex; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-2 { gap: 0.5rem; }
-        .gap-3 { gap: 1rem; }
-        .gap-4 { gap: 1.5rem; }
-        
-        /* ========== RESPONSIVE ========== */
+        /* Responsive */
         @media (max-width: 768px) {
             .header {
-                padding: 1rem;
                 flex-direction: column;
                 gap: 15px;
-            }
-            
-            .container {
-                padding: 15px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
+                text-align: center;
             }
             
             .form-grid {
@@ -765,64 +359,33 @@
                 width: 100%;
             }
             
-            .charts-container {
-                grid-template-columns: 1fr;
-            }
-            
             .table-header {
                 flex-direction: column;
                 gap: 15px;
-                align-items: stretch;
-            }
-            
-            table {
-                min-width: auto;
             }
         }
     </style>
 </head>
 <body>
     <!-- Loader -->
-    <div id="loader" class="loader-container">
-        <div class="spinner"></div>
-        <h2 style="color: var(--primary); margin-bottom: 10px;">E-TRAX</h2>
-        <p style="color: var(--text-muted-dark);">Loading...</p>
-    </div>
+    <div id="loader" class="loader"></div>
 
     <!-- Toast Container -->
-    <div id="toastContainer" class="toast-container"></div>
-
-    <!-- Modal -->
-    <div id="modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Edit History</h3>
-                <button class="modal-close" onclick="closeModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="modalBody">
-                <!-- Modal content will be loaded here -->
-            </div>
-        </div>
-    </div>
+    <div id="toastContainer"></div>
 
     <!-- Main App -->
     <div id="app" class="hidden">
         <!-- Header -->
         <header class="header">
             <div class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="logo-text">E-TRAX</div>
+                <i class="fas fa-chart-line"></i>
+                E-TRAX
             </div>
-            
-            <div class="user-section">
+            <div class="user-info">
                 <div class="user-avatar" id="userAvatar">U</div>
-                <div class="user-info">
-                    <div class="user-name" id="userName">User</div>
-                    <div class="user-email" id="userEmail">user@example.com</div>
+                <div>
+                    <div id="userName" style="font-weight: bold;">User</div>
+                    <div id="userEmail" style="font-size: 0.9rem; color: var(--text-muted);">user@example.com</div>
                 </div>
                 <button class="logout-btn" id="logoutBtn">
                     <i class="fas fa-sign-out-alt"></i>
@@ -834,22 +397,19 @@
         <!-- Main Content -->
         <main class="container">
             <!-- Login View -->
-            <div id="loginView" class="login-container">
-                <div class="login-card">
-                    <div class="login-logo">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h2 class="login-title">Welcome to E-TRAX</h2>
-                    <p class="login-subtitle">Track expenses, manage budgets, and analyze spending</p>
-                    
-                    <button id="googleLoginBtn" class="google-login-btn">
-                        <i class="fab fa-google"></i>
-                        Sign in with Google
-                    </button>
-                    
-                    <div class="login-footer">
-                        <p>Secure authentication via Google</p>
-                        <p class="mt-1">Your data is private and secure</p>
+            <div id="loginView">
+                <div class="login-container">
+                    <div class="login-card">
+                        <div style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h2 style="margin-bottom: 10px;">Welcome to E-TRAX</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 30px;">Track your expenses easily</p>
+                        
+                        <button id="googleLoginBtn" class="login-btn">
+                            <i class="fab fa-google"></i>
+                            Sign in with Google
+                        </button>
                     </div>
                 </div>
             </div>
@@ -859,42 +419,19 @@
                 <!-- Stats -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-header">
-                            <h3 class="stat-title">
-                                <i class="fas fa-wallet stat-icon"></i>
-                                Total Spent
-                            </h3>
-                            <i class="fas fa-chart-bar" style="color: var(--primary);"></i>
-                        </div>
+                        <div class="stat-title">Total Spent</div>
                         <div class="stat-value" id="totalSpent">₹0</div>
                         <div class="stat-subtext" id="expenseCount">0 expenses</div>
                     </div>
                     
                     <div class="stat-card">
-                        <div class="stat-header">
-                            <h3 class="stat-title">
-                                <i class="fas fa-bullseye stat-icon"></i>
-                                Monthly Budget
-                            </h3>
-                            <i class="fas fa-sack-dollar" style="color: var(--secondary);"></i>
-                        </div>
+                        <div class="stat-title">Monthly Budget</div>
                         <div class="stat-value" id="budgetAmount">₹0</div>
-                        <div class="progress-bar">
-                            <div id="budgetProgress" class="progress-fill" style="width: 0%"></div>
-                        </div>
-                        <div class="stat-subtext">
-                            <span id="remainingBudget">₹0</span> remaining
-                        </div>
+                        <div class="stat-subtext" id="remainingBudget">₹0 remaining</div>
                     </div>
                     
                     <div class="stat-card">
-                        <div class="stat-header">
-                            <h3 class="stat-title">
-                                <i class="fas fa-tags stat-icon"></i>
-                                Top Category
-                            </h3>
-                            <i class="fas fa-star" style="color: var(--warning);"></i>
-                        </div>
+                        <div class="stat-title">Top Category</div>
                         <div class="stat-value" id="topCategory">-</div>
                         <div class="stat-subtext" id="categoryAmount">₹0</div>
                     </div>
@@ -908,81 +445,55 @@
                     </h3>
                     
                     <form id="expenseForm">
-                        <input type="hidden" id="editId">
-                        
                         <div class="form-grid">
                             <div class="form-group">
-                                <label class="form-label" for="expenseName">Name *</label>
-                                <input type="text" 
-                                       id="expenseName" 
-                                       class="form-input" 
-                                       placeholder="What did you spend on?" 
-                                       required>
+                                <label>Name *</label>
+                                <input type="text" id="expenseName" class="form-input" placeholder="What did you buy?" required>
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label" for="expenseAmount">Amount (₹) *</label>
-                                <input type="number" 
-                                       id="expenseAmount" 
-                                       class="form-input" 
-                                       placeholder="0.00" 
-                                       step="0.01" 
-                                       min="0" 
-                                       required>
+                                <label>Amount (₹) *</label>
+                                <input type="number" id="expenseAmount" class="form-input" placeholder="0.00" step="0.01" required>
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label" for="expenseCategory">Category *</label>
+                                <label>Category *</label>
                                 <select id="expenseCategory" class="form-select" required>
                                     <option value="">Select category</option>
-                                    <option value="Food & Dining">Food & Dining</option>
+                                    <option value="Food">Food</option>
                                     <option value="Shopping">Shopping</option>
-                                    <option value="Transportation">Transportation</option>
+                                    <option value="Transport">Transport</option>
                                     <option value="Entertainment">Entertainment</option>
-                                    <option value="Bills & Utilities">Bills & Utilities</option>
-                                    <option value="Healthcare">Healthcare</option>
-                                    <option value="Education">Education</option>
-                                    <option value="Travel">Travel</option>
-                                    <option value="Personal">Personal</option>
+                                    <option value="Bills">Bills</option>
                                     <option value="Other">Other</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label" for="expenseType">Payment Type</label>
+                                <label>Payment Type</label>
                                 <select id="expenseType" class="form-select">
                                     <option value="Cash">Cash</option>
                                     <option value="Card">Card</option>
                                     <option value="UPI">UPI</option>
-                                    <option value="Net Banking">Net Banking</option>
-                                    <option value="Other">Other</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label" for="expenseDate">Date *</label>
-                                <input type="date" 
-                                       id="expenseDate" 
-                                       class="form-input" 
-                                       required>
+                                <label>Date *</label>
+                                <input type="date" id="expenseDate" class="form-input" required>
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label" for="expenseDescription">Description</label>
-                                <input type="text" 
-                                       id="expenseDescription" 
-                                       class="form-input" 
-                                       placeholder="Additional notes (optional)">
+                                <label>Description</label>
+                                <input type="text" id="expenseDescription" class="form-input" placeholder="Optional notes">
                             </div>
                         </div>
                         
                         <div class="form-actions">
-                            <button type="reset" class="btn btn-secondary">
-                                <i class="fas fa-times"></i>
+                            <button type="button" class="btn btn-secondary" onclick="clearForm()">
                                 Clear
                             </button>
                             <button type="submit" class="btn btn-primary" id="submitBtn">
-                                <i class="fas fa-check"></i>
                                 Save Expense
                             </button>
                         </div>
@@ -992,23 +503,23 @@
                 <!-- Recent Expenses -->
                 <div class="table-container">
                     <div class="table-header">
-                        <h3 class="table-title">
+                        <h3>
                             <i class="fas fa-history"></i>
                             Recent Expenses
                         </h3>
-                        <div class="flex items-center gap-3">
-                            <button class="btn btn-secondary" onclick="refreshData()">
+                        <div>
+                            <button class="btn btn-secondary" onclick="loadExpenses()">
                                 <i class="fas fa-sync-alt"></i>
                                 Refresh
                             </button>
-                            <button class="btn btn-secondary" onclick="runDebug()">
+                            <button class="btn btn-secondary" onclick="debugData()" style="margin-left: 10px;">
                                 <i class="fas fa-bug"></i>
                                 Debug
                             </button>
                         </div>
                     </div>
                     
-                    <div class="table-responsive">
+                    <div style="overflow-x: auto;">
                         <table>
                             <thead>
                                 <tr>
@@ -1021,39 +532,14 @@
                                 </tr>
                             </thead>
                             <tbody id="expensesTable">
-                                <!-- Expenses will be loaded here -->
+                                <!-- Expenses will load here -->
                             </tbody>
                         </table>
                         
-                        <div id="emptyState" class="text-center mt-4 mb-4 hidden">
-                            <i class="fas fa-receipt" style="font-size: 3rem; color: var(--text-muted-dark); margin-bottom: 15px;"></i>
-                            <h3 style="color: var(--text-muted-dark);">No expenses yet</h3>
-                            <p style="color: var(--text-muted-dark);">Add your first expense above to get started!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Analytics -->
-                <div id="analyticsSection" class="hidden">
-                    <div class="charts-container">
-                        <div class="chart-card">
-                            <h3 class="chart-title">
-                                <i class="fas fa-chart-line"></i>
-                                Spending Trend
-                            </h3>
-                            <div class="chart-wrapper">
-                                <canvas id="lineChart"></canvas>
-                            </div>
-                        </div>
-                        
-                        <div class="chart-card">
-                            <h3 class="chart-title">
-                                <i class="fas fa-chart-pie"></i>
-                                Spending by Category
-                            </h3>
-                            <div class="chart-wrapper">
-                                <canvas id="pieChart"></canvas>
-                            </div>
+                        <div id="emptyState" class="empty-state hidden">
+                            <i class="fas fa-receipt" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                            <h3>No expenses yet</h3>
+                            <p>Add your first expense to get started!</p>
                         </div>
                     </div>
                 </div>
@@ -1062,17 +548,14 @@
     </div>
 
     <script>
-        // ========== GLOBAL STATE ==========
-        const state = {
-            currentUser: null,
-            expenses: [],
-            budget: 0,
-            isEditing: false,
-            editId: null,
-            charts: {}
-        };
+        // ================= CONFIG =================
+        const BASE_URL = window.location.origin;
+        let firebaseApp = null;
+        let firebaseAuth = null;
+        let currentUser = null;
+        let expenses = [];
 
-        // ========== DOM ELEMENTS ==========
+        // ================= DOM ELEMENTS =================
         const elements = {
             loader: document.getElementById('loader'),
             app: document.getElementById('app'),
@@ -1087,25 +570,14 @@
             submitBtn: document.getElementById('submitBtn'),
             expensesTable: document.getElementById('expensesTable'),
             emptyState: document.getElementById('emptyState'),
-            analyticsSection: document.getElementById('analyticsSection'),
-            modal: document.getElementById('modal'),
-            modalBody: document.getElementById('modalBody'),
             toastContainer: document.getElementById('toastContainer')
         };
 
-        // ========== API CONFIG ==========
-        const BASE_URL = window.location.origin;
-        let firebaseApp = null;
-        let firebaseAuth = null;
-        let firebaseProvider = null;
-
-        // ========== INITIALIZE APP ==========
+        // ================= INITIALIZE =================
         async function initializeApp() {
             try {
                 // Load Firebase config
                 const configRes = await fetch(`${BASE_URL}/firebase-config`);
-                if (!configRes.ok) throw new Error('Failed to load Firebase config');
-                
                 const firebaseConfig = await configRes.json();
                 
                 // Load Firebase SDK
@@ -1114,110 +586,67 @@
                 // Initialize Firebase
                 firebaseApp = firebase.initializeApp(firebaseConfig);
                 firebaseAuth = firebase.auth();
-                firebaseProvider = new firebase.auth.GoogleAuthProvider();
                 
                 // Set up auth listener
-                setupAuthListener();
+                firebaseAuth.onAuthStateChanged(handleAuthStateChange);
                 
             } catch (error) {
-                console.error('Initialization error:', error);
-                showToast('error', 'Error', 'Failed to initialize app');
-                setTimeout(() => elements.loader.classList.add('hidden'), 1000);
+                console.error('Init error:', error);
+                showToast('error', 'Error', 'Failed to initialize');
+                hideLoader();
             }
         }
 
         function loadFirebaseSDK() {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 if (window.firebase) {
                     resolve();
                     return;
                 }
-                
                 const script = document.createElement('script');
                 script.src = 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js';
                 script.onload = () => {
                     const authScript = document.createElement('script');
                     authScript.src = 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js';
                     authScript.onload = resolve;
-                    authScript.onerror = reject;
                     document.head.appendChild(authScript);
                 };
-                script.onerror = reject;
                 document.head.appendChild(script);
             });
         }
 
-        // ========== AUTHENTICATION ==========
-        function setupAuthListener() {
-            firebaseAuth.onAuthStateChanged(async (user) => {
-                if (user) {
-                    // User is signed in
-                    state.currentUser = user;
-                    updateUserUI(user);
-                    
-                    // Show dashboard
-                    elements.loginView.classList.add('hidden');
-                    elements.dashboardView.classList.remove('hidden');
-                    elements.app.classList.remove('hidden');
-                    
-                    // Load data
-                    await Promise.all([
-                        loadExpenses(),
-                        loadBudget()
-                    ]);
-                    
-                    // Hide loader
-                    elements.loader.classList.add('hidden');
-                    
-                } else {
-                    // User is signed out
-                    state.currentUser = null;
-                    
-                    // Show login
-                    elements.dashboardView.classList.add('hidden');
-                    elements.loginView.classList.remove('hidden');
-                    elements.app.classList.remove('hidden');
-                    elements.loader.classList.add('hidden');
-                    
-                    // Reset state
-                    state.expenses = [];
-                    state.budget = 0;
-                    resetUI();
-                }
-            });
+        // ================= AUTHENTICATION =================
+        function handleAuthStateChange(user) {
+            if (user) {
+                // User is signed in
+                currentUser = user;
+                updateUserUI(user);
+                showDashboard();
+                loadExpenses();
+            } else {
+                // User is signed out
+                currentUser = null;
+                showLogin();
+            }
+            hideLoader();
         }
 
         async function signInWithGoogle() {
             try {
-                elements.googleLoginBtn.disabled = true;
-                elements.googleLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
-                
-                await firebaseAuth.signInWithPopup(firebaseProvider);
-                showToast('success', 'Welcome!', 'Successfully signed in');
-                
+                const provider = new firebase.auth.GoogleAuthProvider();
+                await firebaseAuth.signInWithPopup(provider);
+                showToast('success', 'Welcome!', 'Signed in successfully');
             } catch (error) {
-                console.error('Sign in error:', error);
                 showToast('error', 'Sign In Failed', error.message);
-            } finally {
-                elements.googleLoginBtn.disabled = false;
-                elements.googleLoginBtn.innerHTML = '<i class="fab fa-google"></i> Sign in with Google';
             }
         }
 
         async function signOut() {
             try {
-                elements.logoutBtn.disabled = true;
-                elements.logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging out...';
-                
                 await firebaseAuth.signOut();
-                showToast('success', 'Signed Out', 'Successfully signed out');
-                
+                showToast('success', 'Goodbye!', 'Signed out successfully');
             } catch (error) {
-                console.error('Sign out error:', error);
                 showToast('error', 'Sign Out Failed', error.message);
-            } finally {
-                elements.logoutBtn.disabled = false;
-                elements.logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
             }
         }
 
@@ -1227,64 +656,76 @@
             elements.userAvatar.textContent = (user.displayName || user.email).charAt(0).toUpperCase();
         }
 
-        // ========== EXPENSE MANAGEMENT ==========
+        // ================= UI CONTROLS =================
+        function showDashboard() {
+            elements.loginView.classList.add('hidden');
+            elements.dashboardView.classList.remove('hidden');
+            elements.app.classList.remove('hidden');
+        }
+
+        function showLogin() {
+            elements.dashboardView.classList.add('hidden');
+            elements.loginView.classList.remove('hidden');
+            elements.app.classList.remove('hidden');
+            expenses = [];
+            renderExpenses();
+        }
+
+        function hideLoader() {
+            elements.loader.classList.add('hidden');
+        }
+
+        // ================= EXPENSE MANAGEMENT =================
         async function loadExpenses() {
-            if (!state.currentUser) return;
+            if (!currentUser) return;
             
             try {
-                console.log('📥 Loading expenses...');
+                showLoader();
                 
-                // Use the FIXED endpoint
-                const response = await fetch(`${BASE_URL}/api/expenses?uid=${state.currentUser.uid}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
+                console.log('🔍 Loading expenses for user:', currentUser.uid);
                 
+                // Use the NEW endpoint
+                const response = await fetch(`${BASE_URL}/api/get-expenses?uid=${currentUser.uid}`);
                 const data = await response.json();
+                
                 console.log('📦 API Response:', data);
                 
                 if (data.success && data.expenses) {
-                    state.expenses = data.expenses;
-                    console.log(`✅ Loaded ${state.expenses.length} expenses`);
+                    expenses = data.expenses;
+                    console.log(`✅ Loaded ${expenses.length} expenses`);
                     
-                    // Debug: Log first few expenses
-                    if (state.expenses.length > 0) {
-                        console.log('📝 First expense:', state.expenses[0]);
+                    if (expenses.length > 0) {
+                        console.log('📝 First expense:', expenses[0]);
                     }
                     
                     renderExpenses();
-                    updateDashboardStats();
-                    
-                    if (state.expenses.length > 0) {
-                        elements.analyticsSection.classList.remove('hidden');
-                        renderCharts();
-                    } else {
-                        elements.analyticsSection.classList.add('hidden');
-                    }
+                    updateStats();
                     
                 } else {
-                    console.error('API returned error:', data);
+                    console.error('API error:', data);
                     showToast('error', 'Load Failed', data.message || 'Failed to load expenses');
                 }
                 
             } catch (error) {
-                console.error('❌ Load expenses error:', error);
+                console.error('❌ Load error:', error);
                 showToast('error', 'Load Failed', error.message);
+            } finally {
+                hideLoader();
             }
         }
 
         async function saveExpense(expenseData) {
-            if (!state.currentUser) return;
+            if (!currentUser) return;
             
             try {
                 elements.submitBtn.disabled = true;
-                elements.submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                elements.submitBtn.innerHTML = 'Saving...';
                 
-                const response = await fetch(`${BASE_URL}/api/expenses`, {
+                const response = await fetch(`${BASE_URL}/api/create-expense`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        uid: state.currentUser.uid,
+                        uid: currentUser.uid,
                         ...expenseData
                     })
                 });
@@ -1292,141 +733,69 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    showToast('success', 'Success', 'Expense saved successfully');
-                    
-                    // Reset form
-                    elements.expenseForm.reset();
-                    document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
-                    state.isEditing = false;
-                    state.editId = null;
-                    
-                    // Reload expenses
+                    showToast('success', 'Success', 'Expense saved!');
+                    clearForm();
                     await loadExpenses();
-                    
                 } else {
                     throw new Error(data.message);
                 }
                 
             } catch (error) {
-                console.error('Save expense error:', error);
                 showToast('error', 'Save Failed', error.message);
             } finally {
                 elements.submitBtn.disabled = false;
-                elements.submitBtn.innerHTML = '<i class="fas fa-check"></i> Save Expense';
-            }
-        }
-
-        async function updateExpense(id, expenseData) {
-            if (!state.currentUser) return;
-            
-            try {
-                elements.submitBtn.disabled = true;
-                elements.submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
-                
-                const response = await fetch(`${BASE_URL}/api/expenses/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(expenseData)
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    showToast('success', 'Updated', 'Expense updated successfully');
-                    
-                    // Reset form
-                    elements.expenseForm.reset();
-                    state.isEditing = false;
-                    state.editId = null;
-                    
-                    // Reload expenses
-                    await loadExpenses();
-                    
-                } else {
-                    throw new Error(data.message);
-                }
-                
-            } catch (error) {
-                console.error('Update expense error:', error);
-                showToast('error', 'Update Failed', error.message);
-            } finally {
-                elements.submitBtn.disabled = false;
-                elements.submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Expense';
+                elements.submitBtn.innerHTML = 'Save Expense';
             }
         }
 
         async function deleteExpense(id, name) {
-            if (!confirm(`Delete expense "${name}"?`)) return;
+            if (!confirm(`Delete "${name}"?`)) return;
             
             try {
-                const response = await fetch(`${BASE_URL}/api/expenses/${id}`, {
+                const response = await fetch(`${BASE_URL}/api/delete-expense/${id}`, {
                     method: 'DELETE'
                 });
                 
                 const data = await response.json();
                 
                 if (data.success) {
-                    showToast('success', 'Deleted', 'Expense deleted successfully');
+                    showToast('success', 'Deleted', 'Expense removed');
                     await loadExpenses();
                 } else {
                     throw new Error(data.message);
                 }
                 
             } catch (error) {
-                console.error('Delete expense error:', error);
                 showToast('error', 'Delete Failed', error.message);
             }
         }
 
-        // ========== BUDGET MANAGEMENT ==========
-        async function loadBudget() {
-            if (!state.currentUser) return;
-            
-            try {
-                const response = await fetch(`${BASE_URL}/getBudget?uid=${state.currentUser.uid}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    state.budget = data.amount || 0;
-                    updateBudgetUI();
-                }
-            } catch (error) {
-                console.error('Load budget error:', error);
-            }
-        }
-
-        // ========== UI UPDATES ==========
+        // ================= UI RENDERING =================
         function renderExpenses() {
             const tbody = elements.expensesTable;
             tbody.innerHTML = '';
             
-            if (state.expenses.length === 0) {
+            if (expenses.length === 0) {
                 elements.emptyState.classList.remove('hidden');
                 return;
             }
             
             elements.emptyState.classList.add('hidden');
             
-            state.expenses.forEach(expense => {
+            expenses.forEach(expense => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>
-                        <div style="font-weight: 500;">${expense.name || 'Expense'}</div>
-                        ${expense.description ? `<div style="font-size: 0.85rem; color: var(--text-muted-dark); margin-top: 0.25rem;">${expense.description}</div>` : ''}
-                    </td>
-                    <td>
-                        <div style="font-weight: 700; color: var(--primary);">₹${parseFloat(expense.amount || 0).toFixed(2)}</div>
-                    </td>
-                    <td>
-                        <span class="category-badge">${expense.category || 'Other'}</span>
-                    </td>
+                    <td>${expense.name || 'Expense'}</td>
+                    <td style="font-weight: bold; color: var(--primary);">₹${parseFloat(expense.amount || 0).toFixed(2)}</td>
+                    <td><span class="category-badge">${expense.category || 'Other'}</span></td>
                     <td>${expense.type || 'Cash'}</td>
-                    <td>${expense.date || 'No date'}</td>
+                    <td>${expense.date || ''}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="action-btn edit" onclick="editExpense('${expense._id}')" title="Edit">
+                            <button class="action-btn" onclick="editExpense('${expense._id}')" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="action-btn delete" onclick="deleteExpense('${expense._id}', '${expense.name || 'Expense'}')" title="Delete">
+                            <button class="action-btn" onclick="deleteExpense('${expense._id}', '${expense.name || 'Expense'}')" title="Delete">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -1436,154 +805,35 @@
             });
         }
 
-        function updateDashboardStats() {
-            const totalSpent = state.expenses.reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
-            const expenseCount = state.expenses.length;
+        function updateStats() {
+            // Total spent
+            const total = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
+            document.getElementById('totalSpent').textContent = `₹${total.toFixed(2)}`;
+            document.getElementById('expenseCount').textContent = `${expenses.length} expense${expenses.length !== 1 ? 's' : ''}`;
             
-            // Calculate top category
+            // Top category
             const categoryTotals = {};
-            state.expenses.forEach(exp => {
-                const cat = exp.category || 'Uncategorized';
+            expenses.forEach(exp => {
+                const cat = exp.category || 'Other';
                 categoryTotals[cat] = (categoryTotals[cat] || 0) + parseFloat(exp.amount || 0);
             });
             
-            let topCategory = '-';
-            let topCategoryAmount = 0;
-            
-            Object.entries(categoryTotals).forEach(([cat, amount]) => {
-                if (amount > topCategoryAmount) {
-                    topCategory = cat;
-                    topCategoryAmount = amount;
+            let topCat = '-';
+            let topAmount = 0;
+            for (const [cat, amount] of Object.entries(categoryTotals)) {
+                if (amount > topAmount) {
+                    topCat = cat;
+                    topAmount = amount;
                 }
-            });
-            
-            // Update UI
-            document.getElementById('totalSpent').textContent = `₹${totalSpent.toFixed(2)}`;
-            document.getElementById('expenseCount').textContent = `${expenseCount} expense${expenseCount !== 1 ? 's' : ''}`;
-            document.getElementById('topCategory').textContent = topCategory;
-            document.getElementById('categoryAmount').textContent = `₹${topCategoryAmount.toFixed(2)}`;
-            
-            // Update budget progress
-            updateBudgetUI(totalSpent);
-        }
-
-        function updateBudgetUI(totalSpent = null) {
-            if (totalSpent === null) {
-                totalSpent = state.expenses.reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
             }
             
-            const budget = state.budget;
-            const remaining = budget - totalSpent;
-            const percentage = budget > 0 ? Math.min((totalSpent / budget) * 100, 100) : 0;
-            
-            document.getElementById('budgetAmount').textContent = `₹${budget.toFixed(2)}`;
-            document.getElementById('remainingBudget').textContent = `₹${remaining.toFixed(2)}`;
-            
-            const progressBar = document.getElementById('budgetProgress');
-            progressBar.style.width = `${percentage}%`;
+            document.getElementById('topCategory').textContent = topCat;
+            document.getElementById('categoryAmount').textContent = `₹${topAmount.toFixed(2)}`;
         }
 
-        function resetUI() {
-            elements.expensesTable.innerHTML = '';
-            elements.emptyState.classList.remove('hidden');
-            elements.analyticsSection.classList.add('hidden');
-            
-            document.getElementById('totalSpent').textContent = '₹0';
-            document.getElementById('expenseCount').textContent = '0 expenses';
-            document.getElementById('budgetAmount').textContent = '₹0';
-            document.getElementById('remainingBudget').textContent = '₹0';
-            document.getElementById('topCategory').textContent = '-';
-            document.getElementById('categoryAmount').textContent = '₹0';
-            
-            document.getElementById('budgetProgress').style.width = '0%';
-        }
-
-        // ========== CHARTS ==========
-        function renderCharts() {
-            // Destroy existing charts
-            if (state.charts.line) state.charts.line.destroy();
-            if (state.charts.pie) state.charts.pie.destroy();
-            
-            // Line chart
-            const lineCtx = document.getElementById('lineChart').getContext('2d');
-            const monthlyData = {};
-            
-            state.expenses.forEach(exp => {
-                const month = (exp.date || '').substring(0, 7);
-                if (month) {
-                    monthlyData[month] = (monthlyData[month] || 0) + parseFloat(exp.amount || 0);
-                }
-            });
-            
-            const months = Object.keys(monthlyData).sort();
-            const amounts = months.map(month => monthlyData[month]);
-            
-            if (months.length > 0) {
-                state.charts.line = new Chart(lineCtx, {
-                    type: 'line',
-                    data: {
-                        labels: months,
-                        datasets: [{
-                            label: 'Monthly Spending',
-                            data: amounts,
-                            borderColor: 'rgb(59, 130, 246)',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            fill: true,
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false
-                    }
-                });
-            }
-            
-            // Pie chart
-            const pieCtx = document.getElementById('pieChart').getContext('2d');
-            const categoryData = {};
-            
-            state.expenses.forEach(exp => {
-                const cat = exp.category || 'Uncategorized';
-                categoryData[cat] = (categoryData[cat] || 0) + parseFloat(exp.amount || 0);
-            });
-            
-            const categories = Object.keys(categoryData);
-            const categoryAmounts = categories.map(cat => categoryData[cat]);
-            
-            if (categories.length > 0) {
-                state.charts.pie = new Chart(pieCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: categories,
-                        datasets: [{
-                            data: categoryAmounts,
-                            backgroundColor: [
-                                'rgb(59, 130, 246)',
-                                'rgb(16, 185, 129)',
-                                'rgb(245, 158, 11)',
-                                'rgb(139, 92, 246)',
-                                'rgb(239, 68, 68)',
-                                'rgb(99, 102, 241)'
-                            ]
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false
-                    }
-                });
-            }
-        }
-
-        // ========== FORM HANDLING ==========
+        // ================= FORM HANDLING =================
         elements.expenseForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            if (!state.currentUser) {
-                showToast('error', 'Not Signed In', 'Please sign in first');
-                return;
-            }
             
             const formData = {
                 name: document.getElementById('expenseName').value.trim(),
@@ -1596,68 +846,52 @@
             
             // Validation
             if (!formData.name || !formData.amount || !formData.category || !formData.date) {
-                showToast('error', 'Validation Error', 'Please fill all required fields');
+                showToast('error', 'Error', 'Please fill all required fields');
                 return;
             }
             
-            if (parseFloat(formData.amount) <= 0) {
-                showToast('error', 'Invalid Amount', 'Amount must be greater than 0');
-                return;
-            }
-            
-            if (state.isEditing && state.editId) {
-                await updateExpense(state.editId, formData);
-            } else {
-                await saveExpense(formData);
-            }
+            await saveExpense(formData);
         });
 
         // Set default date
         document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
 
-        // ========== EVENT HANDLERS ==========
+        function clearForm() {
+            elements.expenseForm.reset();
+            document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+        }
+
         function editExpense(id) {
-            const expense = state.expenses.find(exp => exp._id === id);
+            const expense = expenses.find(e => e._id === id);
             if (!expense) return;
             
-            state.isEditing = true;
-            state.editId = id;
-            
-            document.getElementById('editId').value = id;
             document.getElementById('expenseName').value = expense.name || '';
-            document.getElementById('expenseAmount').value = expense.amount || 0;
-            document.getElementById('expenseCategory').value = expense.category || 'Other';
+            document.getElementById('expenseAmount').value = expense.amount || '';
+            document.getElementById('expenseCategory').value = expense.category || '';
             document.getElementById('expenseType').value = expense.type || 'Cash';
-            document.getElementById('expenseDate').value = expense.date || new Date().toISOString().split('T')[0];
+            document.getElementById('expenseDate').value = expense.date || '';
             document.getElementById('expenseDescription').value = expense.description || '';
             
-            elements.submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Expense';
+            elements.submitBtn.innerHTML = 'Update Expense';
             
             // Scroll to form
-            document.getElementById('expenseForm').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('expenseForm').scrollIntoView();
         }
 
-        async function refreshData() {
-            await Promise.all([
-                loadExpenses(),
-                loadBudget()
-            ]);
-            showToast('success', 'Refreshed', 'Data updated successfully');
-        }
-
-        async function runDebug() {
-            if (!state.currentUser) return;
+        // ================= DEBUG FUNCTIONS =================
+        async function debugData() {
+            if (!currentUser) return;
             
             try {
                 showToast('info', 'Debug', 'Checking data...');
                 
-                const response = await fetch(`${BASE_URL}/api/debug-all?uid=${state.currentUser.uid}`);
+                const response = await fetch(`${BASE_URL}/api/debug-raw-data?uid=${currentUser.uid}`);
                 const data = await response.json();
                 
-                console.log('🔍 DEBUG DATA:', data);
+                console.log('🔍 DEBUG RAW DATA:', data);
                 
                 if (data.success) {
-                    alert(`Data Analysis:\nTotal Documents: ${data.analysis.totalDocuments}\nField Frequency: ${JSON.stringify(data.analysis.fieldFrequency, null, 2)}\nCheck console for full details (F12)`);
+                    alert(`Data Analysis:\nTotal Documents: ${data.totalDocuments}\nFields Found: ${Object.keys(data.fieldAnalysis).join(', ')}\nCheck console (F12) for full details`);
                 }
                 
             } catch (error) {
@@ -1666,70 +900,47 @@
             }
         }
 
-        // ========== MODAL ==========
-        function openModal() {
-            elements.modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+        // ================= UTILITIES =================
+        function showLoader() {
+            elements.loader.classList.remove('hidden');
         }
 
-        function closeModal() {
-            elements.modal.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        // ========== TOAST ==========
         function showToast(type, title, message) {
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.innerHTML = `
-                <div class="toast-icon">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <div style="font-size: 1.2rem;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
                 </div>
-                <div class="toast-content">
-                    <div class="toast-title">${title}</div>
-                    <div class="toast-message">${message}</div>
+                <div>
+                    <div style="font-weight: bold;">${title}</div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted);">${message}</div>
                 </div>
-                <button class="toast-close" onclick="this.parentElement.remove()">
+                <button onclick="this.parentElement.remove()" style="background: none; border: none; color: var(--text-muted); cursor: pointer;">
                     <i class="fas fa-times"></i>
                 </button>
             `;
             
             elements.toastContainer.appendChild(toast);
             
-            // Auto remove after 5 seconds
+            // Auto remove
             setTimeout(() => {
-                if (toast.parentElement) {
-                    toast.remove();
-                }
+                if (toast.parentElement) toast.remove();
             }, 5000);
         }
 
-        // ========== EVENT LISTENERS ==========
+        // ================= EVENT LISTENERS =================
         elements.googleLoginBtn.addEventListener('click', signInWithGoogle);
         elements.logoutBtn.addEventListener('click', signOut);
-        
-        // Close modal on overlay click
-        elements.modal.addEventListener('click', (e) => {
-            if (e.target === elements.modal) {
-                closeModal();
-            }
-        });
-        
-        // Close modal on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && elements.modal.classList.contains('active')) {
-                closeModal();
-            }
-        });
 
-        // ========== GLOBAL FUNCTIONS ==========
+        // ================= GLOBAL FUNCTIONS =================
+        window.loadExpenses = loadExpenses;
+        window.debugData = debugData;
+        window.clearForm = clearForm;
         window.editExpense = editExpense;
         window.deleteExpense = deleteExpense;
-        window.refreshData = refreshData;
-        window.closeModal = closeModal;
-        window.runDebug = runDebug;
 
-        // ========== INITIALIZE ==========
+        // ================= START APP =================
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
