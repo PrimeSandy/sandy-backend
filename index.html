@@ -1341,6 +1341,10 @@
                                 <i class="fas fa-sync-alt"></i>
                                 Refresh
                             </button>
+                            <button class="btn" onclick="debugData()" style="background: #f59e0b; color: white;">
+                                <i class="fas fa-bug"></i>
+                                Debug
+                            </button>
                         </div>
                     </div>
                     
@@ -1633,10 +1637,21 @@
             try {
                 showTableLoader();
                 
-                const response = await fetch(`${BASE_URL}/users?uid=${state.currentUser.uid}`);
-                if (!response.ok) throw new Error('Failed to fetch expenses');
+                console.log(`📥 Loading expenses for user: ${state.currentUser.uid}`);
                 
-                state.expenses = await response.json();
+                const response = await fetch(`${BASE_URL}/users?uid=${state.currentUser.uid}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch expenses: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log(`📦 Received ${data.length} expenses from API`);
+                
+                if (data.length > 0) {
+                    console.log("📝 First expense in response:", data[0]);
+                }
+                
+                state.expenses = data;
                 renderExpenses();
                 updateDashboardStats();
                 
@@ -1648,8 +1663,8 @@
                 }
                 
             } catch (error) {
-                console.error('Load expenses error:', error);
-                showToast('error', 'Load Failed', 'Failed to load expenses');
+                console.error('❌ Load expenses error:', error);
+                showToast('error', 'Load Failed', 'Failed to load expenses. Check console for details.');
             } finally {
                 hideTableLoader();
             }
@@ -1845,28 +1860,40 @@
             
             elements.emptyState.classList.add('hidden');
             
-            state.expenses.forEach(expense => {
+            console.log(`🎨 Rendering ${state.expenses.length} expenses`);
+            
+            state.expenses.forEach((expense, index) => {
                 const row = document.createElement('tr');
+                
+                // Debug log for first few expenses
+                if (index < 3) {
+                    console.log(`📋 Expense ${index}:`, {
+                        name: expense.name,
+                        amount: expense.amount,
+                        category: expense.category
+                    });
+                }
+                
                 row.innerHTML = `
                     <td>
-                        <div style="font-weight: 500;">${expense.name}</div>
+                        <div style="font-weight: 500;">${expense.name || "Unnamed"}</div>
                         ${expense.description ? `<div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">${expense.description}</div>` : ''}
                     </td>
                     <td>
-                        <div style="font-weight: 700; color: var(--primary);">₹${parseFloat(expense.amount).toFixed(2)}</div>
+                        <div style="font-weight: 700; color: var(--primary);">₹${parseFloat(expense.amount || 0).toFixed(2)}</div>
                         ${expense.editCount > 0 ? `<div style="font-size: 0.75rem; color: var(--warning); margin-top: 0.25rem;"><i class="fas fa-edit"></i> ${expense.editCount} edits</div>` : ''}
                     </td>
                     <td>
-                        <span class="category-badge">${expense.category}</span>
+                        <span class="category-badge">${expense.category || "Other"}</span>
                     </td>
-                    <td>${expense.type}</td>
-                    <td>${expense.date}</td>
+                    <td>${expense.type || "Cash"}</td>
+                    <td>${expense.date || "No date"}</td>
                     <td>
                         <div class="action-buttons">
                             <button class="action-btn edit" onclick="editExpense('${expense._id}')" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="action-btn delete" onclick="deleteExpense('${expense._id}', '${expense.name}')" title="Delete">
+                            <button class="action-btn delete" onclick="deleteExpense('${expense._id}', '${expense.name || "Expense"}')" title="Delete">
                                 <i class="fas fa-trash"></i>
                             </button>
                             <button class="action-btn" onclick="viewHistory('${expense._id}')" title="View History">
@@ -1877,17 +1904,19 @@
                 `;
                 tbody.appendChild(row);
             });
+            
+            console.log("✅ Expenses rendered in table");
         }
 
         function updateDashboardStats() {
-            const totalSpent = state.expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+            const totalSpent = state.expenses.reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
             const expenseCount = state.expenses.length;
             
             // Calculate category totals
             const categoryTotals = {};
             state.expenses.forEach(exp => {
-                const cat = exp.category || 'Uncategorized';
-                categoryTotals[cat] = (categoryTotals[cat] || 0) + parseFloat(exp.amount);
+                const cat = exp.category || "Uncategorized";
+                categoryTotals[cat] = (categoryTotals[cat] || 0) + parseFloat(exp.amount || 0);
             });
             
             // Find top category
@@ -1913,7 +1942,7 @@
 
         function updateBudgetUI(totalSpent = null) {
             if (totalSpent === null) {
-                totalSpent = state.expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+                totalSpent = state.expenses.reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
             }
             
             const budget = state.budget;
@@ -1960,111 +1989,117 @@
             // Prepare data for line chart (monthly spending)
             const monthlyData = {};
             state.expenses.forEach(exp => {
-                const month = exp.date.substring(0, 7); // YYYY-MM
-                monthlyData[month] = (monthlyData[month] || 0) + parseFloat(exp.amount);
+                const month = (exp.date || "").substring(0, 7); // YYYY-MM
+                if (month) {
+                    monthlyData[month] = (monthlyData[month] || 0) + parseFloat(exp.amount || 0);
+                }
             });
             
             const months = Object.keys(monthlyData).sort();
             const monthlyAmounts = months.map(month => monthlyData[month]);
             
             // Line Chart
-            const lineCtx = document.getElementById('lineChart').getContext('2d');
-            state.charts.line = new Chart(lineCtx, {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: 'Monthly Spending',
-                        data: monthlyAmounts,
-                        borderColor: 'rgb(14, 165, 233)',
-                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: { color: 'var(--text)' }
-                        }
+            if (months.length > 0) {
+                const lineCtx = document.getElementById('lineChart').getContext('2d');
+                state.charts.line = new Chart(lineCtx, {
+                    type: 'line',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: 'Monthly Spending',
+                            data: monthlyAmounts,
+                            borderColor: 'rgb(14, 165, 233)',
+                            backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
                     },
-                    scales: {
-                        x: {
-                            grid: { color: 'var(--border)' },
-                            ticks: { color: 'var(--text-muted)' }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: 'var(--text)' }
+                            }
                         },
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'var(--border)' },
-                            ticks: { 
-                                color: 'var(--text-muted)',
-                                callback: value => '₹' + value
+                        scales: {
+                            x: {
+                                grid: { color: 'var(--border)' },
+                                ticks: { color: 'var(--text-muted)' }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'var(--border)' },
+                                ticks: { 
+                                    color: 'var(--text-muted)',
+                                    callback: value => '₹' + value
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
             
             // Prepare data for pie chart (category spending)
             const categoryData = {};
             state.expenses.forEach(exp => {
-                const cat = exp.category || 'Uncategorized';
-                categoryData[cat] = (categoryData[cat] || 0) + parseFloat(exp.amount);
+                const cat = exp.category || "Uncategorized";
+                categoryData[cat] = (categoryData[cat] || 0) + parseFloat(exp.amount || 0);
             });
             
             const categories = Object.keys(categoryData);
             const categoryAmounts = categories.map(cat => categoryData[cat]);
             
             // Pie Chart
-            const pieCtx = document.getElementById('pieChart').getContext('2d');
-            state.charts.pie = new Chart(pieCtx, {
-                type: 'pie',
-                data: {
-                    labels: categories,
-                    datasets: [{
-                        data: categoryAmounts,
-                        backgroundColor: [
-                            'rgb(14, 165, 233)',   // Primary
-                            'rgb(139, 92, 246)',   // Secondary
-                            'rgb(16, 185, 129)',   // Accent
-                            'rgb(245, 158, 11)',   // Warning
-                            'rgb(239, 68, 68)',    // Danger
-                            'rgb(168, 85, 247)',   // Purple
-                            'rgb(6, 182, 212)',    // Cyan
-                            'rgb(34, 197, 94)',    // Green
-                            'rgb(249, 115, 22)',   // Orange
-                            'rgb(156, 163, 175)'   // Gray
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: { 
-                                color: 'var(--text)',
-                                padding: 20
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: context => {
-                                    const label = context.label || '';
-                                    const value = context.raw || 0;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = Math.round((value / total) * 100);
-                                    return `${label}: ₹${value.toFixed(2)} (${percentage}%)`;
+            if (categories.length > 0) {
+                const pieCtx = document.getElementById('pieChart').getContext('2d');
+                state.charts.pie = new Chart(pieCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: categories,
+                        datasets: [{
+                            data: categoryAmounts,
+                            backgroundColor: [
+                                'rgb(14, 165, 233)',   // Primary
+                                'rgb(139, 92, 246)',   // Secondary
+                                'rgb(16, 185, 129)',   // Accent
+                                'rgb(245, 158, 11)',   // Warning
+                                'rgb(239, 68, 68)',    // Danger
+                                'rgb(168, 85, 247)',   // Purple
+                                'rgb(6, 182, 212)',    // Cyan
+                                'rgb(34, 197, 94)',    // Green
+                                'rgb(249, 115, 22)',   // Orange
+                                'rgb(156, 163, 175)'   // Gray
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: { 
+                                    color: 'var(--text)',
+                                    padding: 20
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: context => {
+                                        const label = context.label || '';
+                                        const value = context.raw || 0;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((value / total) * 100);
+                                        return `${label}: ₹${value.toFixed(2)} (${percentage}%)`;
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
         }
 
         // ================= LOADER MANAGEMENT =================
@@ -2195,12 +2230,12 @@
         function renderHistoryModal(expense) {
             let html = `
                 <div class="history-details">
-                    <h4 style="color: var(--primary); margin-bottom: 1rem;">${expense.name}</h4>
+                    <h4 style="color: var(--primary); margin-bottom: 1rem;">${expense.name || "Expense"}</h4>
                     <div style="background: var(--card); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
                             <div>
                                 <div style="font-size: 0.85rem; color: var(--text-muted);">Current Amount</div>
-                                <div style="font-weight: 700; font-size: 1.2rem; color: var(--primary);">₹${parseFloat(expense.amount).toFixed(2)}</div>
+                                <div style="font-weight: 700; font-size: 1.2rem; color: var(--primary);">₹${parseFloat(expense.amount || 0).toFixed(2)}</div>
                             </div>
                             <div>
                                 <div style="font-size: 0.85rem; color: var(--text-muted);">Total Edits</div>
@@ -2208,7 +2243,7 @@
                             </div>
                             <div>
                                 <div style="font-size: 0.85rem; color: var(--text-muted);">Created</div>
-                                <div style="font-weight: 500; font-size: 0.9rem;">${new Date(expense.createdAt).toLocaleDateString()}</div>
+                                <div style="font-weight: 500; font-size: 0.9rem;">${new Date(expense.createdAt || Date.now()).toLocaleDateString()}</div>
                             </div>
                         </div>
                     </div>
@@ -2257,12 +2292,12 @@
             state.editId = id;
             
             document.getElementById('editId').value = id;
-            document.getElementById('expenseName').value = expense.name;
-            document.getElementById('expenseAmount').value = expense.amount;
-            document.getElementById('expenseCategory').value = expense.category;
-            document.getElementById('expenseType').value = expense.type;
-            document.getElementById('expenseDate').value = expense.date;
-            document.getElementById('expenseDescription').value = expense.description || '';
+            document.getElementById('expenseName').value = expense.name || "";
+            document.getElementById('expenseAmount').value = expense.amount || 0;
+            document.getElementById('expenseCategory').value = expense.category || "Other";
+            document.getElementById('expenseType').value = expense.type || "Cash";
+            document.getElementById('expenseDate').value = expense.date || new Date().toISOString().split('T')[0];
+            document.getElementById('expenseDescription').value = expense.description || "";
             
             elements.submitBtn.innerHTML = '<i class="fas fa-save"></i>Update Expense';
             
@@ -2277,6 +2312,32 @@
             ]);
             showToast('success', 'Refreshed', 'Data updated successfully');
         }
+
+        // Debug function to check data
+        window.debugData = async function() {
+            if (!state.currentUser) return;
+            
+            try {
+                showToast('info', 'Debug Mode', 'Checking data structure...');
+                
+                const response = await fetch(`${BASE_URL}/debug/expenses?uid=${state.currentUser.uid}`);
+                const data = await response.json();
+                
+                console.log('🔍 DEBUG DATA:', data);
+                
+                if (data.analysis) {
+                    alert(`Data Analysis:\n
+Total Expenses: ${data.analysis.total}\n
+Field Names: ${Array.from(data.analysis.fieldNames).join(', ')}\n
+Check console for full details (F12 → Console)
+                    `);
+                }
+                
+            } catch (error) {
+                console.error('Debug error:', error);
+                showToast('error', 'Debug Failed', error.message);
+            }
+        };
 
         // ================= FORM HANDLING =================
         elements.expenseForm.addEventListener('submit', async (e) => {
@@ -2341,6 +2402,7 @@
         window.viewHistory = viewHistory;
         window.refreshData = refreshData;
         window.closeModal = closeModal;
+        window.debugData = debugData;
 
         // Budget management functions
         window.setBudget = async () => {
@@ -2358,19 +2420,6 @@
 
         // ================= INITIALIZE APP =================
         document.addEventListener('DOMContentLoaded', initializeApp);
-
-        // Service Worker registration for PWA (optional)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('Service Worker registered:', registration);
-                    })
-                    .catch(error => {
-                        console.log('Service Worker registration failed:', error);
-                    });
-            });
-        }
     </script>
 </body>
 </html>
