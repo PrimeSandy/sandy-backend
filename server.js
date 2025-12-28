@@ -1,542 +1,39 @@
-// server.js - ULTIMATE FIX FOR OLD MONGODB DATA
-require("dotenv").config();
+require("dotenv").config(); 
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
 const path = require("path");
 const cors = require("cors");
+const http = require("http");
 
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
+// Create HTTP server
+const server = http.createServer(app);
+
 // MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017";
-const client = new MongoClient(MONGODB_URI);
-let db, expensesCollection;
+const client = new MongoClient(process.env.MONGODB_URI);
+let db, expenses, budgets;
 
 async function connectDB() {
-  try {
+  if (!db) {
     await client.connect();
-    db = client.db("E_TRAX_DB");
-    expensesCollection = db.collection("expenses");
-    console.log("✅ MongoDB Connected to E_TRAX_DB");
-    
-    // Check collections
-    const collections = await db.listCollections().toArray();
-    console.log("📁 Available collections:", collections.map(c => c.name));
-    
-  } catch (err) {
-    console.error("❌ MongoDB Connection Error:", err.message);
+    db = client.db("PTS_PRO");
+    expenses = db.collection("expenses");
+    budgets = db.collection("budgets");
+    console.log("✅ MongoDB connected");
   }
 }
-
-// Connect to DB on startup
 connectDB();
 
-// ================= FIXED API ENDPOINTS =================
-
-// 1. GET ALL EXPENSES FOR USER - ULTIMATE FIX
-app.get("/api/get-expenses", async (req, res) => {
-  try {
-    const { uid } = req.query;
-    
-    if (!uid) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "User ID is required" 
-      });
-    }
-    
-    console.log(`🔍 Searching expenses for user: ${uid}`);
-    
-    // Try to find expenses by UID in ANY format
-    const query = { 
-      $or: [
-        { uid: uid },
-        { userId: uid },
-        { user: uid }
-      ]
-    };
-    
-    console.log("🔎 Query:", JSON.stringify(query));
-    
-    const allDocuments = await expensesCollection
-      .find(query)
-      .sort({ createdAt: -1 })
-      .toArray();
-    
-    console.log(`📊 Found ${allDocuments.length} documents total`);
-    
-    if (allDocuments.length > 0) {
-      console.log("📄 First document structure:");
-      console.log("ID:", allDocuments[0]._id);
-      console.log("All Keys:", Object.keys(allDocuments[0]));
-      console.log("Full Document:", JSON.stringify(allDocuments[0], null, 2));
-    }
-    
-    // ================= TRANSFORM ALL DOCUMENTS =================
-    const transformedExpenses = allDocuments.map((doc, index) => {
-      // Extract ALL fields from document
-      const allFields = Object.keys(doc);
-      
-      // DEBUG: Log first 3 documents
-      if (index < 3) {
-        console.log(`📋 Document ${index + 1}:`, {
-          id: doc._id,
-          fields: allFields,
-          hasName: !!doc.name,
-          hasAmount: doc.amount !== undefined,
-          sampleData: {
-            name: doc.name,
-            amount: doc.amount,
-            itemName: doc.itemName,
-            price: doc.price,
-            description: doc.description,
-            date: doc.date
-          }
-        });
-      }
-      
-      // ================= EXTRACT NAME =================
-      let extractedName = "";
-      
-      // Try different possible name fields
-      if (doc.name && typeof doc.name === 'string') {
-        extractedName = doc.name;
-      } else if (doc.itemName && typeof doc.itemName === 'string') {
-        extractedName = doc.itemName;
-      } else if (doc.title && typeof doc.title === 'string') {
-        extractedName = doc.title;
-      } else if (doc.description && typeof doc.description === 'string') {
-        // Use first 30 chars of description as name
-        extractedName = doc.description.substring(0, 30) + (doc.description.length > 30 ? "..." : "");
-      } else if (doc.item && typeof doc.item === 'string') {
-        extractedName = doc.item;
-      } else {
-        extractedName = "Expense #" + (index + 1);
-      }
-      
-      // ================= EXTRACT AMOUNT =================
-      let extractedAmount = 0;
-      
-      // Try different possible amount fields
-      if (doc.amount !== undefined && doc.amount !== null) {
-        extractedAmount = parseFloat(doc.amount) || 0;
-      } else if (doc.price !== undefined && doc.price !== null) {
-        extractedAmount = parseFloat(doc.price) || 0;
-      } else if (doc.cost !== undefined && doc.cost !== null) {
-        extractedAmount = parseFloat(doc.cost) || 0;
-      } else if (doc.value !== undefined && doc.value !== null) {
-        extractedAmount = parseFloat(doc.value) || 0;
-      }
-      
-      // ================= EXTRACT DATE =================
-      let extractedDate = "";
-      
-      // Try different possible date fields
-      if (doc.date) {
-        if (doc.date instanceof Date) {
-          extractedDate = doc.date.toISOString().split('T')[0];
-        } else if (typeof doc.date === 'string') {
-          extractedDate = doc.date.split('T')[0];
-        }
-      } else if (doc.createdAt) {
-        if (doc.createdAt instanceof Date) {
-          extractedDate = doc.createdAt.toISOString().split('T')[0];
-        } else if (typeof doc.createdAt === 'string') {
-          extractedDate = doc.createdAt.split('T')[0];
-        }
-      } else {
-        extractedDate = new Date().toISOString().split('T')[0];
-      }
-      
-      // ================= EXTRACT CATEGORY =================
-      let extractedCategory = "Other";
-      
-      if (doc.category && typeof doc.category === 'string') {
-        extractedCategory = doc.category;
-      } else if (doc.type && typeof doc.type === 'string') {
-        extractedCategory = doc.type;
-      } else if (doc.categoryType && typeof doc.categoryType === 'string') {
-        extractedCategory = doc.categoryType;
-      }
-      
-      // ================= CREATE TRANSFORMED OBJECT =================
-      const transformed = {
-        _id: doc._id,
-        uid: doc.uid || doc.userId || doc.user || uid,
-        name: extractedName,
-        amount: extractedAmount,
-        category: extractedCategory,
-        type: doc.type || doc.paymentType || "Cash",
-        description: doc.description || doc.note || "",
-        date: extractedDate,
-        createdAt: doc.createdAt || new Date(),
-        updatedAt: doc.updatedAt || new Date(),
-        editCount: doc.editCount || 0,
-        editHistory: doc.editHistory || [],
-        
-        // Debug info
-        _originalFields: allFields,
-        _hasOriginalName: !!doc.name,
-        _hasOriginalAmount: doc.amount !== undefined,
-        _wasTransformed: !doc.name || doc.amount === undefined
-      };
-      
-      return transformed;
-    });
-    
-    console.log(`✅ Returning ${transformedExpenses.length} transformed expenses`);
-    
-    res.json({
-      success: true,
-      count: transformedExpenses.length,
-      expenses: transformedExpenses,
-      debug: {
-        totalDocuments: allDocuments.length,
-        transformedCount: transformedExpenses.length,
-        sampleOldDocument: allDocuments[0] ? {
-          id: allDocuments[0]._id,
-          fields: Object.keys(allDocuments[0])
-        } : null
-      }
-    });
-    
-  } catch (err) {
-    console.error("❌ Get expenses error:", err);
-    res.status(500).json({ 
-      success: false, 
-      message: "Failed to load expenses",
-      error: err.message 
-    });
-  }
+// ✅ Serve Frontend
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// 2. CREATE NEW EXPENSE
-app.post("/api/create-expense", async (req, res) => {
-  try {
-    const { uid, name, amount, category, type, description, date } = req.body;
-    
-    if (!uid || !name || !amount) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Missing required fields" 
-      });
-    }
-    
-    const newExpense = {
-      uid,
-      name: name.trim(),
-      amount: parseFloat(amount),
-      category: category || "Other",
-      type: type || "Cash",
-      description: description || "",
-      date: date || new Date().toISOString().split('T')[0],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      editCount: 0,
-      editHistory: []
-    };
-    
-    const result = await expensesCollection.insertOne(newExpense);
-    
-    console.log("✅ New expense created:", result.insertedId);
-    
-    res.json({
-      success: true,
-      message: "Expense saved successfully",
-      id: result.insertedId,
-      expense: newExpense
-    });
-    
-  } catch (err) {
-    console.error("❌ Create expense error:", err);
-    res.status(500).json({ 
-      success: false, 
-      message: "Failed to save expense",
-      error: err.message 
-    });
-  }
-});
-
-// 3. UPDATE EXPENSE
-app.put("/api/update-expense/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updateData = req.body;
-    
-    const result = await expensesCollection.updateOne(
-      { _id: new ObjectId(id) },
-      { 
-        $set: {
-          ...updateData,
-          updatedAt: new Date()
-        }
-      }
-    );
-    
-    if (result.matchedCount === 0) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "Expense not found" 
-      });
-    }
-    
-    res.json({
-      success: true,
-      message: "Expense updated successfully"
-    });
-    
-  } catch (err) {
-    console.error("❌ Update expense error:", err);
-    res.status(500).json({ 
-      success: false, 
-      message: "Failed to update expense",
-      error: err.message 
-    });
-  }
-});
-
-// 4. DELETE EXPENSE
-app.delete("/api/delete-expense/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    const result = await expensesCollection.deleteOne({ 
-      _id: new ObjectId(id) 
-    });
-    
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "Expense not found" 
-      });
-    }
-    
-    res.json({
-      success: true,
-      message: "Expense deleted successfully"
-    });
-    
-  } catch (err) {
-    console.error("❌ Delete expense error:", err);
-    res.status(500).json({ 
-      success: false, 
-      message: "Failed to delete expense",
-      error: err.message 
-    });
-  }
-});
-
-// 5. GET SINGLE EXPENSE
-app.get("/api/get-expense/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    const expense = await expensesCollection.findOne({ 
-      _id: new ObjectId(id) 
-    });
-    
-    if (!expense) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "Expense not found" 
-      });
-    }
-    
-    res.json({
-      success: true,
-      expense: expense
-    });
-    
-  } catch (err) {
-    console.error("❌ Get single expense error:", err);
-    res.status(500).json({ 
-      success: false, 
-      message: "Failed to get expense",
-      error: err.message 
-    });
-  }
-});
-
-// 6. MIGRATE OLD DATA TO NEW FORMAT
-app.post("/api/migrate-old-data", async (req, res) => {
-  try {
-    const { uid } = req.body;
-    
-    if (!uid) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "User ID is required" 
-      });
-    }
-    
-    console.log(`🔄 Starting migration for user: ${uid}`);
-    
-    // Find all old documents without proper name/amount fields
-    const oldDocuments = await expensesCollection.find({
-      uid: uid,
-      $or: [
-        { name: { $exists: false } },
-        { amount: { $exists: false } },
-        { name: null },
-        { amount: null }
-      ]
-    }).toArray();
-    
-    console.log(`📦 Found ${oldDocuments.length} documents to migrate`);
-    
-    let migratedCount = 0;
-    let errors = [];
-    
-    for (const doc of oldDocuments) {
-      try {
-        // Extract data from old format
-        const oldName = doc.itemName || doc.title || doc.description || "Migrated Expense";
-        const oldAmount = doc.price || doc.cost || doc.value || 0;
-        const oldCategory = doc.category || doc.type || "Other";
-        const oldDate = doc.date || doc.createdAt || new Date();
-        
-        // Update to new format
-        await expensesCollection.updateOne(
-          { _id: doc._id },
-          {
-            $set: {
-              name: oldName,
-              amount: parseFloat(oldAmount),
-              category: oldCategory,
-              date: oldDate instanceof Date ? oldDate.toISOString().split('T')[0] : 
-                    typeof oldDate === 'string' ? oldDate.split('T')[0] : 
-                    new Date().toISOString().split('T')[0],
-              updatedAt: new Date()
-            }
-          }
-        );
-        
-        migratedCount++;
-        console.log(`✅ Migrated document: ${doc._id}`);
-        
-      } catch (err) {
-        errors.push({ id: doc._id, error: err.message });
-        console.error(`❌ Error migrating ${doc._id}:`, err.message);
-      }
-    }
-    
-    res.json({
-      success: true,
-      message: `Migration completed: ${migratedCount} documents migrated`,
-      migrated: migratedCount,
-      errors: errors
-    });
-    
-  } catch (err) {
-    console.error("❌ Migration error:", err);
-    res.status(500).json({ 
-      success: false, 
-      message: "Migration failed",
-      error: err.message 
-    });
-  }
-});
-
-// 7. DEBUG ENDPOINT - SEE RAW DATA
-app.get("/api/debug-raw-data", async (req, res) => {
-  try {
-    const { uid } = req.query;
-    
-    if (!uid) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "User ID is required" 
-      });
-    }
-    
-    console.log(`🔍 Debug request for user: ${uid}`);
-    
-    // Find ALL documents for this user
-    const allDocuments = await expensesCollection
-      .find({ 
-        $or: [
-          { uid: uid },
-          { userId: uid },
-          { user: uid }
-        ]
-      })
-      .toArray();
-    
-    // Analyze field structure
-    const fieldAnalysis = {};
-    allDocuments.forEach(doc => {
-      Object.keys(doc).forEach(field => {
-        if (!fieldAnalysis[field]) {
-          fieldAnalysis[field] = {
-            count: 0,
-            sampleValues: [],
-            types: new Set()
-          };
-        }
-        fieldAnalysis[field].count++;
-        
-        // Store sample values (max 3)
-        if (fieldAnalysis[field].sampleValues.length < 3) {
-          fieldAnalysis[field].sampleValues.push(doc[field]);
-        }
-        
-        // Track data type
-        fieldAnalysis[field].types.add(typeof doc[field]);
-      });
-    });
-    
-    res.json({
-      success: true,
-      totalDocuments: allDocuments.length,
-      fieldAnalysis: fieldAnalysis,
-      allDocuments: allDocuments.map(doc => ({
-        _id: doc._id,
-        ...doc
-      })),
-      sampleDocument: allDocuments[0] || null
-    });
-    
-  } catch (err) {
-    console.error("❌ Debug error:", err);
-    res.status(500).json({ 
-      success: false, 
-      message: "Debug failed",
-      error: err.message 
-    });
-  }
-});
-
-// 8. TEST CONNECTION
-app.get("/api/test-connection", async (req, res) => {
-  try {
-    const collections = await db.listCollections().toArray();
-    const expenseCount = await expensesCollection.countDocuments();
-    
-    res.json({
-      success: true,
-      message: "Database connection successful",
-      database: db.databaseName,
-      collections: collections.map(c => c.name),
-      totalExpenses: expenseCount,
-      timestamp: new Date().toISOString()
-    });
-    
-  } catch (err) {
-    console.error("❌ Test connection error:", err);
-    res.status(500).json({ 
-      success: false, 
-      message: "Database connection failed",
-      error: err.message 
-    });
-  }
-});
-
-// 9. Firebase Config
+// ✅ SECURE: Serve Firebase Config from Environment Variables
 app.get("/firebase-config", (req, res) => {
   const firebaseConfig = {
     apiKey: process.env.FIREBASE_API_KEY,
@@ -544,51 +41,228 @@ app.get("/firebase-config", (req, res) => {
     projectId: process.env.FIREBASE_PROJECT_ID,
     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID
+    appId: process.env.FIREBASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
   };
+  
+  // Validate that all required config values are present
+  const missingKeys = Object.keys(firebaseConfig).filter(key => !firebaseConfig[key]);
+  if (missingKeys.length > 0) {
+    console.error('Missing Firebase config keys:', missingKeys);
+    return res.status(500).json({ error: 'Firebase configuration incomplete' });
+  }
+  
   res.json(firebaseConfig);
 });
 
-// 10. Health Check
+// ✅ Health Check
 app.get("/health", (req, res) => {
   res.json({ 
-    status: "healthy",
-    service: "E-TRAX API",
-    version: "2.1.0",
-    timestamp: new Date().toISOString(),
-    endpoints: [
-      "/api/get-expenses",
-      "/api/create-expense",
-      "/api/update-expense",
-      "/api/delete-expense",
-      "/api/debug-raw-data",
-      "/api/test-connection",
-      "/api/migrate-old-data"
-    ]
+    status: "OK", 
+    message: "Server is running!",
+    firebase: {
+      configured: !!process.env.FIREBASE_API_KEY,
+      project: process.env.FIREBASE_PROJECT_ID
+    }
   });
 });
 
-// Serve Frontend
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+// ✅ Create Expense
+app.post("/submit", async (req, res) => {
+  try {
+    await connectDB();
+    const { uid, name, amount, type, description, date } = req.body;
+    const now = new Date();
+    const doc = {
+      uid,
+      name,
+      amount: parseFloat(amount),
+      type,
+      description,
+      date,
+      createdAt: now,
+      updatedAt: now,
+      editCount: 0,
+      editHistory: [],
+    };
+    const result = await expenses.insertOne(doc);
+    res.json({ status: "success", message: "✅ Expense saved successfully!", id: result.insertedId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: "error", message: "❌ Failed to save expense" });
+  }
 });
 
-// Error Handler
-app.use((err, req, res, next) => {
-  console.error("🚨 Server Error:", err);
-  res.status(500).json({ 
-    success: false, 
-    message: "Internal server error",
-    error: process.env.NODE_ENV === "development" ? err.message : undefined
-  });
+// ✅ Get All Expenses
+app.get("/users", async (req, res) => {
+  try {
+    await connectDB();
+    const { uid } = req.query;
+    if (!uid) return res.status(400).json({ status: "error", message: "Missing user ID" });
+    const all = await expenses.find({ uid }).sort({ createdAt: -1 }).toArray();
+    res.json(all);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: "error", message: "❌ Failed to load expenses" });
+  }
 });
 
-// Start Server
+// ✅ Get Single Expense
+app.get("/user/:id", async (req, res) => {
+  try {
+    await connectDB();
+    const user = await expenses.findOne({ _id: new ObjectId(req.params.id) });
+    if (!user) return res.status(404).json({ status: "error", message: "Expense not found" });
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: "error", message: "❌ Invalid expense ID" });
+  }
+});
+
+// ✅ Update Expense
+app.put("/update/:id", async (req, res) => {
+  try {
+    await connectDB();
+    const { uid, editorName, name, amount, type, description, date } = req.body;
+    const id = req.params.id;
+    
+    const exp = await expenses.findOne({ _id: new ObjectId(id) });
+    if (!exp) return res.status(404).json({ status: "error", message: "Expense not found" });
+    if (exp.uid !== uid) return res.status(403).json({ status: "error", message: "Not authorized to edit this expense" });
+
+    const before = { 
+      name: exp.name, 
+      amount: exp.amount, 
+      type: exp.type, 
+      description: exp.description, 
+      date: exp.date 
+    };
+    
+    const after = { 
+      name, 
+      amount: parseFloat(amount), 
+      type, 
+      description, 
+      date 
+    };
+
+    // Track changes
+    const changes = [];
+    if (before.name !== after.name) changes.push(`Name changed from "${before.name}" to "${after.name}"`);
+    if (before.amount !== after.amount) changes.push(`Amount changed from ₹${before.amount} to ₹${after.amount}`);
+    if (before.type !== after.type) changes.push(`Type changed from ${before.type} to ${after.type}`);
+    if (before.description !== after.description) changes.push(`Description changed from "${before.description}" to "${after.description}"`);
+    if (before.date !== after.date) changes.push(`Date changed from ${before.date} to ${after.date}`);
+
+    const updateResult = await expenses.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: { 
+          name, 
+          amount: parseFloat(amount), 
+          type, 
+          description, 
+          date, 
+          updatedAt: new Date() 
+        },
+        $inc: { editCount: 1 },
+        $push: {
+          editHistory: {
+            editorUid: uid,
+            editorName: editorName || "Unknown User",
+            date: new Date(),
+            before,
+            after,
+            changes: changes.length > 0 ? changes : ["No significant changes detected"]
+          },
+        },
+      }
+    );
+
+    if (updateResult.modifiedCount === 0) {
+      return res.status(400).json({ status: "error", message: "No changes made" });
+    }
+
+    res.json({ 
+      status: "success", 
+      message: "✅ Expense updated successfully!",
+      changes: changes
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: "error", message: "❌ Failed to update expense" });
+  }
+});
+
+// ✅ Delete Expense
+app.delete("/delete/:id", async (req, res) => {
+  try {
+    await connectDB();
+    const id = req.params.id;
+    const exp = await expenses.findOne({ _id: new ObjectId(id) });
+    if (!exp) return res.status(404).json({ status: "error", message: "Expense not found" });
+    
+    await expenses.deleteOne({ _id: new ObjectId(id) });
+    res.json({ status: "success", message: "✅ Expense deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: "error", message: "❌ Failed to delete expense" });
+  }
+});
+
+// ✅ Budget Routes
+app.post("/setBudget", async (req, res) => {
+  try {
+    await connectDB();
+    const { uid, amount, reset } = req.body;
+    if (!uid) return res.status(400).json({ status: "error", message: "Missing user ID" });
+
+    if (reset) {
+      await budgets.deleteOne({ uid });
+      return res.json({ status: "success", message: "✅ Budget reset successfully" });
+    }
+
+    const amt = parseFloat(amount) || 0;
+    await budgets.updateOne(
+      { uid }, 
+      { $set: { uid, amount: amt, updatedAt: new Date() } }, 
+      { upsert: true }
+    );
+    res.json({ status: "success", message: "✅ Budget saved successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: "error", message: "❌ Budget operation failed" });
+  }
+});
+
+app.get("/getBudget", async (req, res) => {
+  try {
+    await connectDB();
+    const { uid } = req.query;
+    if (!uid) return res.status(400).json({ status: "error", message: "Missing user ID" });
+    const b = await budgets.findOne({ uid });
+    res.json({ amount: b?.amount || 0, updatedAt: b?.updatedAt || null });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: "error", message: "❌ Failed to get budget" });
+  }
+});
+
+// Error handling
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Promise Rejection:', err);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+
+// ✅ Always start server (both local and production)
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌐 Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`📡 MongoDB: ${MONGODB_URI}`);
+  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📊 MongoDB: Connected to PTS_PRO database`);
+  console.log(`🔐 Firebase: ${process.env.FIREBASE_PROJECT_ID ? 'Configured' : 'Not configured'}`);
 });
-
-module.exports = app;
