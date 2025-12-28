@@ -7,6 +7,7 @@ const BASE_URL = window.location.hostname.includes("localhost")
 let auth = null;
 let currentUserUid = null;
 let currentUserName = null;
+let currentUserPhoto = null;
 
 // Theme Management
 const themes = ['dark', 'light', 'professional'];
@@ -57,20 +58,84 @@ function setupAuthListener() {
         if (user) {
             currentUserUid = user.uid;
             currentUserName = user.displayName || "User";
+            currentUserPhoto = user.photoURL || null;
+            
             toggleLoginState(true);
             loadData();
-            userNameDisplay.textContent = currentUserName;
+            
+            // Update user display with profile
+            updateUserDisplay(user);
+            
             fetchBudget();
         } else {
             currentUserUid = null;
             currentUserName = null;
+            currentUserPhoto = null;
+            
             toggleLoginState(false);
             tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
             analyticsContainer.style.display = "none";
-            userNameDisplay.textContent = "";
+            
+            // Clear user display
+            clearUserDisplay();
+            
             clearBudgetUI();
         }
     });
+}
+
+// Update user display with profile picture and name
+function updateUserDisplay(user) {
+    const userNameDisplay = document.getElementById("userNameDisplay");
+    const userProfilePic = document.getElementById("userProfilePic");
+    const userInitials = document.getElementById("userInitials");
+    
+    if (user.displayName) {
+        // Set display name
+        userNameDisplay.textContent = user.displayName;
+        
+        // Get initials for fallback
+        const initials = getInitials(user.displayName);
+        userInitials.textContent = initials;
+        
+        // Set profile picture if available
+        if (user.photoURL) {
+            userProfilePic.src = user.photoURL;
+            userProfilePic.style.display = "block";
+            userInitials.style.display = "none";
+        } else {
+            userProfilePic.style.display = "none";
+            userInitials.style.display = "flex";
+        }
+    } else {
+        userNameDisplay.textContent = "User";
+        userInitials.textContent = "U";
+        userInitials.style.display = "flex";
+        userProfilePic.style.display = "none";
+    }
+}
+
+// Get initials from name
+function getInitials(name) {
+    return name
+        .split(' ')
+        .map(part => part.charAt(0))
+        .join('')
+        .toUpperCase()
+        .substring(0, 2);
+}
+
+// Clear user display on logout
+function clearUserDisplay() {
+    const userNameDisplay = document.getElementById("userNameDisplay");
+    const userProfilePic = document.getElementById("userProfilePic");
+    const userInitials = document.getElementById("userInitials");
+    
+    userNameDisplay.textContent = "";
+    userProfilePic.src = "";
+    userProfilePic.style.display = "none";
+    userInitials.textContent = "";
+    userInitials.style.display = "none";
 }
 
 // Elements
@@ -82,6 +147,8 @@ const expenseFormContainer = document.getElementById("expenseFormContainer");
 const tableContainer = document.getElementById("tableContainer");
 const msgBox = document.getElementById("msgBox");
 const userNameDisplay = document.getElementById("userNameDisplay");
+const userProfilePic = document.getElementById("userProfilePic");
+const userInitials = document.getElementById("userInitials");
 const analyticsContainer = document.getElementById("analyticsContainer");
 const themeToggle = document.getElementById("themeToggle");
 const historyLink = document.getElementById("historyLink");
@@ -149,9 +216,14 @@ loginBtn.addEventListener("click", async () => {
         const result = await auth.signInWithPopup(provider);
         currentUserUid = result.user.uid;
         currentUserName = result.user.displayName || "User";
+        currentUserPhoto = result.user.photoURL || null;
+        
         toggleLoginState(true);
         loadData();
-        userNameDisplay.textContent = currentUserName;
+        
+        // Update user display with profile
+        updateUserDisplay(result.user);
+        
         showMessage("✅ Logged in successfully",2000);
         fetchBudget();
     } catch(err){ 
@@ -168,10 +240,15 @@ logoutBtn && logoutBtn.addEventListener("click", async () => {
         await auth.signOut();
         currentUserUid = null;
         currentUserName = null;
+        currentUserPhoto = null;
+        
         toggleLoginState(false);
         tableContainer.innerHTML = "<p class='text-muted'>Login to view your expenses</p>";
         analyticsContainer.style.display="none";
-        userNameDisplay.textContent = "";
+        
+        // Clear user display
+        clearUserDisplay();
+        
         clearBudgetUI();
         showMessage("✅ Logged out successfully",2000);
     } catch(err){ 
