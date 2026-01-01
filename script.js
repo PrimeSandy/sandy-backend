@@ -8,7 +8,7 @@ const BASE_URL = window.location.hostname.includes("localhost")
     ? "http://localhost:3000"
     : "https://primesandy.github.io/sandy-backend";
 
-
+ 
 // const BASE_URL = window.location.hostname.includes("localhost")
 //     ? "http://localhost:3000"
 //     : "https://www.alphaprime.co.in";
