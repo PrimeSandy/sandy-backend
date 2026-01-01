@@ -1,12 +1,12 @@
-// BASE URL
-// const BASE_URL = window.location.hostname.includes("localhost")
-//     ? "http://localhost:3000"
-//     : "https://sandy-backend2-0.onrender.com";
-
 BASE URL
 const BASE_URL = window.location.hostname.includes("localhost")
     ? "http://localhost:3000"
-    : "https://primesandy.github.io/sandy-backend";
+    : "https://sandy-backend2-0.onrender.com";
+
+// BASE URL
+// const BASE_URL = window.location.hostname.includes("localhost")
+//     ? "http://localhost:3000"
+//     : "https://primesandy.github.io/sandy-backend";
 
  
 // const BASE_URL = window.location.hostname.includes("localhost")
