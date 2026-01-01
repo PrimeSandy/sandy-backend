@@ -64,7 +64,7 @@ function setupAuthListener() {
             loadData();
             
             // Update user display with profile
-            updateUserDisplay(user);
+            updateUserDisplay(user); 
             
             fetchBudget();
         } else {
