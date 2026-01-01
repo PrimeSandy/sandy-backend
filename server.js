@@ -3,15 +3,13 @@ const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
 const path = require("path");
 const cors = require("cors");
-const http = require("http");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
 
-// Create HTTP server
-const server = http.createServer(app);
+// Vercel uses process.cwd() for static files
+app.use(express.static(path.join(__dirname)));
 
 // MongoDB Connection
 const client = new MongoClient(process.env.MONGODB_URI);
@@ -28,9 +26,21 @@ async function connectDB() {
 }
 connectDB();
 
-// ✅ Serve Frontend
+// ✅ Serve Frontend Pages
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
+});
+
+app.get("/about", (req, res) => {
+    res.sendFile(path.join(__dirname, "about.html"));
+});
+
+app.get("/privacy-policy", (req, res) => {
+    res.sendFile(path.join(__dirname, "privacy-policy.html"));
+});
+
+app.get("/terms-conditions", (req, res) => {
+    res.sendFile(path.join(__dirname, "terms-conditions.html"));
 });
 
 // ✅ SECURE: Serve Firebase Config from Environment Variables
@@ -55,11 +65,12 @@ app.get("/firebase-config", (req, res) => {
     res.json(firebaseConfig);
 });
 
-// ✅ Health Check
-app.get("/health", (req, res) => {
+// ✅ Health Check for Vercel
+app.get("/api/health", (req, res) => {
     res.json({ 
         status: "OK", 
-        message: "Server is running!",
+        message: "E-TRAX Server is running on Vercel!",
+        timestamp: new Date().toISOString(),
         firebase: {
             configured: !!process.env.FIREBASE_API_KEY,
             project: process.env.FIREBASE_PROJECT_ID
@@ -68,7 +79,7 @@ app.get("/health", (req, res) => {
 });
 
 // ✅ Create Expense
-app.post("/submit", async (req, res) => {
+app.post("/api/submit", async (req, res) => {
     try {
         await connectDB();
         const { uid, name, amount, type, description, date } = req.body;
@@ -94,7 +105,7 @@ app.post("/submit", async (req, res) => {
 });
 
 // ✅ Get All Expenses
-app.get("/users", async (req, res) => {
+app.get("/api/users", async (req, res) => {
     try {
         await connectDB();
         const { uid } = req.query;
@@ -108,7 +119,7 @@ app.get("/users", async (req, res) => {
 });
 
 // ✅ Get Single Expense
-app.get("/user/:id", async (req, res) => {
+app.get("/api/user/:id", async (req, res) => {
     try {
         await connectDB();
         const user = await expenses.findOne({ _id: new ObjectId(req.params.id) });
@@ -121,7 +132,7 @@ app.get("/user/:id", async (req, res) => {
 });
 
 // ✅ Update Expense
-app.put("/update/:id", async (req, res) => {
+app.put("/api/update/:id", async (req, res) => {
     try {
         await connectDB();
         const { uid, editorName, name, amount, type, description, date } = req.body;
@@ -196,7 +207,7 @@ app.put("/update/:id", async (req, res) => {
 });
 
 // ✅ Delete Expense
-app.delete("/delete/:id", async (req, res) => {
+app.delete("/api/delete/:id", async (req, res) => {
     try {
         await connectDB();
         const id = req.params.id;
@@ -212,7 +223,7 @@ app.delete("/delete/:id", async (req, res) => {
 });
 
 // ✅ Budget Routes
-app.post("/setBudget", async (req, res) => {
+app.post("/api/setBudget", async (req, res) => {
     try {
         await connectDB();
         const { uid, amount, reset } = req.body;
@@ -236,7 +247,7 @@ app.post("/setBudget", async (req, res) => {
     }
 });
 
-app.get("/getBudget", async (req, res) => {
+app.get("/api/getBudget", async (req, res) => {
     try {
         await connectDB();
         const { uid } = req.query;
@@ -258,11 +269,18 @@ process.on('uncaughtException', (err) => {
     console.error('Uncaught Exception:', err);
 });
 
-// ✅ Always start server (both local and production)
+// ✅ Vercel will handle the port automatically
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`📊 MongoDB: Connected to PTS_PRO database`);
-    console.log(`🔐 Firebase: ${process.env.FIREBASE_PROJECT_ID ? 'Configured' : 'Not configured'}`);
-});
+
+// Export for Vercel
+module.exports = app;
+
+// Only start server if not in Vercel environment
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`🚀 Server running locally on port ${PORT}`);
+        console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+        console.log(`📊 MongoDB: Connected to PTS_PRO database`);
+        console.log(`🔐 Firebase: ${process.env.FIREBASE_PROJECT_ID ? 'Configured' : 'Not configured'}`);
+    });
+}
