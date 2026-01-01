@@ -1,7 +1,11 @@
 // BASE URL
+// const BASE_URL = window.location.hostname.includes("localhost")
+//     ? "http://localhost:3000"
+//     : "https://sandy-backend2-0.onrender.com";
+
 const BASE_URL = window.location.hostname.includes("localhost")
     ? "http://localhost:3000"
-    : "https://sandy-backend2-0.onrender.com";
+    : "https://www.alphaprime.co.in";
 
 // Firebase will be initialized after fetching config from backend
 let auth = null;
