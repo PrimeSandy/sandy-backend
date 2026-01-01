@@ -64,7 +64,7 @@ function setupAuthListener() {
             loadData();
             
             // Update user display with profile
-            updateUserDisplay(user); 
+            updateUserDisplay(user);
             
             fetchBudget();
         } else {
@@ -196,12 +196,18 @@ function showMessage(msg, duration=2000) {
     setTimeout(()=> msgBox.style.display="none", duration);
 }
 
-// Toggle login state
+// Toggle login state - FIXED FUNCTION
 function toggleLoginState(isLoggedIn) {
     loginView.style.display = isLoggedIn ? "none" : "flex";
     mainHeader.classList.toggle('visible', isLoggedIn);
     expenseFormContainer.style.display = isLoggedIn ? "block" : "none";
+    
+    // FIX 1: Budget card should be visible only after login
     budgetCard.style.display = isLoggedIn ? "block" : "none";
+    
+    // FIX 2: Hide budget input and save button before login
+    if (budgetInput) budgetInput.style.display = isLoggedIn ? "block" : "none";
+    if (saveBudgetBtn) saveBudgetBtn.style.display = isLoggedIn ? "inline-block" : "none";
 }
 
 // Login button
@@ -340,8 +346,13 @@ async function fetchBudget(){
     } catch(err){ console.error(err); clearBudgetUI(); }
 }
 
+// FIXED: clearBudgetUI function
 function clearBudgetUI(){
-    if(budgetInput) budgetInput.value = "";
+    if(budgetInput) {
+        budgetInput.value = "";
+        budgetInput.style.display = currentUserUid ? "block" : "none";
+    }
+    if(saveBudgetBtn) saveBudgetBtn.style.display = currentUserUid ? "inline-block" : "none";
     if(budgetProgressBar) budgetProgressBar.style.width = "0%";
     if(budgetProgressBar) budgetProgressBar.className = "progress-bar";
     if(budgetStatusText) budgetStatusText.innerText = "No budget set";
@@ -350,11 +361,17 @@ function clearBudgetUI(){
     if(analyticsBadge) analyticsBadge.innerText = "";
 }
 
+// FIXED: updateBudgetUI function
 function updateBudgetUI(budgetAmount, totalSpent){
     if(!budgetAmount || budgetAmount <= 0){
         clearBudgetUI();
         return;
     }
+    
+    // Ensure input and button are visible when logged in
+    if (budgetInput) budgetInput.style.display = "block";
+    if (saveBudgetBtn) saveBudgetBtn.style.display = "inline-block";
+    
     const pct = (totalSpent / budgetAmount) * 100;
     const pctClamped = Math.min(Math.round(pct), 999);
     const widthPct = Math.min(pctClamped, 100);
