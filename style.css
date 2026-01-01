@@ -343,6 +343,60 @@ header.visible {
     font-weight: 600;
 }
 
+/* BUDGET CARD - FIXED STYLES */
+#budgetCard {
+    display: none; /* Hidden by default, shown only after login */
+    margin-bottom: 20px;
+}
+
+#budgetCard .card-body {
+    padding: 20px;
+}
+
+/* Budget input and button alignment */
+#budgetCard .row.g-2 {
+    margin-bottom: 15px;
+}
+
+#budgetInput {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+}
+
+#saveBudgetBtn {
+    width: 100%;
+    padding: 10px 15px;
+    font-weight: 600;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#saveBudgetBtn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+/* Mobile responsive adjustments for budget card */
+@media (max-width: 768px) {
+    #budgetCard .row.g-2 {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    #budgetCard .row.g-2 > [class*="col-"] {
+        width: 100% !important;
+    }
+}
+
 /* TABLE */
 .table-container { 
     margin-top: 20px; 
@@ -376,10 +430,6 @@ table tbody tr:hover {
 }
 
 /* BUDGET */
-#budgetCard { 
-    display:none; 
-}
-
 #budgetBar { 
     height: 22px; 
     border-radius:8px; 
@@ -896,15 +946,7 @@ footer a:hover {
         padding-right: 12px;
     }
     
-    /* ========== REMOVE DUPLICATE BUDGET BAR ========== */
-    /* Hide any fixed/top budget summary */
-    .budget-summary-fixed,
-    .budget-top-bar,
-    .budget-header-strip {
-        display: none !important;
-    }
-    
-    /* ========== BUDGET CARD OPTIMIZATION ========== */
+    /* ========== BUDGET CARD MOBILE OPTIMIZATION ========== */
     #budgetCard {
         margin-top: 0;
         position: relative;

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -100,21 +99,7 @@
         </div>
     </div>
 </div>
-<!-- In the budget card section, modify this part -->
-<div class="row g-2 mb-3">
-    <div class="budget-mobile-container">
-        <div class="col-md-5">
-            <input type="number" id="budgetInput" class="form-control" placeholder="Enter budget amount (e.g. 5000)">
-        </div>
-        <div class="col-md-3">
-            <button id="saveBudgetBtn" class="btn btn-primary w-100">Save Budget</button>
-        </div>
-        <div class="col-md-4 text-end">
-            <div id="budgetStatusText" style="font-weight:600;color:var(--text);">No budget set</div>
-        </div>
-    </div>
-</div>
-<!-- HEADER -->
+
 <!-- HEADER -->
 <header id="mainHeader">
     <div class="header-content">
@@ -160,7 +145,7 @@
 
 <!-- MAIN CONTAINER -->
 <div class="container my-3">
-    <!-- BUDGET CARD -->
+    <!-- BUDGET CARD - FIXED: Only shows after login -->
     <div id="budgetCard" class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -173,16 +158,20 @@
                 </div>
             </div>
 
-            <div class="row g-2 mb-3">
-                <div class="col-md-5">
+            <!-- BUDGET INPUT AND SAVE BUTTON - FIXED: Inside budget card -->
+            <div class="row g-2 mb-3 align-items-center">
+                <div class="col-md-6 col-lg-7">
                     <input type="number" id="budgetInput" class="form-control" placeholder="Enter budget amount (e.g. 5000)">
                 </div>
-                <div class="col-md-3">
-                    <button id="saveBudgetBtn" class="btn btn-primary w-100">Save Budget</button>
+                <div class="col-md-6 col-lg-5">
+                    <button id="saveBudgetBtn" class="btn btn-primary w-100">
+                        <i class="fas fa-save"></i> Save Budget
+                    </button>
                 </div>
-                <div class="col-md-4 text-end">
-                    <div id="budgetStatusText" style="font-weight:600;color:var(--text);">No budget set</div>
-                </div>
+            </div>
+
+            <div class="text-center mb-2">
+                <div id="budgetStatusText" style="font-weight:600;color:var(--text);">No budget set</div>
             </div>
 
             <div id="budgetBar" class="mb-2">
