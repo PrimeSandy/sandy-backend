@@ -79,57 +79,6 @@ body {
     font-weight: 500;
 }
 
-/* ================= CHART.JS THEME FIX ================= */
-/* Force ALL chart text to be white - FIXED */
-.chart-container,
-.chart-container *,
-.chart-container svg,
-.chart-container svg * {
-    color: white !important;
-    fill: white !important;
-}
-
-/* Specific charts */
-#lineChart,
-#pieChart,
-#lineChart *,
-#pieChart * {
-    color: white !important;
-    fill: white !important;
-}
-
-/* Chart.js canvas text */
-.chartjs-render-monitor {
-    color: white !important;
-}
-
-/* Chart legends and labels */
-.chartjs-legend,
-.chartjs-legend *,
-.chartjs-scale,
-.chartjs-scale * {
-    color: white !important;
-    fill: white !important;
-}
-
-/* Tooltips */
-.chartjs-tooltip {
-    color: white !important;
-    background: rgba(0, 0, 0, 0.9) !important;
-}
-
-/* Axis text */
-.chartjs-scale,
-.chartjs-scale text {
-    color: white !important;
-    fill: white !important;
-}
-
-/* Grid lines - keep them visible */
-.chartjs-grid {
-    stroke: rgba(255, 255, 255, 0.3) !important;
-}
-
 /* ---------- LOGIN CARD ---------- */
 .login-wrapper {
     display: flex;
@@ -216,7 +165,7 @@ body {
 .google-btn img { width:20px; height:20px; }
 .small-note { color: var(--text-muted); font-size:0.9rem; margin-top:16px; font-weight: 500; }
 
-/* HEADER - DESKTOP VERSION */
+/* HEADER - DESKTOP VERSION (UNCHANGED) */
 header { 
     display: none;
     background: var(--card-bg);
@@ -267,7 +216,7 @@ header.visible {
     gap: 15px;
 }
 
-/* User Profile Container */
+/* User Profile Container - NEW */
 .user-profile {
     display: flex;
     align-items: center;
@@ -394,7 +343,7 @@ header.visible {
     font-weight: 600;
 }
 
-/* BUDGET CARD */
+/* BUDGET CARD - FIXED STYLES */
 #budgetCard {
     display: none; /* Hidden by default, shown only after login */
     margin-bottom: 20px;
@@ -404,6 +353,7 @@ header.visible {
     padding: 20px;
 }
 
+/* Budget input and button alignment */
 #budgetCard .row.g-2 {
     margin-bottom: 15px;
 }
@@ -433,6 +383,18 @@ header.visible {
 #saveBudgetBtn:hover {
     background: var(--primary-dark);
     transform: translateY(-2px);
+}
+
+/* Mobile responsive adjustments for budget card */
+@media (max-width: 768px) {
+    #budgetCard .row.g-2 {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    #budgetCard .row.g-2 > [class*="col-"] {
+        width: 100% !important;
+    }
 }
 
 /* TABLE */
@@ -707,6 +669,13 @@ footer a:hover {
     text-decoration: underline;
 }
 
+/* CHART CONTAINERS */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin-bottom: 20px;
+}
+
 /* LOADING */
 .loading {
     display: inline-block;
@@ -749,14 +718,6 @@ footer a:hover {
 .badge-info {
     background: var(--primary);
     color: white;
-}
-
-/* CHART CONTAINER */
-.chart-container {
-    position: relative;
-    height: 300px;
-    margin-bottom: 20px;
-    color: white !important;
 }
 
 /* Mobile Expense Cards */
@@ -806,9 +767,15 @@ footer a:hover {
     font-weight: 500;
 }
 
+/* Ensure all critical text is bright */
+.high-contrast-text {
+    color: var(--text) !important;
+    font-weight: 600 !important;
+}
+
 /* ================= MOBILE RESPONSIVE DESIGN (max-width: 768px) ================= */
 @media (max-width: 768px) {
-    /* ========== FIXED HEADER ========== */
+    /* ========== FIXED HEADER - NO OVERLAP ========== */
     header {
         position: fixed !important;
         top: 0;
@@ -830,18 +797,17 @@ footer a:hover {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         flex-wrap: nowrap;
     }
     
-    /* Brand section */
+    /* Brand section - compact */
     .brand-section {
         display: flex;
         align-items: center;
         gap: 6px;
         flex-shrink: 0;
         min-width: 0;
-        order: 0;
     }
     
     .project-name {
@@ -859,42 +825,38 @@ footer a:hover {
         display: none !important;
     }
     
-    /* User Profile - FIXED: Show in mobile */
+    /* User Profile - mobile version */
     .user-profile {
-        display: flex !important;
+        display: none !important; /* Hide on mobile - not enough space */
+    }
+    
+    /* Header controls */
+    .header-controls {
+        display: flex;
         align-items: center;
-        gap: 4px;
-        padding: 2px 6px;
-        background: rgba(0, 188, 212, 0.1);
-        border-radius: 20px;
-        order: 1;
+        gap: 6px;
         margin-left: auto;
-        margin-right: 8px;
+        flex-shrink: 0;
     }
     
-    /* Hide user name text on mobile */
+    /* Username only (no profile pic on mobile) */
     #userNameDisplay {
-        display: none !important;
+        display: none; /* Hide on mobile - use initials instead */
     }
     
-    /* Show user initials badge */
+    /* User Initials Badge - mobile alternative */
     .user-initials {
-        width: 28px;
-        height: 28px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         background: var(--primary);
         color: white;
-        display: flex !important;
+        display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
-        font-size: 0.7rem;
+        font-size: 0.8rem;
         border: 2px solid var(--primary);
-    }
-    
-    /* Hide profile picture on mobile */
-    .profile-pic {
-        display: none !important;
     }
     
     /* Theme toggle - icon only */
@@ -909,7 +871,6 @@ footer a:hover {
         justify-content: center;
         border: 1px solid var(--border);
         background: var(--card-bg);
-        order: 2;
     }
     
     .theme-toggle span {
@@ -928,7 +889,6 @@ footer a:hover {
         gap: 4px;
         margin: 0;
         padding: 0;
-        order: 3;
     }
     
     .nav-links a {
@@ -944,6 +904,7 @@ footer a:hover {
         background: var(--card-bg);
         border: 1px solid var(--border);
         text-decoration: none;
+        position: static !important;
     }
     
     .nav-links a i {
@@ -964,6 +925,7 @@ footer a:hover {
         border: 1px solid var(--danger) !important;
         background: var(--card-bg);
         font-size: 0;
+        position: static !important;
     }
     
     #googleLogoutBtn i {
@@ -1139,18 +1101,6 @@ footer a:hover {
         max-width: 100px;
     }
     
-    /* User profile on very small screens */
-    .user-profile {
-        padding: 2px 4px;
-        margin-right: 4px;
-    }
-    
-    .user-initials {
-        width: 24px;
-        height: 24px;
-        font-size: 0.6rem;
-    }
-    
     .theme-toggle,
     .nav-links a,
     #googleLogoutBtn {
@@ -1167,6 +1117,13 @@ footer a:hover {
     
     .container {
         padding-top: 66px !important;
+    }
+    
+    /* Show user initials on very small screens */
+    .user-initials {
+        width: 30px;
+        height: 30px;
+        font-size: 0.75rem;
     }
 }
 
