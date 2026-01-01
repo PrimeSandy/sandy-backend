@@ -79,6 +79,74 @@ body {
     font-weight: 500;
 }
 
+/* ================= CHART.JS COMPLETE THEME FIX ================= */
+/* All chart containers */
+.chart-container canvas {
+    color: var(--text) !important;
+}
+
+/* Chart.js tooltip */
+.chartjs-tooltip {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text) !important;
+    border-radius: 8px;
+    padding: 10px !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+}
+
+.chartjs-tooltip-key {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 8px;
+    border-radius: 3px;
+}
+
+/* Chart legends */
+.chartjs-legend {
+    color: var(--text) !important;
+}
+
+.chartjs-legend-text {
+    color: var(--text) !important;
+    font-weight: 500;
+}
+
+/* Axis text */
+.chartjs-scale {
+    color: var(--text) !important;
+}
+
+.chartjs-scale-label {
+    color: var(--text) !important;
+    fill: var(--text) !important;
+}
+
+/* Grid lines */
+.chartjs-grid {
+    color: var(--border) !important;
+    stroke: var(--border) !important;
+}
+
+/* Specific chart fixes */
+#lineChart,
+#pieChart {
+    color: var(--text) !important;
+}
+
+/* Chart container specific */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin-bottom: 20px;
+    color: var(--text) !important;
+}
+
+.chart-container canvas {
+    color: var(--text) !important;
+}
+
 /* ---------- LOGIN CARD ---------- */
 .login-wrapper {
     display: flex;
@@ -667,13 +735,6 @@ footer a {
 footer a:hover {
     color: var(--primary-dark);
     text-decoration: underline;
-}
-
-/* CHART CONTAINERS */
-.chart-container {
-    position: relative;
-    height: 300px;
-    margin-bottom: 20px;
 }
 
 /* LOADING */
