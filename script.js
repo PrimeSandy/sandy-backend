@@ -1,7 +1,5 @@
-// BASE URL
-const BASE_URL = window.location.hostname.includes("localhost")
-    ? "http://localhost:3000"
-    : "https://sandy-backend2-0.onrender.com";
+// BASE URL for Vercel
+const BASE_URL = window.location.origin;
 
 // Firebase will be initialized after fetching config from backend
 let auth = null;
@@ -287,7 +285,7 @@ form && form.addEventListener("submit", async e=>{
         date: document.getElementById("date").value
     };
     try {
-        const url = editId.value ? `${BASE_URL}/update/${editId.value}` : `${BASE_URL}/submit`;
+        const url = editId.value ? `${BASE_URL}/api/update/${editId.value}` : `${BASE_URL}/api/submit`;
         const method = editId.value ? "PUT" : "POST";
         // Add editor name when updating
         if (editId.value) {
@@ -307,7 +305,7 @@ form && form.addEventListener("submit", async e=>{
 async function saveBudgetToServer(amount){
     if(!currentUserUid) return;
     try {
-        const res = await fetch(`${BASE_URL}/setBudget`, {
+        const res = await fetch(`${BASE_URL}/api/setBudget`, {
             method: "POST",
             headers: { "Content-Type":"application/json" },
             body: JSON.stringify({ uid: currentUserUid, amount: parseFloat(amount) || 0 })
@@ -322,7 +320,7 @@ async function saveBudgetToServer(amount){
 async function fetchBudget(){
     if(!currentUserUid) return clearBudgetUI();
     try {
-        const res = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
+        const res = await fetch(`${BASE_URL}/api/getBudget?uid=${currentUserUid}`);
         if(!res.ok) return clearBudgetUI();
         const r = await res.json();
         if(!r || typeof r.amount === "undefined" || r.amount === 0){
@@ -331,7 +329,7 @@ async function fetchBudget(){
             return;
         }
         currentBudgetAmount = parseFloat(r.amount) || 0;
-        const expensesRes = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
+        const expensesRes = await fetch(`${BASE_URL}/api/users?uid=${currentUserUid}`);
         const arr = await expensesRes.json();
         let totalAmount = 0;
         if(Array.isArray(arr)) arr.forEach(x=> totalAmount += parseFloat(x.amount)||0);
@@ -393,7 +391,7 @@ resetBudgetBtn && resetBudgetBtn.addEventListener("click", async () => {
     if(!currentUserUid) return;
     if(!confirm("Reset/delete your budget?")) return;
     try {
-        const res = await fetch(`${BASE_URL}/setBudget`, {
+        const res = await fetch(`${BASE_URL}/api/setBudget`, {
             method: "POST",
             headers: { "Content-Type":"application/json" },
             body: JSON.stringify({ uid: currentUserUid, amount: 0, reset: true })
@@ -409,13 +407,13 @@ resetBudgetBtn && resetBudgetBtn.addEventListener("click", async () => {
 async function loadData(){
     if(!currentUserUid) return;
     try{
-        const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
+        const res = await fetch(`${BASE_URL}/api/users?uid=${currentUserUid}`);
         if(!res.ok) throw new Error("Failed to fetch users");
         const users = await res.json();
         if(!Array.isArray(users) || users.length===0){
             tableContainer.innerHTML = "<p class='text-muted'>No expenses yet. Add your first expense above!</p>";
             analyticsContainer.style.display="none";
-            const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
+            const bRes = await fetch(`${BASE_URL}/api/getBudget?uid=${currentUserUid}`);
             if(bRes.ok){
                 const b = await bRes.json();
                 if(b && b.amount) updateBudgetUI(parseFloat(b.amount), 0);
@@ -559,7 +557,7 @@ async function loadData(){
         analyticsContainer.style.display="block";
         renderCharts(users);
 
-        const bRes = await fetch(`${BASE_URL}/getBudget?uid=${currentUserUid}`);
+        const bRes = await fetch(`${BASE_URL}/api/getBudget?uid=${currentUserUid}`);
         if(bRes.ok){
             const b = await bRes.json();
             if(b && b.amount && parseFloat(b.amount) > 0){
@@ -579,7 +577,7 @@ async function loadData(){
 // Edit and Delete handlers
 window.editExpense = async function(id){
     try{
-        const res = await fetch(`${BASE_URL}/user/${id}`);
+        const res = await fetch(`${BASE_URL}/api/user/${id}`);
         if(!res.ok) throw new Error("Failed to fetch user");
         const user = await res.json();
         document.getElementById("name").value=user.name;
@@ -595,7 +593,7 @@ window.editExpense = async function(id){
 window.deleteExpense = async function(id, name){
     if(!confirm(`Are you sure you want to delete expense "${name}"? This action cannot be undone.`)) return;
     try{
-        const res = await fetch(`${BASE_URL}/delete/${id}`, { method: "DELETE" });
+        const res = await fetch(`${BASE_URL}/api/delete/${id}`, { method: "DELETE" });
         const r = await res.json();
         if(res.ok){
             showMessage("✅ Expense deleted successfully");
@@ -610,7 +608,7 @@ window.deleteExpense = async function(id, name){
 // History functions
 window.viewHistory = async function(expenseId) {
     try {
-        const res = await fetch(`${BASE_URL}/user/${expenseId}`);
+        const res = await fetch(`${BASE_URL}/api/user/${expenseId}`);
         if(!res.ok) throw new Error("Failed to fetch expense");
         const expense = await res.json();
         
@@ -676,7 +674,7 @@ window.viewHistory = async function(expenseId) {
 
 async function showHistory() {
     try {
-        const res = await fetch(`${BASE_URL}/users?uid=${currentUserUid}`);
+        const res = await fetch(`${BASE_URL}/api/users?uid=${currentUserUid}`);
         if(!res.ok) throw new Error("Failed to fetch expenses");
         const expenses = await res.json();
         
