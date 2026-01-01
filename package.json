@@ -9,7 +9,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "expense-tracker",
     "budget",
     "mongodb",
     "firebase",
